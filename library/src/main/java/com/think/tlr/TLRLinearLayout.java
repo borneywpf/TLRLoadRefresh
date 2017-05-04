@@ -249,8 +249,12 @@ public final class TLRLinearLayout extends ViewGroup {
         if (!isKeepContentLayout) {
             mContentLayout.offsetTopAndBottom(y);
         }
-        mHeaderView.offsetTopAndBottom(y);
-        mFooterView.offsetTopAndBottom(y);
+        if (isEnableRefresh && mCalculator.isRefresh()) {
+            mHeaderView.offsetTopAndBottom(y);
+        }
+        if (isEnableLoad && mCalculator.isLoad()) {
+            mFooterView.offsetTopAndBottom(y);
+        }
         invalidate();
     }
 

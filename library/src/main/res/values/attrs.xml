@@ -8,6 +8,8 @@
         <attr name="closeAnimDuration" format="integer"/>
         <attr name="openAnimDuration" format="integer"/>
         <attr name="resistance" format="float"/>
+        <attr name="keepHeadAnimator" format="boolean"/>
+        <attr name="keepFootAnimator" format="boolean"/>
         <attr name="keepContentLayout" format="boolean"/>
     </declare-styleable>
 
