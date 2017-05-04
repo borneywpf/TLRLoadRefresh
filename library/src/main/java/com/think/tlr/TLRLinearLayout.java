@@ -27,7 +27,15 @@ public final class TLRLinearLayout extends ViewGroup {
     private List<View> mContentChilds;
     private LinearLayout mContentLayout;
     private View mFooterView;
-    private CoordinateCalculator mCalculator;
+    private TLRCalculator mCalculator;
+
+    public enum RefreshStatus {
+        IDLE, PULL_DOWN, RELEASE_REFRESH, REFRESHING
+    }
+
+    public enum LoadStatus {
+        IDLE, PULL_UP, RELEASE_LOAD, LOADING
+    }
 
     public TLRLinearLayout(Context context) {
         this(context, null);
@@ -41,7 +49,7 @@ public final class TLRLinearLayout extends ViewGroup {
         super(context, attrs, defStyleAttr);
         initAttrs(attrs);
         setWillNotDraw(false);
-        mCalculator = new CoordinateCalculator(this, attrs);
+        mCalculator = new TLRCalculator(this, attrs);
         mContentViews = new ArrayList<>();
         mContentChilds = new ArrayList<>();
     }
@@ -229,6 +237,14 @@ public final class TLRLinearLayout extends ViewGroup {
         mCalculator.startAutoRefresh();
     }
 
+    public void endRefresh() {
+        mCalculator.endRefresh();
+    }
+
+    public void endLoad() {
+        mCalculator.endLoad();
+    }
+
     void move(int y) {
         if (!isKeepContentLayout) {
             mContentLayout.offsetTopAndBottom(y);
@@ -240,7 +256,7 @@ public final class TLRLinearLayout extends ViewGroup {
 
     private boolean isTouchViewRefresh(View target, float x, float y) {
         boolean inView = inView(target, x, y);
-        if (inView && mCalculator.touchDirection() == CoordinateCalculator.Direction.DOWN) {
+        if (inView && mCalculator.touchDirection() == TLRCalculator.Direction.DOWN) {
             return isViewRefresh(target);
         }
         return false;
@@ -248,7 +264,7 @@ public final class TLRLinearLayout extends ViewGroup {
 
     private boolean isTouchViewLoad(View target, float x, float y) {
         boolean inView = inView(target, x, y);
-        if (inView && mCalculator.touchDirection() == CoordinateCalculator.Direction.UP) {
+        if (inView && mCalculator.touchDirection() == TLRCalculator.Direction.UP) {
             return isViewLoad(target);
         }
         return false;

@@ -11,19 +11,53 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 
+import com.think.tlr.TLRLinearLayout.RefreshStatus;
+import com.think.tlr.TLRLinearLayout.LoadStatus;
+
 /**
  * Created by borney on 5/3/17.
  */
-class CoordinateCalculator {
+class TLRCalculator {
     private float mDownX, mDownY;
     private float mLastX, mLastY;
+    /**
+     * Touch View 移动阀值
+     */
     private float mOffsetX, mOffsetY;
+    /**
+     * View 偏移坐标
+     */
     private int mTotalOffsetY, mTotalOffsetX;
-    private float mRefreshThreshold = 1.0f;
-    private float mLoadThreshold = 1.0f;
+
+    /**
+     * 刷新阀值系数，加载阀值系数
+     */
+    private float mRefreshThreshold = 1.0f, mLoadThreshold = 1.0f;
+    /**
+     * 阻尼系数
+     */
     private float mResistance = 1.6f;
+    /**
+     * 关闭和打开动画时间
+     */
+    private int mCloseAnimDuration = 500, mOpenAnimDuration = 800;
+
     private int mHeadHeight;
     private int mFootHeight;
+    /**
+     * 刷新阀值(高度), 加载阀值
+     */
+    private int mRefreshThresholdHeight, mLoadThresholdHeight;
+
+    /**
+     * 刷新状态机
+     */
+    private RefreshStatus mRefreshStatus = RefreshStatus.IDLE;
+    /**
+     * 加载状态机
+     */
+    private LoadStatus mLoadStatus = LoadStatus.IDLE;
+    private boolean isAutoRefresh = false;
     private ValueAnimator mValueAnimator;
     private TLRLinearLayout mTLRLinearLayout;
     private int mTouchSlop;
@@ -31,7 +65,7 @@ class CoordinateCalculator {
     private boolean isLoad;
     private Direction mDirection = Direction.NONE;
 
-    public CoordinateCalculator(TLRLinearLayout layout, AttributeSet attrs) {
+    public TLRCalculator(TLRLinearLayout layout, AttributeSet attrs) {
         mTLRLinearLayout = layout;
         Context context = layout.getContext();
         initAttrs(context, attrs);
@@ -54,6 +88,10 @@ class CoordinateCalculator {
                     mLoadThreshold = array.getFloat(index, mLoadThreshold);
                 } else if (index == R.styleable.TLRLinearLayout_resistance) {
                     mResistance = array.getFloat(index, mResistance);
+                } else if (index == R.styleable.TLRLinearLayout_closeAnimDuration) {
+                    mCloseAnimDuration = array.getInt(index, mCloseAnimDuration);
+                } else if (index == R.styleable.TLRLinearLayout_openAnimDuration) {
+                    mOpenAnimDuration = array.getInt(index, mOpenAnimDuration);
                 }
             }
         } finally {
@@ -66,21 +104,21 @@ class CoordinateCalculator {
         isLoad = load;
     }
 
-    void setHeadViewHeight(int height) {
+    public void setHeadViewHeight(int height) {
         mHeadHeight = height;
+        mRefreshThresholdHeight = (int) (mHeadHeight * mRefreshThreshold);
     }
 
-    void setFootViewHeight(int height) {
+    public void setFootViewHeight(int height) {
         mFootHeight = height;
+        mLoadThresholdHeight = (int) (mFootHeight * mLoadThreshold);
     }
 
     /**
      * call by layout touch down
      */
-    void eventDown(float x, float y) {
-        if (mValueAnimator != null && mValueAnimator.isStarted()) {
-            mValueAnimator.end();
-        }
+    public void eventDown(float x, float y) {
+        reset();
         mLastX = mDownX = x;
         mLastY = mDownY = y;
     }
@@ -88,7 +126,7 @@ class CoordinateCalculator {
     /**
      * call by layout touch move
      */
-    void eventMove(float x, float y) {
+    public void eventMove(float x, float y) {
         float xDiff = x - mLastX;
         float yDiff = y - mLastY;
         setDirection(xDiff, yDiff);
@@ -100,9 +138,12 @@ class CoordinateCalculator {
     /**
      * call by layout touch up/cancel
      */
-    void eventUp(float x, float y) {
+    public void eventUp(float x, float y) {
         mDirection = Direction.NONE;
-        startResetAnimator();
+        if (mRefreshStatus == RefreshStatus.RELEASE_REFRESH) {
+            notifyRefreshStatusChanged(RefreshStatus.REFRESHING);
+            endRefresh();
+        }
     }
 
     /**
@@ -110,14 +151,14 @@ class CoordinateCalculator {
      *
      * @return
      */
-    boolean canCalculatorV() {
+    public boolean canCalculatorV() {
         if (mDirection == Direction.DOWN || mDirection == Direction.UP) {
             return Math.abs(mLastY - mDownY) > mTouchSlop;
         }
         return false;
     }
 
-    void touchMoveLayoutView() {
+    public void touchMoveLayoutView() {
         moveLayoutView((int) mOffsetY);
     }
 
@@ -128,11 +169,28 @@ class CoordinateCalculator {
      */
     private void moveLayoutView(int y) {
         mTotalOffsetY += y;
-        Log.d("total:" + mTotalOffsetY + " y:" + y + " d:" + mDirection);
+        Log.d("total:" + mTotalOffsetY + " mRefreshThresholdHeight:" + mRefreshThresholdHeight + " isRefresh:" + isRefresh + " isLoad:" + isLoad);
         mTLRLinearLayout.move(y);
+        if (isRefresh && mTotalOffsetY >= 0 && mRefreshStatus == RefreshStatus.IDLE) {
+            notifyRefreshStatusChanged(RefreshStatus.PULL_DOWN);
+        }
+        if (mTotalOffsetY >= mRefreshThresholdHeight && mRefreshStatus == RefreshStatus.PULL_DOWN) {
+            notifyRefreshStatusChanged(RefreshStatus.RELEASE_REFRESH);
+        }
     }
 
     private void reset() {
+        if (mValueAnimator != null && mValueAnimator.isStarted()) {
+            mValueAnimator.end();
+        }
+        if (mValueAnimator != null && mTotalOffsetY != 0) {
+            mValueAnimator.reverse();
+        }
+        isRefresh = false;
+        isLoad = false;
+        isAutoRefresh = false;
+        mRefreshStatus = RefreshStatus.IDLE;
+        mLoadStatus = LoadStatus.IDLE;
         mLastX = mDownX = 0;
         mLastY = mDownY = 0;
         mTotalOffsetY = 0;
@@ -161,8 +219,10 @@ class CoordinateCalculator {
         mOffsetY = offsetY / mResistance;
     }
 
-    void startAutoRefresh() {
+    public void startAutoRefresh() {
         Log.d("startAutoRefresh mHeadHeight:" + mHeadHeight);
+        isAutoRefresh = true;
+        isRefresh = true;
         if (mHeadHeight == 0) {
             mTLRLinearLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
@@ -182,11 +242,11 @@ class CoordinateCalculator {
     }
 
     private void startAutoRefreshAnimator() {
-        startYAnimator(-mHeadHeight, 0, new AccelerateDecelerateInterpolator(), 800);
+        startYAnimator(-mHeadHeight, 0, new AccelerateDecelerateInterpolator(), mOpenAnimDuration);
     }
 
     private void startResetAnimator() {
-        startYAnimator(mTotalOffsetY, 0, new DecelerateInterpolator(), 500);
+        startYAnimator(mTotalOffsetY, 0, new DecelerateInterpolator(), mCloseAnimDuration);
     }
 
     private void startYAnimator(final int startY, int endY, TimeInterpolator interpolator, long duration) {
@@ -206,8 +266,24 @@ class CoordinateCalculator {
         mValueAnimator.start();
     }
 
-    Direction touchDirection() {
+    public Direction touchDirection() {
         return mDirection;
+    }
+
+    public void notifyRefreshStatusChanged(RefreshStatus refreshStatus) {
+        mRefreshStatus = refreshStatus;
+        Log.i("mRefreshStatus=" + mRefreshStatus);
+    }
+
+    public void endRefresh() {
+        if (mRefreshStatus == RefreshStatus.REFRESHING) {
+            notifyRefreshStatusChanged(RefreshStatus.IDLE);
+            startResetAnimator();
+        }
+    }
+
+    public void endLoad() {
+
     }
 
     public enum Direction {
