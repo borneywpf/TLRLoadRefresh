@@ -40,8 +40,8 @@ public final class TLRLinearLayout extends ViewGroup {
     public TLRLinearLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initAttrs(attrs);
-        initCalculator(attrs);
         setWillNotDraw(false);
+        mCalculator = new CoordinateCalculator(this, attrs);
         mContentViews = new ArrayList<>();
         mContentChilds = new ArrayList<>();
     }
@@ -70,33 +70,6 @@ public final class TLRLinearLayout extends ViewGroup {
         } finally {
             array.recycle();
         }
-    }
-
-    private void initCalculator(AttributeSet attrs) {
-        TypedArray array = getContext().obtainStyledAttributes(attrs, R.styleable.TLRLinearLayout);
-        if (array == null) {
-            Log.e("initAttrs array is null");
-            return;
-        }
-        float refreshThreshold = 1.0f;
-        float loadThreshold = 1.0f;
-        float resistance = 1.6f;
-        try {
-            final int N = array.getIndexCount();
-            for (int i = 0; i < N; i++) {
-                int index = array.getIndex(i);
-                if (index == R.styleable.TLRLinearLayout_refreshThreshold) {
-                    refreshThreshold = array.getFloat(index, refreshThreshold);
-                } else if (index == R.styleable.TLRLinearLayout_loadThreshold) {
-                    loadThreshold = array.getFloat(index, loadThreshold);
-                } else if (index == R.styleable.TLRLinearLayout_resistance) {
-                    resistance = array.getFloat(index, resistance);
-                }
-            }
-        } finally {
-            array.recycle();
-        }
-        mCalculator = new CoordinateCalculator(this, refreshThreshold, loadThreshold, resistance);
     }
 
     @Override
@@ -171,6 +144,10 @@ public final class TLRLinearLayout extends ViewGroup {
                         }
                     }
 
+                    refresh &= isEnableRefresh;
+                    load &= isEnableLoad;
+
+                    mCalculator.setTLR(refresh, load);
                     if (refresh || load) {
                         ev.setAction(MotionEvent.ACTION_CANCEL);
                         superdispatchTouchEvent(ev);
@@ -205,6 +182,10 @@ public final class TLRLinearLayout extends ViewGroup {
                 if (child.equals(mContentLayout)) {
                     width = child.getMeasuredWidth();
                     height = child.getMeasuredHeight();
+                } else if (child.equals(mHeaderView)) {
+                    mCalculator.setHeadViewHeight(child.getMeasuredHeight());
+                } else if (child.equals(mFooterView)) {
+                    mCalculator.setFootViewHeight(child.getMeasuredHeight());
                 }
             }
         }
@@ -244,14 +225,11 @@ public final class TLRLinearLayout extends ViewGroup {
                 || x >= view.getRight());
     }
 
-    @Override
-    public void computeScroll() {
-        if (mCalculator.computeScrollOffset()) {
-            mCalculator.scrollerMoveLayoutView();
-        }
+    public void startAutoRefresh() {
+        mCalculator.startAutoRefresh();
     }
 
-    public void move(int y) {
+    void move(int y) {
         if (!isKeepContentLayout) {
             mContentLayout.offsetTopAndBottom(y);
         }
@@ -262,7 +240,7 @@ public final class TLRLinearLayout extends ViewGroup {
 
     private boolean isTouchViewRefresh(View target, float x, float y) {
         boolean inView = inView(target, x, y);
-        if (inView && mCalculator.getDirection() == CoordinateCalculator.Direction.DOWN) {
+        if (inView && mCalculator.touchDirection() == CoordinateCalculator.Direction.DOWN) {
             return isViewRefresh(target);
         }
         return false;
@@ -270,7 +248,7 @@ public final class TLRLinearLayout extends ViewGroup {
 
     private boolean isTouchViewLoad(View target, float x, float y) {
         boolean inView = inView(target, x, y);
-        if (inView && mCalculator.getDirection() == CoordinateCalculator.Direction.UP) {
+        if (inView && mCalculator.touchDirection() == CoordinateCalculator.Direction.UP) {
             return isViewLoad(target);
         }
         return false;

@@ -12,6 +12,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.think.tlr.TLRLinearLayout;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,12 +22,14 @@ import java.util.List;
  */
 public class TLRListActivity extends AppCompatActivity {
     private ListView mListView;
+    private TLRLinearLayout mTLRLinearLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tlrlistview);
         mListView = (ListView) findViewById(R.id.content);
+        mTLRLinearLayout = (TLRLinearLayout) findViewById(R.id.tlrlayout);
         mListView.setAdapter(new MyListAdapter(initList()));
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -33,6 +37,12 @@ public class TLRListActivity extends AppCompatActivity {
                 Toast.makeText(TLRListActivity.this, "onclick " + position, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mTLRLinearLayout.startAutoRefresh();
     }
 
     private List<String> initList() {
