@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TLRLinearLayout">
+        <attr name="enableRefresh" format="boolean"/>
+        <attr name="enableLoad" format="boolean"/>
+        <attr name="refreshThreshold" format="float"/>
+        <attr name="loadThreshold" format="float"/>
+        <attr name="resistance" format="float"/>
+        <attr name="keepContentLayout" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="TLRLinearLayout_Layout">
+        <attr name="label">
+            <flag name="head" value="0x01"/>
+            <flag name="content" value="0x02"/>
+            <flag name="foot" value="0x04"/>
+        </attr>
+    </declare-styleable>
+</resources>
