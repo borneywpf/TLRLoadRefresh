@@ -61,11 +61,18 @@ class TLRCalculator {
     /**
      * 是否保存刷新view/加载view
      */
-    private boolean isKeepHeadAnimator = true, isKeepFootAnimator = true;
+    private boolean isKeepHeadRefreshing = true, isKeepFootLoading = true;
     /**
      * 是否是自动刷新
      */
     private boolean isAutoRefresh = false;
+
+    /**
+     * 是否释放刷新/加载
+     */
+    private boolean isReleaseRefresh = true, isReleaseLoad = true;
+
+    private boolean isBackStatus = true;
 
     private ValueAnimator mAutoAnimator, mResetAnimator;
 
@@ -100,10 +107,14 @@ class TLRCalculator {
                     mCloseAnimDuration = array.getInt(index, mCloseAnimDuration);
                 } else if (index == R.styleable.TLRLinearLayout_openAnimDuration) {
                     mOpenAnimDuration = array.getInt(index, mOpenAnimDuration);
-                } else if (index == R.styleable.TLRLinearLayout_keepHeadAnimator) {
-                    isKeepHeadAnimator = array.getBoolean(index, isKeepHeadAnimator);
-                } else if (index == R.styleable.TLRLinearLayout_keepFootAnimator) {
-                    isKeepFootAnimator = array.getBoolean(index, isKeepFootAnimator);
+                } else if (index == R.styleable.TLRLinearLayout_keepHeadRefreshing) {
+                    isKeepHeadRefreshing = array.getBoolean(index, isKeepHeadRefreshing);
+                } else if (index == R.styleable.TLRLinearLayout_keepFootLoading) {
+                    isKeepFootLoading = array.getBoolean(index, isKeepFootLoading);
+                } else if (index == R.styleable.TLRLinearLayout_releaseRefresh) {
+                    isReleaseRefresh = array.getBoolean(index, isReleaseRefresh);
+                } else if (index == R.styleable.TLRLinearLayout_releaseLoad) {
+                    isReleaseLoad = array.getBoolean(index, isReleaseLoad);
                 }
             }
         } finally {
@@ -146,6 +157,18 @@ class TLRCalculator {
      */
     public void eventUp(float x, float y) {
         mDirection = Direction.NONE;
+        if (mRefreshStatus == RefreshStatus.RELEASE_REFRESH) {
+            notifyRefreshStatusChanged(RefreshStatus.REFRESHING);
+            notifyRefreshStatusChanged(RefreshStatus.IDLE);
+        } else if (mRefreshStatus != RefreshStatus.IDLE) {
+            notifyRefreshStatusChanged(RefreshStatus.IDLE);
+        }
+        if (mLoadStatus == LoadStatus.RELEASE_LOAD) {
+            notifyLoadStatusChanged(LoadStatus.LOADING);
+            notifyLoadStatusChanged(LoadStatus.IDLE);
+        } else if (mLoadStatus != LoadStatus.IDLE) {
+            notifyLoadStatusChanged(LoadStatus.IDLE);
+        }
         startResetAnimator();
     }
 
@@ -171,13 +194,79 @@ class TLRCalculator {
      * @return
      */
     private void moveLayoutView(int y) {
-        mTLRLinearLayout.move(y);
+        if (y == 0) {
+            return;
+        }
+        //start ui move
+        if (mTotalOffsetY == 0 && isBackStatus) {
+            isBackStatus = false;
+        }
+
         mTotalOffsetY += y;
-        //Log.d("total:" + mTotalOffsetY + " mRefreshThresholdHeight:" + mRefreshThresholdHeight + " isRefresh:" + isRefresh + " isLoad:" + isLoad);
+        mTLRLinearLayout.move(y);
+        //Log.d("t:" + mTotalOffsetY + " y:" + y + " s:" + isBackStatus);
+        if (mTotalOffsetY > 0 && mLoadStatus == LoadStatus.IDLE) {
+            calculateRefreshStatus(y > 0);
+        }
+        if (mTotalOffsetY < 0 && mRefreshStatus == RefreshStatus.IDLE) {
+            calculateLoadStatus(y < 0);
+        }
+
+        //end ui move
+        if (mTotalOffsetY == 0 && !isBackStatus) {
+            isBackStatus = true;
+        }
     }
 
-    private int absTotalOffsetY() {
-        return Math.abs(mTotalOffsetY);
+    /**
+     * calculate refresh view status
+     *
+     * @param down view is move down now
+     */
+    private void calculateRefreshStatus(boolean down) {
+        if (down) {//view向下运动
+            if (mRefreshStatus == RefreshStatus.IDLE) {
+                notifyRefreshStatusChanged(RefreshStatus.PULL_DOWN);
+            }
+            if (mTotalOffsetY >= mRefreshThresholdHeight && mRefreshStatus == RefreshStatus.PULL_DOWN) {
+                notifyRefreshStatusChanged(RefreshStatus.RELEASE_REFRESH);
+                if (isAutoRefresh) {
+                    notifyRefreshStatusChanged(RefreshStatus.REFRESHING);
+                    notifyRefreshStatusChanged(RefreshStatus.IDLE);
+                    isAutoRefresh = false;
+                }
+            }
+        } else {//view向上运动
+            if (mTotalOffsetY < mRefreshThresholdHeight && mRefreshStatus == RefreshStatus.RELEASE_REFRESH) {
+                notifyRefreshStatusChanged(RefreshStatus.PULL_DOWN);
+            }
+            if (mRefreshStatus == RefreshStatus.PULL_DOWN) {
+                notifyRefreshStatusChanged(RefreshStatus.IDLE);
+            }
+        }
+    }
+
+    /**
+     * calculate load view status
+     *
+     * @param up view is move up now
+     */
+    private void calculateLoadStatus(boolean up) {
+        if (up) {//view向上运动
+            if (mTotalOffsetY < 0 && mLoadStatus == LoadStatus.IDLE) {
+                notifyLoadStatusChanged(LoadStatus.PULL_UP);
+            }
+            if (Math.abs(mTotalOffsetY) >= mLoadThresholdHeight && mLoadStatus == LoadStatus.PULL_UP) {
+                notifyLoadStatusChanged(LoadStatus.RELEASE_LOAD);
+            }
+        } else {//view向下运动
+            if (Math.abs(mTotalOffsetY) < mLoadThresholdHeight && mLoadStatus == LoadStatus.RELEASE_LOAD) {
+                notifyLoadStatusChanged(LoadStatus.PULL_UP);
+            }
+            if (mLoadStatus == LoadStatus.PULL_UP) {
+                notifyLoadStatusChanged(LoadStatus.IDLE);
+            }
+        }
     }
 
     private void setDirection(float xDiff, float yDiff) {
@@ -271,11 +360,24 @@ class TLRCalculator {
     }
 
     private void notifyRefreshStatusChanged(RefreshStatus status) {
+        if (mRefreshStatus == status) {
+            return;
+        }
+        if (isBackStatus) {
+            isAutoRefresh = false;
+            return;
+        }
         mRefreshStatus = status;
         Log.i("mRefreshStatus=" + mRefreshStatus);
     }
 
     private void notifyLoadStatusChanged(LoadStatus status) {
+        if (mLoadStatus == status) {
+            return;
+        }
+        if (isBackStatus) {
+            return;
+        }
         mLoadStatus = status;
         Log.w("mLoadStatus=" + mLoadStatus);
     }

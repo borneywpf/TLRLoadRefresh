@@ -8,8 +8,10 @@
         <attr name="closeAnimDuration" format="integer"/>
         <attr name="openAnimDuration" format="integer"/>
         <attr name="resistance" format="float"/>
-        <attr name="keepHeadAnimator" format="boolean"/>
-        <attr name="keepFootAnimator" format="boolean"/>
+        <attr name="releaseRefresh" format="boolean"/>
+        <attr name="releaseLoad" format="boolean"/>
+        <attr name="keepHeadRefreshing" format="boolean"/>
+        <attr name="keepFootLoading" format="boolean"/>
         <attr name="keepContentLayout" format="boolean"/>
     </declare-styleable>
 

@@ -19,7 +19,7 @@
         android:layout_height="match_parent"
         uiloader:enableRefresh="true"
         uiloader:enableLoad="true"
-        uiloader:keepHeadAnimator="false"
+        uiloader:keepHeadRefreshing="false"
         uiloader:keepContentLayout="false">
 
         <TextView
