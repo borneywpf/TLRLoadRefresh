@@ -9,8 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by borney on 4/28/17.
@@ -28,6 +31,7 @@ public final class TLRLinearLayout extends ViewGroup {
     private LinearLayout mContentLayout;
     private View mFooterView;
     private TLRCalculator mCalculator;
+    private TLRUiHandlerWrapper mUiHandlerWrapper;
 
     public enum RefreshStatus {
         IDLE, PULL_DOWN, RELEASE_REFRESH, REFRESHING
@@ -49,7 +53,9 @@ public final class TLRLinearLayout extends ViewGroup {
         super(context, attrs, defStyleAttr);
         initAttrs(attrs);
         setWillNotDraw(false);
+        mUiHandlerWrapper = new TLRUiHandlerWrapper();
         mCalculator = new TLRCalculator(this, attrs);
+        mCalculator.setTLRUiHandler(mUiHandlerWrapper);
         mContentViews = new ArrayList<>();
         mContentChilds = new ArrayList<>();
     }
@@ -332,6 +338,55 @@ public final class TLRLinearLayout extends ViewGroup {
 
         public int getLabel() {
             return label;
+        }
+    }
+
+    private static class TLRUiHandlerWrapper implements TLRUiHandler {
+        private final List<WeakReference<TLRUiHandler>> mTLRUiHandlers = new CopyOnWriteArrayList<>();
+
+        @Override
+        public void onRefreshStatusChanged(RefreshStatus status) {
+            Log.d("onRefreshStatusChanged status:" + status);
+            Iterator<WeakReference<TLRUiHandler>> iterator = mTLRUiHandlers.iterator();
+            while (iterator.hasNext()) {
+                WeakReference<TLRUiHandler> wefUiHandler = iterator.next();
+                TLRUiHandler handler = wefUiHandler.get();
+                if (handler != null) {
+                    handler.onRefreshStatusChanged(status);
+                } else {
+                    iterator.remove();
+                }
+            }
+        }
+
+        @Override
+        public void onLoadStatusChanged(LoadStatus status) {
+            Log.i("onLoadStatusChanged status:" + status);
+            Iterator<WeakReference<TLRUiHandler>> iterator = mTLRUiHandlers.iterator();
+            while (iterator.hasNext()) {
+                WeakReference<TLRUiHandler> wefUiHandler = iterator.next();
+                TLRUiHandler handler = wefUiHandler.get();
+                if (handler != null) {
+                    handler.onLoadStatusChanged(status);
+                } else {
+                    iterator.remove();
+                }
+            }
+        }
+
+        @Override
+        public void onOffsetChanged(int totalOffsetY, int totalThresholdY, int offsetY, float threshOffset) {
+            //Log.v("onOffsetChanged totalOffsetY:" + totalOffsetY + " totalThresholdY:" + totalThresholdY + " offsetY:" + offsetY + " threshOffset:" + threshOffset);
+            Iterator<WeakReference<TLRUiHandler>> iterator = mTLRUiHandlers.iterator();
+            while (iterator.hasNext()) {
+                WeakReference<TLRUiHandler> wefUiHandler = iterator.next();
+                TLRUiHandler handler = wefUiHandler.get();
+                if (handler != null) {
+                    handler.onOffsetChanged(totalOffsetY, totalThresholdY, offsetY, threshOffset);
+                } else {
+                    iterator.remove();
+                }
+            }
         }
     }
 }

@@ -17,6 +17,14 @@ public class Log {
         android.util.Log.d(tag, msg);
     }
 
+    public static void v(String msg) {
+        v(DEF_TAG, msg);
+    }
+
+    public static void v(String tag, String msg) {
+        android.util.Log.v(tag, msg);
+    }
+
     public static void i(String msg) {
         i(DEF_TAG, msg);
     }

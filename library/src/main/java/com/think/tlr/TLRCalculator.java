@@ -74,6 +74,8 @@ class TLRCalculator {
 
     private boolean isBackStatus = true;
 
+    private TLRUiHandler mTLRUiHandler;
+
     private ValueAnimator mAutoAnimator, mResetAnimator;
 
     private TLRLinearLayout mTLRLinearLayout;
@@ -120,6 +122,10 @@ class TLRCalculator {
         } finally {
             array.recycle();
         }
+    }
+
+    public void setTLRUiHandler(TLRUiHandler uiHandler) {
+        mTLRUiHandler = uiHandler;
     }
 
     public void setHeadViewHeight(int height) {
@@ -204,17 +210,33 @@ class TLRCalculator {
 
         mTotalOffsetY += y;
         mTLRLinearLayout.move(y);
-        //Log.d("t:" + mTotalOffsetY + " y:" + y + " s:" + isBackStatus);
         if (mTotalOffsetY > 0 && mLoadStatus == LoadStatus.IDLE) {
             calculateRefreshStatus(y > 0);
+            notifyPixOffset(mTotalOffsetY, mRefreshThresholdHeight, y);
         }
         if (mTotalOffsetY < 0 && mRefreshStatus == RefreshStatus.IDLE) {
             calculateLoadStatus(y < 0);
+            notifyPixOffset(mTotalOffsetY, mLoadThresholdHeight, y);
         }
 
         //end ui move
         if (mTotalOffsetY == 0 && !isBackStatus) {
             isBackStatus = true;
+            notifyPixOffset(0, 0, y);
+        }
+    }
+
+    private void notifyPixOffset(int totalOffsetY, int height, int y) {
+        int totalThresholdY = totalOffsetY;
+        if (Math.abs(totalThresholdY) >= height) {
+            totalThresholdY = height * Integer.signum(totalThresholdY);
+        }
+        float offset = 0.0f;
+        if (totalThresholdY != 0) {
+            offset = (float) (Math.round(((float) totalThresholdY / height) * 100)) / 100;
+        }
+        if (mTLRUiHandler != null) {
+            mTLRUiHandler.onOffsetChanged(totalOffsetY, totalThresholdY, y, offset);
         }
     }
 
@@ -368,7 +390,9 @@ class TLRCalculator {
             return;
         }
         mRefreshStatus = status;
-        Log.i("mRefreshStatus=" + mRefreshStatus);
+        if (mTLRUiHandler != null) {
+            mTLRUiHandler.onRefreshStatusChanged(mRefreshStatus);
+        }
     }
 
     private void notifyLoadStatusChanged(LoadStatus status) {
@@ -379,7 +403,9 @@ class TLRCalculator {
             return;
         }
         mLoadStatus = status;
-        Log.w("mLoadStatus=" + mLoadStatus);
+        if (mTLRUiHandler != null) {
+            mTLRUiHandler.onLoadStatusChanged(mLoadStatus);
+        }
     }
 
     public void endRefresh() {
