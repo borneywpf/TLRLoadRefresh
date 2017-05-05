@@ -51,31 +51,16 @@ class TLRCalculator {
     private int mRefreshThresholdHeight, mLoadThresholdHeight;
 
     /**
-     * 刷新状态机
-     */
-    private RefreshStatus mRefreshStatus = RefreshStatus.IDLE;
-    /**
-     * 加载状态机
-     */
-    private LoadStatus mLoadStatus = LoadStatus.IDLE;
-    /**
      * 是否保存刷新view/加载view
      */
     private boolean isKeepHeadRefreshing = true, isKeepFootLoading = true;
-    /**
-     * 是否是自动刷新
-     */
-    private boolean isAutoRefresh = false;
-
-    /**
-     * 是否释放刷新/加载
-     */
-    private boolean isReleaseRefresh = true, isReleaseLoad = true;
 
     /**
      * UI是否回归到初始状态
      */
     private boolean isBackStatus = true;
+
+    private TLRStatusController mStatusController;
 
     private TLRUiHandler mTLRUiHandler;
 
@@ -88,6 +73,7 @@ class TLRCalculator {
     public TLRCalculator(TLRLinearLayout layout, AttributeSet attrs) {
         mTLRLinearLayout = layout;
         Context context = layout.getContext();
+        mStatusController = new TLRStatusController(this);
         initAttrs(context, attrs);
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
     }
@@ -117,9 +103,9 @@ class TLRCalculator {
                 } else if (index == R.styleable.TLRLinearLayout_keepFootLoading) {
                     isKeepFootLoading = array.getBoolean(index, isKeepFootLoading);
                 } else if (index == R.styleable.TLRLinearLayout_releaseRefresh) {
-                    isReleaseRefresh = array.getBoolean(index, isReleaseRefresh);
+                    mStatusController.setReleaseRefresh(array.getBoolean(index, true));
                 } else if (index == R.styleable.TLRLinearLayout_releaseLoad) {
-                    isReleaseLoad = array.getBoolean(index, isReleaseLoad);
+                    mStatusController.setReleaseLoad(array.getBoolean(index, true));
                 }
             }
         } finally {
@@ -127,22 +113,23 @@ class TLRCalculator {
         }
         Log.v("isKeepHeadRefreshing = " + isKeepHeadRefreshing);
         Log.v("isKeepFootLoading = " + isKeepFootLoading);
-        Log.v("isReleaseRefresh = " + isReleaseRefresh);
-        Log.v("isReleaseLoad = " + isReleaseLoad);
     }
 
     public void setTLRUiHandler(TLRUiHandler uiHandler) {
         mTLRUiHandler = uiHandler;
+        mStatusController.setTLRUiHandler(mTLRUiHandler);
     }
 
     public void setHeadViewHeight(int height) {
         mHeadHeight = height;
         mRefreshThresholdHeight = (int) (mHeadHeight * mRefreshThreshold);
+        mStatusController.setRefreshThresholdHeight(mRefreshThresholdHeight);
     }
 
     public void setFootViewHeight(int height) {
         mFootHeight = height;
         mLoadThresholdHeight = (int) (mFootHeight * mLoadThreshold);
+        mStatusController.setLoadThresholdHeight(mLoadThresholdHeight);
     }
 
     /**
@@ -170,8 +157,8 @@ class TLRCalculator {
      */
     public void eventUp(float x, float y) {
         mDirection = Direction.NONE;
-        calculatorUpRefreshStatus();
-        calculatorUpLoadStatus();
+        mStatusController.calculatorUpRefreshStatus();
+        mStatusController.calculatorUpLoadStatus();
         if (isKeepFootLoading && mTotalOffsetY <= -mLoadThresholdHeight) {
             startKeepAnimator();
         } else if (isKeepHeadRefreshing && mTotalOffsetY >= mRefreshThresholdHeight) {
@@ -213,12 +200,12 @@ class TLRCalculator {
 
         mTotalOffsetY += y;
         mTLRLinearLayout.move(y);
-        if (mTotalOffsetY > 0 && mLoadStatus == LoadStatus.IDLE) {
-            calculateMoveRefreshStatus(y > 0);
+        if (mTotalOffsetY > 0 && mStatusController.getLoadStatus() == LoadStatus.IDLE) {
+            mStatusController.calculateMoveRefreshStatus(y > 0);
             notifyPixOffset(mTotalOffsetY, mRefreshThresholdHeight, y);
         }
-        if (mTotalOffsetY < 0 && mRefreshStatus == RefreshStatus.IDLE) {
-            calculateMoveLoadStatus(y < 0);
+        if (mTotalOffsetY < 0 && mStatusController.getRefreshStatus() == RefreshStatus.IDLE) {
+            mStatusController.calculateMoveLoadStatus(y < 0);
             notifyPixOffset(mTotalOffsetY, mLoadThresholdHeight, y);
         }
 
@@ -240,79 +227,6 @@ class TLRCalculator {
         }
         if (mTLRUiHandler != null) {
             mTLRUiHandler.onOffsetChanged(totalOffsetY, totalThresholdY, y, offset);
-        }
-    }
-
-    /**
-     * calculate refresh view status
-     *
-     * @param down view is move down now
-     */
-    private void calculateMoveRefreshStatus(boolean down) {
-        if (down) {//view向下运动
-            if (mRefreshStatus == RefreshStatus.IDLE) {
-                notifyRefreshStatusChanged(RefreshStatus.PULL_DOWN);
-            }
-            if (mTotalOffsetY >= mRefreshThresholdHeight && mRefreshStatus == RefreshStatus.PULL_DOWN) {
-                notifyRefreshStatusChanged(RefreshStatus.RELEASE_REFRESH);
-                if (isAutoRefresh) {
-                    notifyRefreshStatusChanged(RefreshStatus.REFRESHING);
-                    notifyRefreshStatusChanged(RefreshStatus.IDLE);
-                    isAutoRefresh = false;
-                }
-            }
-        } else {//view向上运动
-            if (mTotalOffsetY < mRefreshThresholdHeight && mRefreshStatus == RefreshStatus.RELEASE_REFRESH) {
-                notifyRefreshStatusChanged(RefreshStatus.PULL_DOWN);
-            }
-            if (mRefreshStatus == RefreshStatus.PULL_DOWN) {
-                notifyRefreshStatusChanged(RefreshStatus.IDLE);
-            }
-        }
-    }
-
-    /**
-     * calculate load view status
-     *
-     * @param up view is move up now
-     */
-    private void calculateMoveLoadStatus(boolean up) {
-        if (up) {//view向上运动
-            if (mTotalOffsetY < 0 && mLoadStatus == LoadStatus.IDLE) {
-                notifyLoadStatusChanged(LoadStatus.PULL_UP);
-            }
-            if (Math.abs(mTotalOffsetY) >= mLoadThresholdHeight && mLoadStatus == LoadStatus.PULL_UP) {
-                notifyLoadStatusChanged(LoadStatus.RELEASE_LOAD);
-            }
-        } else {//view向下运动
-            if (Math.abs(mTotalOffsetY) < mLoadThresholdHeight && mLoadStatus == LoadStatus.RELEASE_LOAD) {
-                notifyLoadStatusChanged(LoadStatus.PULL_UP);
-            }
-            if (mLoadStatus == LoadStatus.PULL_UP) {
-                notifyLoadStatusChanged(LoadStatus.IDLE);
-            }
-        }
-    }
-
-    private void calculatorUpLoadStatus() {
-        if (mLoadStatus == LoadStatus.RELEASE_LOAD) {
-            if (isReleaseLoad) {
-                notifyLoadStatusChanged(LoadStatus.LOADING);
-                notifyLoadStatusChanged(LoadStatus.IDLE);
-            }
-        } else if (mLoadStatus != LoadStatus.IDLE) {
-            notifyLoadStatusChanged(LoadStatus.IDLE);
-        }
-    }
-
-    private void calculatorUpRefreshStatus() {
-        if (mRefreshStatus == RefreshStatus.RELEASE_REFRESH) {
-            if (isReleaseRefresh) {
-                notifyRefreshStatusChanged(RefreshStatus.REFRESHING);
-                notifyRefreshStatusChanged(RefreshStatus.IDLE);
-            }
-        } else if (mRefreshStatus != RefreshStatus.IDLE) {
-            notifyRefreshStatusChanged(RefreshStatus.IDLE);
         }
     }
 
@@ -339,7 +253,7 @@ class TLRCalculator {
 
     public void startAutoRefresh() {
         Log.d("startAutoRefresh mHeadHeight:" + mHeadHeight);
-        isAutoRefresh = true;
+        mStatusController.setAutoRefresh(true);
         if (mHeadHeight == 0) {
             mTLRLinearLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
@@ -430,31 +344,12 @@ class TLRCalculator {
         }
     }
 
+    public int getTotalOffsetY() {
+        return mTotalOffsetY;
+    }
+
     public Direction getDirection() {
         return mDirection;
-    }
-
-    private void notifyRefreshStatusChanged(RefreshStatus status) {
-        if (mRefreshStatus == status) {
-            return;
-        }
-        mRefreshStatus = status;
-        if (mRefreshStatus == RefreshStatus.IDLE) {
-            isAutoRefresh = false;
-        }
-        if (mTLRUiHandler != null) {
-            mTLRUiHandler.onRefreshStatusChanged(mRefreshStatus);
-        }
-    }
-
-    private void notifyLoadStatusChanged(LoadStatus status) {
-        if (mLoadStatus == status) {
-            return;
-        }
-        mLoadStatus = status;
-        if (mTLRUiHandler != null) {
-            mTLRUiHandler.onLoadStatusChanged(mLoadStatus);
-        }
     }
 
     public void resetKeepView() {
