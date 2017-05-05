@@ -245,12 +245,8 @@ public final class TLRLinearLayout extends ViewGroup {
         mCalculator.startAutoRefresh();
     }
 
-    public void endRefresh() {
-        mCalculator.endRefresh();
-    }
-
-    public void endLoad() {
-        mCalculator.endLoad();
+    public void resetKeepView() {
+        mCalculator.resetKeepView();
     }
 
     void move(int y) {

@@ -11,7 +11,6 @@ import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.view.animation.LinearInterpolator;
 
 import com.think.tlr.TLRLinearLayout.LoadStatus;
 import com.think.tlr.TLRLinearLayout.RefreshStatus;
@@ -173,9 +172,9 @@ class TLRCalculator {
         mDirection = Direction.NONE;
         calculatorUpRefreshStatus();
         calculatorUpLoadStatus();
-        if (isKeepFootLoading && mTotalOffsetY < 0) {
+        if (isKeepFootLoading && mTotalOffsetY <= -mLoadThresholdHeight) {
             startKeepAnimator();
-        } else if (isKeepHeadRefreshing && mTotalOffsetY > 0) {
+        } else if (isKeepHeadRefreshing && mTotalOffsetY >= mRefreshThresholdHeight) {
             startKeepAnimator();
         } else {
             startResetAnimator();
@@ -372,7 +371,10 @@ class TLRCalculator {
             mAutoAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    if (!isKeepHeadRefreshing) {
+                    Log.e("isKeepHeadRefreshing:" + isKeepHeadRefreshing);
+                    if (isKeepHeadRefreshing) {
+                        startKeepAnimator();
+                    } else {
                         startResetAnimator();
                     }
                 }
@@ -399,16 +401,16 @@ class TLRCalculator {
             mKeepAnimator.end();
         }
         int startY = mTotalOffsetY;
-        int endY = 0;
-        if (mTotalOffsetY > mRefreshThresholdHeight) {
+        int endY;
+        if (mTotalOffsetY > 0) {
             endY = mRefreshThresholdHeight;
-        } else if (mTotalOffsetY < -mLoadThresholdHeight) {
+        } else {
             endY = -mLoadThresholdHeight;
         }
-        if (startY != 0) {
+        if (startY != 0 && startY != endY) {
             mKeepAnimator = ValueAnimator.ofInt(startY, endY);
             mKeepAnimator.setDuration(200);
-            mKeepAnimator.setInterpolator(new LinearInterpolator());
+            mKeepAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
             mKeepAnimator.addUpdateListener(new AnimUpdateListener(startY));
             mKeepAnimator.start();
         }
@@ -455,10 +457,8 @@ class TLRCalculator {
         }
     }
 
-    public void endRefresh() {
-    }
-
-    public void endLoad() {
+    public void resetKeepView() {
+        startResetAnimator();
     }
 
     private class AnimUpdateListener implements ValueAnimator.AnimatorUpdateListener {
