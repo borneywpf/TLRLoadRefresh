@@ -18,6 +18,7 @@
         android:layout_height="match_parent"
         uiloader:enableLoad="true"
         uiloader:enableRefresh="true"
+        uiloader:releaseRefresh="false"
         uiloader:keepFootLoading="false"
         uiloader:keepContentLayout="false">
 

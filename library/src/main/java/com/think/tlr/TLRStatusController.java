@@ -1,5 +1,9 @@
 package com.think.tlr;
 
+import android.content.Context;
+import android.content.res.TypedArray;
+import android.util.AttributeSet;
+
 import com.think.tlr.TLRLinearLayout.LoadStatus;
 import com.think.tlr.TLRLinearLayout.RefreshStatus;
 
@@ -34,8 +38,26 @@ class TLRStatusController {
 
     private TLRUiHandler mTLRUiHandler;
 
-    TLRStatusController(TLRCalculator calculator) {
+    TLRStatusController(TLRCalculator calculator, Context context, AttributeSet attrs) {
         mCalculator = calculator;
+        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.TLRLinearLayout);
+        if (array == null) {
+            Log.e("initAttrs array is null");
+            return;
+        }
+        try {
+            final int N = array.getIndexCount();
+            for (int i = 0; i < N; i++) {
+                int index = array.getIndex(i);
+                if (index == R.styleable.TLRLinearLayout_releaseRefresh) {
+                    isReleaseRefresh = array.getBoolean(index, isReleaseRefresh);
+                } else if (index == R.styleable.TLRLinearLayout_releaseLoad) {
+                    isAutoRefresh = array.getBoolean(index, isAutoRefresh);
+                }
+            }
+        } finally {
+            array.recycle();
+        }
     }
 
     /**
@@ -103,8 +125,9 @@ class TLRStatusController {
         if (mLoadStatus == LoadStatus.RELEASE_LOAD) {
             if (isReleaseLoad) {
                 notifyLoadStatusChanged(LoadStatus.LOADING);
-                notifyLoadStatusChanged(LoadStatus.IDLE);
             }
+            notifyLoadStatusChanged(LoadStatus.IDLE);
+            
         } else if (mLoadStatus != LoadStatus.IDLE) {
             notifyLoadStatusChanged(LoadStatus.IDLE);
         }
@@ -117,8 +140,8 @@ class TLRStatusController {
         if (mRefreshStatus == RefreshStatus.RELEASE_REFRESH) {
             if (isReleaseRefresh) {
                 notifyRefreshStatusChanged(RefreshStatus.REFRESHING);
-                notifyRefreshStatusChanged(RefreshStatus.IDLE);
             }
+            notifyRefreshStatusChanged(RefreshStatus.IDLE);
         } else if (mRefreshStatus != RefreshStatus.IDLE) {
             notifyRefreshStatusChanged(RefreshStatus.IDLE);
         }
@@ -145,14 +168,6 @@ class TLRStatusController {
         if (mTLRUiHandler != null) {
             mTLRUiHandler.onLoadStatusChanged(mLoadStatus);
         }
-    }
-
-    public void setReleaseRefresh(boolean refresh) {
-        isReleaseRefresh = refresh;
-    }
-
-    public void setReleaseLoad(boolean load) {
-        isReleaseLoad = load;
     }
 
     public void setTLRUiHandler(TLRUiHandler uiHandler) {

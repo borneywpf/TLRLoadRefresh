@@ -73,8 +73,8 @@ class TLRCalculator {
     public TLRCalculator(TLRLinearLayout layout, AttributeSet attrs) {
         mTLRLinearLayout = layout;
         Context context = layout.getContext();
-        mStatusController = new TLRStatusController(this);
         initAttrs(context, attrs);
+        mStatusController = new TLRStatusController(this, context, attrs);
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
     }
 
@@ -102,10 +102,6 @@ class TLRCalculator {
                     isKeepHeadRefreshing = array.getBoolean(index, isKeepHeadRefreshing);
                 } else if (index == R.styleable.TLRLinearLayout_keepFootLoading) {
                     isKeepFootLoading = array.getBoolean(index, isKeepFootLoading);
-                } else if (index == R.styleable.TLRLinearLayout_releaseRefresh) {
-                    mStatusController.setReleaseRefresh(array.getBoolean(index, true));
-                } else if (index == R.styleable.TLRLinearLayout_releaseLoad) {
-                    mStatusController.setReleaseLoad(array.getBoolean(index, true));
                 }
             }
         } finally {
