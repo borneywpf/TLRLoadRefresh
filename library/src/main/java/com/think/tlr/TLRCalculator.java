@@ -1,7 +1,7 @@
 package com.think.tlr;
 
 import android.animation.Animator;
-import android.animation.TimeInterpolator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -67,7 +67,8 @@ class TLRCalculator {
      */
     private boolean isAutoRefresh = false;
 
-    private ValueAnimator mValueAnimator;
+    private ValueAnimator mAutoAnimator, mResetAnimator;
+
     private TLRLinearLayout mTLRLinearLayout;
     private int mTouchSlop;
     private Direction mDirection = Direction.NONE;
@@ -124,9 +125,6 @@ class TLRCalculator {
      * call by layout touch down
      */
     public void eventDown(float x, float y) {
-        if (mValueAnimator != null && mValueAnimator.isRunning()) {
-            mValueAnimator.end();
-        }
         mLastX = mDownX = x;
         mLastY = mDownY = y;
     }
@@ -173,9 +171,9 @@ class TLRCalculator {
      * @return
      */
     private void moveLayoutView(int y) {
+        mTLRLinearLayout.move(y);
         mTotalOffsetY += y;
         //Log.d("total:" + mTotalOffsetY + " mRefreshThresholdHeight:" + mRefreshThresholdHeight + " isRefresh:" + isRefresh + " isLoad:" + isLoad);
-        mTLRLinearLayout.move(y);
     }
 
     private int absTotalOffsetY() {
@@ -226,37 +224,49 @@ class TLRCalculator {
 
     private void startAutoRefreshAnimator() {
         if (mHeadHeight != 0) {
-            startYAnimator(-mHeadHeight, 0, new AccelerateDecelerateInterpolator(), mOpenAnimDuration, null);
+            if (mAutoAnimator != null && mAutoAnimator.isRunning()) {
+                mAutoAnimator.end();
+            }
+            int startY = -mHeadHeight;
+            mAutoAnimator = ValueAnimator.ofInt(startY, 0);
+            mAutoAnimator.setDuration(mOpenAnimDuration);
+            mAutoAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+            mAutoAnimator.addUpdateListener(new AnimUpdateListener(startY));
+            mAutoAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    startResetAnimator();
+                }
+            });
+            mAutoAnimator.start();
         }
+    }
+
+    public boolean hasAnimatorRunning() {
+        if (mAutoAnimator != null) {
+            return mAutoAnimator.isRunning() || mAutoAnimator.isStarted();
+        }
+        if (mResetAnimator != null) {
+            return mResetAnimator.isRunning() || mResetAnimator.isStarted();
+        }
+        return false;
     }
 
     private void startResetAnimator() {
         if (mTotalOffsetY != 0) {
-            startYAnimator(mTotalOffsetY, 0, new DecelerateInterpolator(), mCloseAnimDuration, null);
-        }
-    }
-
-    private void startYAnimator(final int startY, int endY, TimeInterpolator interpolator, long duration, Animator.AnimatorListener animatorListener) {
-        mValueAnimator = ValueAnimator.ofInt(startY, endY);
-        mValueAnimator.setDuration(duration);
-        mValueAnimator.setInterpolator(interpolator);
-        if (animatorListener != null) {
-            mValueAnimator.addListener(animatorListener);
-        }
-        mValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            int lastY = startY;
-
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                int value = (int) animation.getAnimatedValue();
-                moveLayoutView(value - lastY);
-                lastY = value;
+            if (mResetAnimator != null && mResetAnimator.isRunning()) {
+                mResetAnimator.end();
             }
-        });
-        mValueAnimator.start();
+            int startY = mTotalOffsetY;
+            mResetAnimator = ValueAnimator.ofInt(startY, 0);
+            mResetAnimator.setDuration(mCloseAnimDuration);
+            mResetAnimator.setInterpolator(new DecelerateInterpolator());
+            mResetAnimator.addUpdateListener(new AnimUpdateListener(startY));
+            mResetAnimator.start();
+        }
     }
 
-    public Direction touchDirection() {
+    public Direction getDirection() {
         return mDirection;
     }
 
@@ -274,6 +284,21 @@ class TLRCalculator {
     }
 
     public void endLoad() {
+    }
+
+    private class AnimUpdateListener implements ValueAnimator.AnimatorUpdateListener {
+        private int lastY;
+
+        AnimUpdateListener(int startY) {
+            this.lastY = startY;
+        }
+
+        @Override
+        public void onAnimationUpdate(ValueAnimator animation) {
+            int value = (int) animation.getAnimatedValue();
+            moveLayoutView(value - lastY);
+            lastY = value;
+        }
     }
 
     public enum Direction {

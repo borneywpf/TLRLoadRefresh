@@ -130,6 +130,9 @@ public final class TLRLinearLayout extends ViewGroup {
         if (!isEnableLoad && !isEnableRefresh) {
             return superdispatchTouchEvent(ev);
         }
+        if (mCalculator.hasAnimatorRunning()) {
+            return superdispatchTouchEvent(ev);
+        }
         int action = ev.getAction();
         float x = ev.getX();
         float y = ev.getY();
@@ -256,7 +259,7 @@ public final class TLRLinearLayout extends ViewGroup {
 
     private boolean isTouchViewRefresh(View target, float x, float y) {
         boolean inView = inView(target, x, y);
-        if (inView && mCalculator.touchDirection() == TLRCalculator.Direction.DOWN) {
+        if (inView && mCalculator.getDirection() == TLRCalculator.Direction.DOWN) {
             return isViewRefresh(target);
         }
         return false;
@@ -264,7 +267,7 @@ public final class TLRLinearLayout extends ViewGroup {
 
     private boolean isTouchViewLoad(View target, float x, float y) {
         boolean inView = inView(target, x, y);
-        if (inView && mCalculator.touchDirection() == TLRCalculator.Direction.UP) {
+        if (inView && mCalculator.getDirection() == TLRCalculator.Direction.UP) {
             return isViewLoad(target);
         }
         return false;
