@@ -45,6 +45,7 @@ class TLRStatusController {
      */
     public void calculateMoveRefreshStatus(boolean down) {
         int totalOffsetY = mCalculator.getTotalOffsetY();
+        //y 方向移动正值,切Load为初始状态
         if (totalOffsetY > 0 && mLoadStatus == LoadStatus.IDLE) {
             if (down) {//view向下运动
                 if (mRefreshStatus == RefreshStatus.IDLE) {
