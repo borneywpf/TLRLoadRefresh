@@ -1,7 +1,6 @@
 package com.think.tlr;
 
 import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -67,11 +66,10 @@ class TLRCalculator {
      * 是否是自动刷新
      */
     private boolean isAutoRefresh = false;
+
     private ValueAnimator mValueAnimator;
     private TLRLinearLayout mTLRLinearLayout;
     private int mTouchSlop;
-    private boolean isRefresh;
-    private boolean isLoad;
     private Direction mDirection = Direction.NONE;
 
     public TLRCalculator(TLRLinearLayout layout, AttributeSet attrs) {
@@ -112,15 +110,6 @@ class TLRCalculator {
         }
     }
 
-    public void setTLR(boolean refresh, boolean load) {
-        if (mRefreshStatus == RefreshStatus.IDLE) {
-            isRefresh = refresh;
-        }
-        if (mLoadStatus == LoadStatus.IDLE) {
-            isLoad = load;
-        }
-    }
-
     public void setHeadViewHeight(int height) {
         mHeadHeight = height;
         mRefreshThresholdHeight = (int) (mHeadHeight * mRefreshThreshold);
@@ -134,18 +123,12 @@ class TLRCalculator {
     /**
      * call by layout touch down
      */
-    public boolean eventDown(float x, float y) {
-        if (mRefreshStatus == RefreshStatus.IDLE && mLoadStatus == LoadStatus.IDLE) {
-            reset();
-            if (mValueAnimator != null && mValueAnimator.isRunning()) {
-                mValueAnimator.end();
-            }
-            mLastX = mDownX = x;
-            mLastY = mDownY = y;
-            return true;
-        } else {
-            return false;
+    public void eventDown(float x, float y) {
+        if (mValueAnimator != null && mValueAnimator.isRunning()) {
+            mValueAnimator.end();
         }
+        mLastX = mDownX = x;
+        mLastY = mDownY = y;
     }
 
     /**
@@ -165,16 +148,7 @@ class TLRCalculator {
      */
     public void eventUp(float x, float y) {
         mDirection = Direction.NONE;
-        if (mRefreshStatus == RefreshStatus.RELEASE_REFRESH) {
-            notifyRefreshStatusChanged(RefreshStatus.REFRESHING);
-        } else if (mRefreshStatus != RefreshStatus.IDLE) {
-            startResetAnimator();
-        }
-        if (mLoadStatus == LoadStatus.RELEASE_LOAD) {
-            notifyLoadStatusChanged(LoadStatus.LOADING);
-        } else if (mLoadStatus != LoadStatus.IDLE) {
-            startResetAnimator();
-        }
+        startResetAnimator();
     }
 
     /**
@@ -201,47 +175,11 @@ class TLRCalculator {
     private void moveLayoutView(int y) {
         mTotalOffsetY += y;
         //Log.d("total:" + mTotalOffsetY + " mRefreshThresholdHeight:" + mRefreshThresholdHeight + " isRefresh:" + isRefresh + " isLoad:" + isLoad);
-        calculateRefreshStatus();
-        calculateLoadStatus();
         mTLRLinearLayout.move(y);
     }
 
-    private void calculateRefreshStatus() {
-        if (isRefresh && Math.abs(mTotalOffsetY) >= 0 && mRefreshStatus == RefreshStatus.IDLE) {
-            notifyRefreshStatusChanged(RefreshStatus.PULL_DOWN);
-        }
-        if (Math.abs(mTotalOffsetY) >= mRefreshThresholdHeight && mRefreshStatus == RefreshStatus.PULL_DOWN) {
-            notifyRefreshStatusChanged(RefreshStatus.RELEASE_REFRESH);
-            if (isAutoRefresh) {
-                notifyRefreshStatusChanged(RefreshStatus.REFRESHING);
-            }
-        }
-    }
-
-    private void calculateLoadStatus() {
-        if (isLoad && Math.abs(mTotalOffsetY) >= 0 && mLoadStatus == LoadStatus.IDLE) {
-            notifyLoadStatusChanged(LoadStatus.PULL_UP);
-        }
-
-        if (Math.abs(mTotalOffsetY) >= mLoadThresholdHeight && mLoadStatus == LoadStatus.PULL_UP) {
-            notifyLoadStatusChanged(LoadStatus.RELEASE_LOAD);
-        }
-    }
-
-    private void reset() {
-        isRefresh = false;
-        isLoad = false;
-        isAutoRefresh = false;
-        mLastX = mDownX = 0;
-        mLastY = mDownY = 0;
-        mDirection = Direction.NONE;
-        setOffset(0, 0);
-    }
-
-    private void resetUI() {
-        if (mTotalOffsetY != 0) {
-            moveLayoutView(-mTotalOffsetY);
-        }
+    private int absTotalOffsetY() {
+        return Math.abs(mTotalOffsetY);
     }
 
     private void setDirection(float xDiff, float yDiff) {
@@ -268,7 +206,6 @@ class TLRCalculator {
     public void startAutoRefresh() {
         Log.d("startAutoRefresh mHeadHeight:" + mHeadHeight);
         isAutoRefresh = true;
-        isRefresh = true;
         if (mHeadHeight == 0) {
             mTLRLinearLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
@@ -295,14 +232,7 @@ class TLRCalculator {
 
     private void startResetAnimator() {
         if (mTotalOffsetY != 0) {
-            startYAnimator(mTotalOffsetY, 0, new DecelerateInterpolator(), mCloseAnimDuration, new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    notifyRefreshStatusChanged(RefreshStatus.IDLE);
-                    notifyLoadStatusChanged(LoadStatus.IDLE);
-                    resetUI();
-                }
-            });
+            startYAnimator(mTotalOffsetY, 0, new DecelerateInterpolator(), mCloseAnimDuration, null);
         }
     }
 
@@ -333,39 +263,17 @@ class TLRCalculator {
     private void notifyRefreshStatusChanged(RefreshStatus status) {
         mRefreshStatus = status;
         Log.i("mRefreshStatus=" + mRefreshStatus);
-        if (!isKeepHeadAnimator && mRefreshStatus == RefreshStatus.REFRESHING) {
-            startResetAnimator();
-        }
     }
 
     private void notifyLoadStatusChanged(LoadStatus status) {
         mLoadStatus = status;
         Log.w("mLoadStatus=" + mLoadStatus);
-        if (!isKeepFootAnimator && mLoadStatus == LoadStatus.LOADING) {
-            startResetAnimator();
-        }
-    }
-
-    public boolean isRefresh() {
-        return mRefreshStatus != RefreshStatus.IDLE;
-    }
-
-    public boolean isLoad() {
-        return mLoadStatus != LoadStatus.IDLE;
     }
 
     public void endRefresh() {
-        if (mRefreshStatus == RefreshStatus.REFRESHING) {
-            notifyRefreshStatusChanged(RefreshStatus.IDLE);
-            startResetAnimator();
-        }
     }
 
     public void endLoad() {
-        if (mLoadStatus == LoadStatus.LOADING) {
-            notifyLoadStatusChanged(LoadStatus.IDLE);
-            startResetAnimator();
-        }
     }
 
     public enum Direction {

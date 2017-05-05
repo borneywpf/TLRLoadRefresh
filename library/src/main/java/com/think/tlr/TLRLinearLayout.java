@@ -155,7 +155,6 @@ public final class TLRLinearLayout extends ViewGroup {
                     refresh &= isEnableRefresh;
                     load &= isEnableLoad;
 
-                    mCalculator.setTLR(refresh, load);
                     if (refresh || load) {
                         ev.setAction(MotionEvent.ACTION_CANCEL);
                         superdispatchTouchEvent(ev);
@@ -249,12 +248,9 @@ public final class TLRLinearLayout extends ViewGroup {
         if (!isKeepContentLayout) {
             mContentLayout.offsetTopAndBottom(y);
         }
-        if (isEnableRefresh && mCalculator.isRefresh()) {
-            mHeaderView.offsetTopAndBottom(y);
-        }
-        if (isEnableLoad && mCalculator.isLoad()) {
-            mFooterView.offsetTopAndBottom(y);
-        }
+        mHeaderView.offsetTopAndBottom(y);
+        mFooterView.offsetTopAndBottom(y);
+
         invalidate();
     }
 
