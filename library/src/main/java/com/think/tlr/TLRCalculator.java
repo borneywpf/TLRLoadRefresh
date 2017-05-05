@@ -198,14 +198,19 @@ class TLRCalculator {
             isBackStatus = false;
         }
 
+        //move view
         mTotalOffsetY += y;
         mTLRLinearLayout.move(y);
+
+        //calculate move status
+        mStatusController.calculateMoveRefreshStatus(y > 0);
+        mStatusController.calculateMoveLoadStatus(y < 0);
+
+        //notify offset
         if (mTotalOffsetY > 0 && mStatusController.getLoadStatus() == LoadStatus.IDLE) {
-            mStatusController.calculateMoveRefreshStatus(y > 0);
             notifyPixOffset(mTotalOffsetY, mRefreshThresholdHeight, y);
         }
         if (mTotalOffsetY < 0 && mStatusController.getRefreshStatus() == RefreshStatus.IDLE) {
-            mStatusController.calculateMoveLoadStatus(y < 0);
             notifyPixOffset(mTotalOffsetY, mLoadThresholdHeight, y);
         }
 

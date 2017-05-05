@@ -44,24 +44,27 @@ class TLRStatusController {
      * @param down view is move down now
      */
     public void calculateMoveRefreshStatus(boolean down) {
-        if (down) {//view向下运动
-            if (mRefreshStatus == RefreshStatus.IDLE) {
-                notifyRefreshStatusChanged(RefreshStatus.PULL_DOWN);
-            }
-            if (mCalculator.getTotalOffsetY() >= mRefreshThresholdHeight && mRefreshStatus == RefreshStatus.PULL_DOWN) {
-                notifyRefreshStatusChanged(RefreshStatus.RELEASE_REFRESH);
-                if (isAutoRefresh) {
-                    notifyRefreshStatusChanged(RefreshStatus.REFRESHING);
-                    notifyRefreshStatusChanged(RefreshStatus.IDLE);
-                    isAutoRefresh = false;
+        int totalOffsetY = mCalculator.getTotalOffsetY();
+        if (totalOffsetY > 0 && mLoadStatus == LoadStatus.IDLE) {
+            if (down) {//view向下运动
+                if (mRefreshStatus == RefreshStatus.IDLE) {
+                    notifyRefreshStatusChanged(RefreshStatus.PULL_DOWN);
                 }
-            }
-        } else {//view向上运动
-            if (mCalculator.getTotalOffsetY() < mRefreshThresholdHeight && mRefreshStatus == RefreshStatus.RELEASE_REFRESH) {
-                notifyRefreshStatusChanged(RefreshStatus.PULL_DOWN);
-            }
-            if (mRefreshStatus == RefreshStatus.PULL_DOWN) {
-                notifyRefreshStatusChanged(RefreshStatus.IDLE);
+                if (totalOffsetY >= mRefreshThresholdHeight && mRefreshStatus == RefreshStatus.PULL_DOWN) {
+                    notifyRefreshStatusChanged(RefreshStatus.RELEASE_REFRESH);
+                    if (isAutoRefresh) {
+                        notifyRefreshStatusChanged(RefreshStatus.REFRESHING);
+                        notifyRefreshStatusChanged(RefreshStatus.IDLE);
+                        isAutoRefresh = false;
+                    }
+                }
+            } else {//view向上运动
+                if (totalOffsetY < mRefreshThresholdHeight && mRefreshStatus == RefreshStatus.RELEASE_REFRESH) {
+                    notifyRefreshStatusChanged(RefreshStatus.PULL_DOWN);
+                }
+                if (mRefreshStatus == RefreshStatus.PULL_DOWN) {
+                    notifyRefreshStatusChanged(RefreshStatus.IDLE);
+                }
             }
         }
     }
@@ -72,19 +75,22 @@ class TLRStatusController {
      * @param up view is move up now
      */
     public void calculateMoveLoadStatus(boolean up) {
-        if (up) {//view向上运动
-            if (mCalculator.getTotalOffsetY() < 0 && mLoadStatus == LoadStatus.IDLE) {
-                notifyLoadStatusChanged(LoadStatus.PULL_UP);
-            }
-            if (Math.abs(mCalculator.getTotalOffsetY()) >= mLoadThresholdHeight && mLoadStatus == LoadStatus.PULL_UP) {
-                notifyLoadStatusChanged(LoadStatus.RELEASE_LOAD);
-            }
-        } else {//view向下运动
-            if (Math.abs(mCalculator.getTotalOffsetY()) < mLoadThresholdHeight && mLoadStatus == LoadStatus.RELEASE_LOAD) {
-                notifyLoadStatusChanged(LoadStatus.PULL_UP);
-            }
-            if (mLoadStatus == LoadStatus.PULL_UP) {
-                notifyLoadStatusChanged(LoadStatus.IDLE);
+        int totalOffsetY = mCalculator.getTotalOffsetY();
+        if (totalOffsetY < 0 && mRefreshStatus == RefreshStatus.IDLE) {
+            if (up) {//view向上运动
+                if (totalOffsetY < 0 && mLoadStatus == LoadStatus.IDLE) {
+                    notifyLoadStatusChanged(LoadStatus.PULL_UP);
+                }
+                if (Math.abs(totalOffsetY) >= mLoadThresholdHeight && mLoadStatus == LoadStatus.PULL_UP) {
+                    notifyLoadStatusChanged(LoadStatus.RELEASE_LOAD);
+                }
+            } else {//view向下运动
+                if (Math.abs(totalOffsetY) < mLoadThresholdHeight && mLoadStatus == LoadStatus.RELEASE_LOAD) {
+                    notifyLoadStatusChanged(LoadStatus.PULL_UP);
+                }
+                if (mLoadStatus == LoadStatus.PULL_UP) {
+                    notifyLoadStatusChanged(LoadStatus.IDLE);
+                }
             }
         }
     }
