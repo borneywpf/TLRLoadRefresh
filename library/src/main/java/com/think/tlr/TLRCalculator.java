@@ -11,6 +11,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 
 import com.think.tlr.TLRLinearLayout.LoadStatus;
 import com.think.tlr.TLRLinearLayout.RefreshStatus;
@@ -72,11 +73,14 @@ class TLRCalculator {
      */
     private boolean isReleaseRefresh = true, isReleaseLoad = true;
 
+    /**
+     * UI是否回归到初始状态
+     */
     private boolean isBackStatus = true;
 
     private TLRUiHandler mTLRUiHandler;
 
-    private ValueAnimator mAutoAnimator, mResetAnimator;
+    private ValueAnimator mAutoAnimator, mResetAnimator, mKeepAnimator;
 
     private TLRLinearLayout mTLRLinearLayout;
     private int mTouchSlop;
@@ -122,6 +126,10 @@ class TLRCalculator {
         } finally {
             array.recycle();
         }
+        Log.v("isKeepHeadRefreshing = " + isKeepHeadRefreshing);
+        Log.v("isKeepFootLoading = " + isKeepFootLoading);
+        Log.v("isReleaseRefresh = " + isReleaseRefresh);
+        Log.v("isReleaseLoad = " + isReleaseLoad);
     }
 
     public void setTLRUiHandler(TLRUiHandler uiHandler) {
@@ -163,19 +171,15 @@ class TLRCalculator {
      */
     public void eventUp(float x, float y) {
         mDirection = Direction.NONE;
-        if (mRefreshStatus == RefreshStatus.RELEASE_REFRESH) {
-            notifyRefreshStatusChanged(RefreshStatus.REFRESHING);
-            notifyRefreshStatusChanged(RefreshStatus.IDLE);
-        } else if (mRefreshStatus != RefreshStatus.IDLE) {
-            notifyRefreshStatusChanged(RefreshStatus.IDLE);
+        calculatorUpRefreshStatus();
+        calculatorUpLoadStatus();
+        if (isKeepFootLoading && mTotalOffsetY < 0) {
+            startKeepAnimator();
+        } else if (isKeepHeadRefreshing && mTotalOffsetY > 0) {
+            startKeepAnimator();
+        } else {
+            startResetAnimator();
         }
-        if (mLoadStatus == LoadStatus.RELEASE_LOAD) {
-            notifyLoadStatusChanged(LoadStatus.LOADING);
-            notifyLoadStatusChanged(LoadStatus.IDLE);
-        } else if (mLoadStatus != LoadStatus.IDLE) {
-            notifyLoadStatusChanged(LoadStatus.IDLE);
-        }
-        startResetAnimator();
     }
 
     /**
@@ -211,11 +215,11 @@ class TLRCalculator {
         mTotalOffsetY += y;
         mTLRLinearLayout.move(y);
         if (mTotalOffsetY > 0 && mLoadStatus == LoadStatus.IDLE) {
-            calculateRefreshStatus(y > 0);
+            calculateMoveRefreshStatus(y > 0);
             notifyPixOffset(mTotalOffsetY, mRefreshThresholdHeight, y);
         }
         if (mTotalOffsetY < 0 && mRefreshStatus == RefreshStatus.IDLE) {
-            calculateLoadStatus(y < 0);
+            calculateMoveLoadStatus(y < 0);
             notifyPixOffset(mTotalOffsetY, mLoadThresholdHeight, y);
         }
 
@@ -245,7 +249,7 @@ class TLRCalculator {
      *
      * @param down view is move down now
      */
-    private void calculateRefreshStatus(boolean down) {
+    private void calculateMoveRefreshStatus(boolean down) {
         if (down) {//view向下运动
             if (mRefreshStatus == RefreshStatus.IDLE) {
                 notifyRefreshStatusChanged(RefreshStatus.PULL_DOWN);
@@ -273,7 +277,7 @@ class TLRCalculator {
      *
      * @param up view is move up now
      */
-    private void calculateLoadStatus(boolean up) {
+    private void calculateMoveLoadStatus(boolean up) {
         if (up) {//view向上运动
             if (mTotalOffsetY < 0 && mLoadStatus == LoadStatus.IDLE) {
                 notifyLoadStatusChanged(LoadStatus.PULL_UP);
@@ -288,6 +292,28 @@ class TLRCalculator {
             if (mLoadStatus == LoadStatus.PULL_UP) {
                 notifyLoadStatusChanged(LoadStatus.IDLE);
             }
+        }
+    }
+
+    private void calculatorUpLoadStatus() {
+        if (mLoadStatus == LoadStatus.RELEASE_LOAD) {
+            if (isReleaseLoad) {
+                notifyLoadStatusChanged(LoadStatus.LOADING);
+                notifyLoadStatusChanged(LoadStatus.IDLE);
+            }
+        } else if (mLoadStatus != LoadStatus.IDLE) {
+            notifyLoadStatusChanged(LoadStatus.IDLE);
+        }
+    }
+
+    private void calculatorUpRefreshStatus() {
+        if (mRefreshStatus == RefreshStatus.RELEASE_REFRESH) {
+            if (isReleaseRefresh) {
+                notifyRefreshStatusChanged(RefreshStatus.REFRESHING);
+                notifyRefreshStatusChanged(RefreshStatus.IDLE);
+            }
+        } else if (mRefreshStatus != RefreshStatus.IDLE) {
+            notifyRefreshStatusChanged(RefreshStatus.IDLE);
         }
     }
 
@@ -346,7 +372,9 @@ class TLRCalculator {
             mAutoAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    startResetAnimator();
+                    if (!isKeepHeadRefreshing) {
+                        startResetAnimator();
+                    }
                 }
             });
             mAutoAnimator.start();
@@ -360,7 +388,30 @@ class TLRCalculator {
         if (mResetAnimator != null) {
             return mResetAnimator.isRunning() || mResetAnimator.isStarted();
         }
+        if (mKeepAnimator != null) {
+            return mKeepAnimator.isRunning() || mKeepAnimator.isStarted();
+        }
         return false;
+    }
+
+    private void startKeepAnimator() {
+        if (mKeepAnimator != null && mKeepAnimator.isRunning()) {
+            mKeepAnimator.end();
+        }
+        int startY = mTotalOffsetY;
+        int endY = 0;
+        if (mTotalOffsetY > mRefreshThresholdHeight) {
+            endY = mRefreshThresholdHeight;
+        } else if (mTotalOffsetY < -mLoadThresholdHeight) {
+            endY = -mLoadThresholdHeight;
+        }
+        if (startY != 0) {
+            mKeepAnimator = ValueAnimator.ofInt(startY, endY);
+            mKeepAnimator.setDuration(200);
+            mKeepAnimator.setInterpolator(new LinearInterpolator());
+            mKeepAnimator.addUpdateListener(new AnimUpdateListener(startY));
+            mKeepAnimator.start();
+        }
     }
 
     private void startResetAnimator() {
@@ -385,11 +436,10 @@ class TLRCalculator {
         if (mRefreshStatus == status) {
             return;
         }
-        if (isBackStatus) {
-            isAutoRefresh = false;
-            return;
-        }
         mRefreshStatus = status;
+        if (mRefreshStatus == RefreshStatus.IDLE) {
+            isAutoRefresh = false;
+        }
         if (mTLRUiHandler != null) {
             mTLRUiHandler.onRefreshStatusChanged(mRefreshStatus);
         }
@@ -397,9 +447,6 @@ class TLRCalculator {
 
     private void notifyLoadStatusChanged(LoadStatus status) {
         if (mLoadStatus == status) {
-            return;
-        }
-        if (isBackStatus) {
             return;
         }
         mLoadStatus = status;
