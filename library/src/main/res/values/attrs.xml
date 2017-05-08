@@ -16,10 +16,10 @@
     </declare-styleable>
 
     <declare-styleable name="TLRLinearLayout_Layout">
-        <attr name="label">
-            <flag name="head" value="0x01"/>
-            <flag name="content" value="0x02"/>
-            <flag name="foot" value="0x04"/>
+        <attr name="label" format="enum">
+            <enum name="head" value="1"/>
+            <enum name="content" value="2"/>
+            <enum name="foot" value="3"/>
         </attr>
     </declare-styleable>
 </resources>

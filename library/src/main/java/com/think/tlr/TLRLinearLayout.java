@@ -19,9 +19,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Created by borney on 4/28/17.
  */
 public final class TLRLinearLayout extends ViewGroup {
-    public static final int FLAG_LABEL_HEAD = 0x01;
-    public static final int FLAG_LABEL_CONTENT = 0x02;
-    public static final int FLAG_LABEL_FOOT = 0x04;
+    public static final int LABEL_HEAD = 1;
+    public static final int LABEL_CONTENT = 2;
+    public static final int LABEL_FOOT = 3;
     private boolean isEnableLoad = false;
     private boolean isEnableRefresh = false;
     private boolean isKeepContentLayout = false;
@@ -97,17 +97,17 @@ public final class TLRLinearLayout extends ViewGroup {
             View child = getChildAt(i);
             LayoutParams params = (LayoutParams) child.getLayoutParams();
             Log.d("child = " + child.getClass().getSimpleName() + " params.label = " + params.label);
-            if (params.label == FLAG_LABEL_HEAD) {
+            if (params.label == LABEL_HEAD) {
                 if (i != 0) {
                     throw new RuntimeException("head must in first");
                 }
                 mHeaderView = child;
-            } else if (params.label == FLAG_LABEL_FOOT) {
+            } else if (params.label == LABEL_FOOT) {
                 if (i != count - 1) {
                     throw new RuntimeException("foot must in last!!!");
                 }
                 mFooterView = child;
-            } else if (params.label == FLAG_LABEL_CONTENT) {
+            } else if (params.label == LABEL_CONTENT) {
                 mContentViews.add(child);
                 mContentChilds.add(child);
             } else {

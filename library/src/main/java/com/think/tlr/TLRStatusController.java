@@ -63,13 +63,13 @@ class TLRStatusController {
     /**
      * calculate refresh view status
      *
-     * @param down view is move down now
+     * @param moveDown view is move down now
      */
-    public void calculateMoveRefreshStatus(boolean down) {
+    public void calculateMoveRefreshStatus(boolean moveDown) {
         int totalOffsetY = mCalculator.getTotalOffsetY();
         //y 方向移动正值,切Load为初始状态
         if (totalOffsetY > 0 && mLoadStatus == LoadStatus.IDLE) {
-            if (down) {//view向下运动
+            if (moveDown) {//view向下运动
                 if (mRefreshStatus == RefreshStatus.IDLE) {
                     notifyRefreshStatusChanged(RefreshStatus.PULL_DOWN);
                 }
@@ -95,12 +95,12 @@ class TLRStatusController {
     /**
      * calculate load view status
      *
-     * @param up view is move up now
+     * @param moveUp view is move up now
      */
-    public void calculateMoveLoadStatus(boolean up) {
+    public void calculateMoveLoadStatus(boolean moveUp) {
         int totalOffsetY = mCalculator.getTotalOffsetY();
         if (totalOffsetY < 0 && mRefreshStatus == RefreshStatus.IDLE) {
-            if (up) {//view向上运动
+            if (moveUp) {//view向上运动
                 if (totalOffsetY < 0 && mLoadStatus == LoadStatus.IDLE) {
                     notifyLoadStatusChanged(LoadStatus.PULL_UP);
                 }
