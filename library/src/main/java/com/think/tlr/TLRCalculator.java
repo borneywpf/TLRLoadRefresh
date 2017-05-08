@@ -194,6 +194,8 @@ class TLRCalculator {
             isBackStatus = false;
         }
 
+        Log.d("mTotalOffsetY:" + mTotalOffsetY + " y:" + y);
+
         //move view
         mTotalOffsetY += y;
         mTLRLinearLayout.move(y);
@@ -253,13 +255,13 @@ class TLRCalculator {
     }
 
     public void startAutoRefresh() {
-        Log.d("startAutoRefresh mHeadHeight:" + mHeadHeight);
+        Log.d("autoRefresh mHeadHeight:" + mHeadHeight);
         mStatusController.setAutoRefresh(true);
         if (mHeadHeight == 0) {
             mTLRLinearLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
-                    Log.d("startAutoRefresh onGlobalLayout mHeadHeight:" + mHeadHeight);
+                    Log.d("autoRefresh onGlobalLayout mHeadHeight:" + mHeadHeight);
                     startAutoRefreshAnimator();
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                         mTLRLinearLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);

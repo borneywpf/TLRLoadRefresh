@@ -17,9 +17,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         uiloader:enableRefresh="true"
-        uiloader:enableLoad="true"
+        uiloader:enableLoad="false"
         uiloader:keepHeadRefreshing="false"
-        uiloader:keepContentLayout="false">
+        uiloader:keepContentLayout="true">
 
         <TextView
             android:layout_width="match_parent"

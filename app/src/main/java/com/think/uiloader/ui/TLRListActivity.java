@@ -66,7 +66,7 @@ public class TLRListActivity extends AppCompatActivity implements ImageContract.
 
     @Override
     public void startImages() {
-        mTLRLinearLayout.startAutoRefresh();
+        mTLRLinearLayout.autoRefresh();
     }
 
     @Override

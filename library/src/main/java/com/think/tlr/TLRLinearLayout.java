@@ -32,6 +32,7 @@ public final class TLRLinearLayout extends ViewGroup {
     private View mFooterView;
     private TLRCalculator mCalculator;
     private TLRUiHandlerWrapper mUiHandlerWrapper;
+    private boolean isAddViewSelf = false;
 
     public enum RefreshStatus {
         IDLE, PULL_DOWN, RELEASE_REFRESH, REFRESHING
@@ -86,6 +87,22 @@ public final class TLRLinearLayout extends ViewGroup {
         }
     }
 
+    private void addSelfView(View child, int index, ViewGroup.LayoutParams params) {
+        isAddViewSelf = true;
+        addView(child, index, params);
+        isAddViewSelf = false;
+    }
+
+    @Override
+    public void addView(View child, int index, ViewGroup.LayoutParams params) {
+        if (index == 0 && !isAddViewSelf) {
+            Log.e("can't add view index 0!!!");
+            return;
+        }
+        super.addView(child, index, params);
+
+    }
+
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
@@ -124,10 +141,11 @@ public final class TLRLinearLayout extends ViewGroup {
         }
 
         for (View view : mContentChilds) {
+            ViewGroup.LayoutParams params = view.getLayoutParams();
             removeView(view);
-            mContentLayout.addView(view);
+            mContentLayout.addView(view, new LinearLayout.LayoutParams(params.width, params.height));
         }
-        addView(mContentLayout, 0, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        addSelfView(mContentLayout, 0, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         Log.i("ContentLayout count:" + mContentLayout.getChildCount());
     }
 
@@ -203,6 +221,7 @@ public final class TLRLinearLayout extends ViewGroup {
                 } else if (child.equals(mFooterView)) {
                     mCalculator.setFootViewHeight(child.getMeasuredHeight());
                 }
+                Log.d(child.getClass().getSimpleName() + " mw:" + child.getMeasuredWidth() + " mh:" + child.getMeasuredHeight());
             }
         }
         setMeasuredDimension(width, height);
@@ -210,25 +229,31 @@ public final class TLRLinearLayout extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+//        if (mCalculator.hasAnimatorRunning()) {
+//            return;
+//        }
         int parentLeft = getPaddingLeft();
         int parentTop = getPaddingTop();
         int count = getChildCount();
+
+        int contentLeft = parentLeft;
+        int contentTop = parentTop;
+        int contentRight = contentLeft + mContentLayout.getMeasuredWidth();
+        int contentBottom = contentTop + mContentLayout.getMeasuredHeight();
+        Log.i("change:" + changed + " contentLeft:" + contentLeft + " contentTop:" + contentTop + " contentRight:" + contentRight + " contentBottom:" + b);
+        mContentLayout.layout(contentLeft, contentTop, contentRight, contentBottom);
         for (int i = 0; i < count; i++) {
             View child = getChildAt(i);
-            int width = child.getMeasuredWidth();
-            int height = child.getMeasuredHeight();
             int left = parentLeft;
-            int right = left + width;
+            int right = left + child.getMeasuredWidth();
             if (child.equals(mHeaderView)) {
-                int bottom = parentTop;
-                int top = bottom - height;
+                int bottom = contentTop;
+                int top = bottom - child.getMeasuredHeight();
                 child.layout(left, top, right, bottom);
             } else if (child.equals(mFooterView)) {
-                int top = parentTop + getMeasuredHeight();
-                int bottom = top + height;
+                int top = contentBottom;
+                int bottom = top + child.getMeasuredHeight();
                 child.layout(left, top, right, bottom);
-            } else {
-                child.layout(left, parentTop, right, parentTop + height);
             }
         }
     }
@@ -241,7 +266,7 @@ public final class TLRLinearLayout extends ViewGroup {
                 || x >= view.getRight());
     }
 
-    public void startAutoRefresh() {
+    public void autoRefresh() {
         mCalculator.startAutoRefresh();
     }
 
@@ -250,13 +275,11 @@ public final class TLRLinearLayout extends ViewGroup {
     }
 
     void move(int y) {
+        mHeaderView.offsetTopAndBottom(y);
+        mFooterView.offsetTopAndBottom(y);
         if (!isKeepContentLayout) {
             mContentLayout.offsetTopAndBottom(y);
         }
-        mHeaderView.offsetTopAndBottom(y);
-        mFooterView.offsetTopAndBottom(y);
-
-        invalidate();
     }
 
     private boolean isTouchViewRefresh(View target, float x, float y) {
