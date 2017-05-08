@@ -5,12 +5,11 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <TextView
+    <ImageView
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:text="XXXXXXXXXXX"
-        android:textSize="20sp"
-        android:gravity="center"
+        android:src="@drawable/list_top_image"
+        android:scaleType="fitXY"
         android:background="@android:color/holo_blue_light"/>
 
     <com.think.tlr.TLRLinearLayout
@@ -29,7 +28,6 @@
             android:gravity="center"
             android:text="I'm Header"
             android:textSize="18sp"
-            android:layout_alignParentBottom="true"
             uiloader:label="head"/>
 
         <TextView
@@ -39,16 +37,13 @@
             android:text="I'm Content Head"
             android:textSize="20sp"
             android:gravity="center"
-            android:layout_alignParentTop="true"
             android:background="@android:color/holo_orange_light"/>
 
         <ListView
             android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            uiloader:label="content"
-            android:layout_below="@id/contentHead"
-            android:background="@android:color/holo_green_light"/>
+            uiloader:label="content"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -56,7 +51,6 @@
             android:background="@android:color/holo_blue_bright"
             android:gravity="center"
             android:text="I'm Footer"
-            android:layout_alignParentTop="true"
             android:textSize="18sp"
             uiloader:label="foot"/>
 

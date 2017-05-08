@@ -1,4 +1,4 @@
-package com.think.uiloader;
+package com.think.uiloader.ui;
 
 import android.content.Intent;
 import android.content.res.TypedArray;
@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.think.uiloader.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,10 +40,10 @@ public class MainActivity extends AppCompatActivity {
     private List<ListItem<AppCompatActivity>> initList() {
         return new ArrayList<ListItem<AppCompatActivity>>() {
             {
-                add(new ListItem("NestedLoaderView", NestedActivity.class));
-                add(new ListItem("TLRViewGroup", TLRViewGroupActivity.class));
                 add(new ListItem("TLRList", TLRListActivity.class));
                 add(new ListItem("TLRTextView", TLRTextViewActivity.class));
+                add(new ListItem("TLRViewGroup", TLRViewGroupActivity.class));
+                add(new ListItem("NestedLoaderView", NestedActivity.class));
             }
         };
     }

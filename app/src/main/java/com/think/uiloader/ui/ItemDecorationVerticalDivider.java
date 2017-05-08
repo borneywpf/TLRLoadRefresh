@@ -1,4 +1,4 @@
-package com.think.uiloader;
+package com.think.uiloader.ui;
 
 import android.content.Context;
 import android.content.res.TypedArray;
