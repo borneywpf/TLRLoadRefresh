@@ -1,0 +1,76 @@
+package com.think.tlr;
+
+import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.view.NestedScrollingParent;
+import android.support.v4.view.NestedScrollingParentHelper;
+import android.support.v4.view.ViewCompat;
+import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.View;
+
+/**
+ * Created by borney on 5/9/17.
+ */
+public class TLRNestedLinearLayout extends TLRLinearLayout implements NestedScrollingParent {
+    private TLRCalculator mCalculator;
+    private NestedScrollingParentHelper mParentHelper;
+
+    public TLRNestedLinearLayout(Context context) {
+        this(context, null);
+    }
+
+    public TLRNestedLinearLayout(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public TLRNestedLinearLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        mCalculator = calculator();
+        mParentHelper = new NestedScrollingParentHelper(this);
+        ViewCompat.setNestedScrollingEnabled(this, true);
+    }
+
+    @Override
+    public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
+        Log.d("onStartNestedScroll child = " + child.getClass().getSimpleName() + " target = " + target.getClass().getSimpleName() + " nestedScrollAxes = " + nestedScrollAxes);
+        if (!isEnableLoad() && !isEnableRefresh()) {
+            return false;
+        }
+        if (mCalculator.hasAnyAnimatorRunning()) {
+            return false;
+        }
+        return (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
+    }
+
+    @Override
+    public void onNestedScrollAccepted(View child, View target, int axes) {
+        mParentHelper.onNestedScrollAccepted(child, target, axes);
+    }
+
+    @Override
+    public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
+        mCalculator.touchMoveLayoutView((int) (-dyUnconsumed / getResistance()));
+    }
+
+    @Override
+    public void onStopNestedScroll(View child) {
+        mParentHelper.onStopNestedScroll(child);
+        mCalculator.eventUp(0, 0);
+    }
+
+    @Override
+    public boolean onNestedPrePerformAccessibilityAction(View target, int action, Bundle args) {
+        return super.onNestedPrePerformAccessibilityAction(target, action, args);
+    }
+
+    @Override
+    public int getNestedScrollAxes() {
+        return mParentHelper.getNestedScrollAxes();
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        return dispatchTouchEvent(true, ev);
+    }
+}

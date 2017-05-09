@@ -180,6 +180,10 @@ class TLRCalculator {
         moveLayoutView((int) mOffsetY);
     }
 
+    public void touchMoveLayoutView(int offsetY) {
+        moveLayoutView(offsetY);
+    }
+
     /**
      * call view {@link android.view.View#offsetTopAndBottom(int)} method must cast offset to int
      *
@@ -194,7 +198,7 @@ class TLRCalculator {
             isBackStatus = false;
         }
 
-        Log.d("mTotalOffsetY:" + mTotalOffsetY + " y:" + y);
+        //Log.d("mTotalOffsetY:" + mTotalOffsetY + " y:" + y);
 
         //move view
         mTotalOffsetY += y;
@@ -299,7 +303,7 @@ class TLRCalculator {
         }
     }
 
-    public boolean hasAnimatorRunning() {
+    public boolean hasAnyAnimatorRunning() {
         if (mAutoAnimator != null) {
             return mAutoAnimator.isRunning() || mAutoAnimator.isStarted();
         }
@@ -356,6 +360,72 @@ class TLRCalculator {
 
     public void resetKeepView() {
         startResetAnimator();
+    }
+
+    public float getRefreshThreshold() {
+        return mRefreshThreshold;
+    }
+
+    public void setRefreshThreshold(float refreshThreshold) {
+        mRefreshThreshold = refreshThreshold;
+        setHeadViewHeight(mHeadHeight);
+    }
+
+    public float getLoadThreshold() {
+        return mLoadThreshold;
+    }
+
+    public void setLoadThreshold(float loadThreshold) {
+        mLoadThreshold = loadThreshold;
+        setFootViewHeight(mFootHeight);
+    }
+
+    public float getResistance() {
+        return mResistance;
+    }
+
+    public void setResistance(float resistance) {
+        mResistance = resistance;
+    }
+
+    public void setCloseAnimDuration(int closeAnimDuration) {
+        mCloseAnimDuration = closeAnimDuration;
+    }
+
+    public void setOpenAnimDuration(int openAnimDuration) {
+        mOpenAnimDuration = openAnimDuration;
+    }
+
+    public boolean isKeepHeadRefreshing() {
+        return isKeepHeadRefreshing;
+    }
+
+    public void setKeepHeadRefreshing(boolean keepHeadRefreshing) {
+        isKeepHeadRefreshing = keepHeadRefreshing;
+    }
+
+    public boolean isKeepFootLoading() {
+        return isKeepFootLoading;
+    }
+
+    public void setKeepFootLoading(boolean keepFootLoading) {
+        isKeepFootLoading = keepFootLoading;
+    }
+
+    public boolean isReleaseRefresh() {
+        return mStatusController.isReleaseRefresh();
+    }
+
+    public void setReleaseRefresh(boolean releaseRefresh) {
+        mStatusController.setReleaseRefresh(releaseRefresh);
+    }
+
+    public boolean isReleaseLoad() {
+        return mStatusController.isReleaseLoad();
+    }
+
+    public void setReleaseLoad(boolean releaseLoad) {
+        mStatusController.setReleaseLoad(releaseLoad);
     }
 
     private class AnimUpdateListener implements ValueAnimator.AnimatorUpdateListener {

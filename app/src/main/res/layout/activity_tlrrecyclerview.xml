@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.think.tlr.TLRNestedLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:uiloader="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tlrlayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    uiloader:enableRefresh="true"
+    uiloader:enableLoad="false"
+    uiloader:keepHeadRefreshing="false">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@android:color/holo_red_light"
+        android:gravity="center"
+        android:text="I'm Header"
+        android:textSize="18sp"
+        uiloader:label="head"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</com.think.tlr.TLRNestedLinearLayout>

@@ -9,11 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author borney
@@ -21,7 +18,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @see android.view.View
  * @see android.view.ViewGroup
  */
-public final class TLRLinearLayout extends ViewGroup {
+public class TLRLinearLayout extends ViewGroup {
     public static final int LABEL_HEAD = 1;
     public static final int LABEL_CONTENT = 2;
     public static final int LABEL_FOOT = 3;
@@ -143,12 +140,12 @@ public final class TLRLinearLayout extends ViewGroup {
                 if (i != 0) {
                     throw new RuntimeException("head must in first");
                 }
-                mHeaderView = child;
+                setHeaderView(child);
             } else if (params.label == LABEL_FOOT) {
                 if (i != count - 1) {
                     throw new RuntimeException("foot must in last!!!");
                 }
-                mFooterView = child;
+                setFooterView(child);
             } else if (params.label == LABEL_CONTENT) {
                 mContentViews.add(child);
                 mContentChilds.add(child);
@@ -176,11 +173,18 @@ public final class TLRLinearLayout extends ViewGroup {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (!isEnableLoad && !isEnableRefresh) {
-            return superdispatchTouchEvent(ev);
+        return dispatchTouchEvent(false, ev);
+    }
+
+    boolean dispatchTouchEvent(boolean isNested, MotionEvent ev) {
+        if (isNested) {
+            return super.dispatchTouchEvent(ev);
         }
-        if (mCalculator.hasAnimatorRunning()) {
-            return superdispatchTouchEvent(ev);
+        if (!isEnableLoad && !isEnableRefresh) {
+            return super.dispatchTouchEvent(ev);
+        }
+        if (mCalculator.hasAnyAnimatorRunning()) {
+            return super.dispatchTouchEvent(ev);
         }
         int action = ev.getAction();
         float x = ev.getX();
@@ -188,28 +192,14 @@ public final class TLRLinearLayout extends ViewGroup {
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 mCalculator.eventDown(x, y);
-                superdispatchTouchEvent(ev);
+                super.dispatchTouchEvent(ev);
                 return true;
             case MotionEvent.ACTION_MOVE:
                 mCalculator.eventMove(x, y);
                 if (mCalculator.canCalculatorV()) {
-                    boolean refresh = false;
-                    boolean load = false;
-                    for (View view : mContentViews) {
-                        if (isTouchViewRefresh(view, x, y)) {
-                            refresh = true;
-                        }
-                        if (isTouchViewLoad(view, x, y)) {
-                            load = true;
-                        }
-                    }
-
-                    refresh &= isEnableRefresh;
-                    load &= isEnableLoad;
-
-                    if (refresh || load) {
+                    if (isTouchMoveRefresh(x, y) || isTouchMoveLoad(x, y)) {
                         ev.setAction(MotionEvent.ACTION_CANCEL);
-                        superdispatchTouchEvent(ev);
+                        super.dispatchTouchEvent(ev);
                         mCalculator.touchMoveLayoutView();
                         return true;
                     }
@@ -220,13 +210,8 @@ public final class TLRLinearLayout extends ViewGroup {
                 mCalculator.eventUp(x, y);
                 break;
         }
-        return superdispatchTouchEvent(ev);
-    }
-
-    private boolean superdispatchTouchEvent(MotionEvent ev) {
         return super.dispatchTouchEvent(ev);
     }
-
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -300,46 +285,6 @@ public final class TLRLinearLayout extends ViewGroup {
         }
     }
 
-    private boolean inView(View view, float x, float y) {
-        final int scrollY = getScrollY();
-        return !(y < view.getTop() - scrollY
-                || y >= view.getBottom() - scrollY
-                || x < view.getLeft()
-                || x >= view.getRight());
-    }
-
-    /**
-     * start auto refresh
-     */
-    public void autoRefresh() {
-        mCalculator.startAutoRefresh();
-    }
-
-    /**
-     * 恢复view到初始状态
-     */
-    public void resetKeepView() {
-        mCalculator.resetKeepView();
-    }
-
-    /**
-     * add {@link TLRUiHandler} callback
-     *
-     * @param handler
-     */
-    public void addTLRUiHandler(TLRUiHandler handler) {
-        mUiHandlerWrapper.addTLRUiHandler(handler);
-    }
-
-    /**
-     * remove {@link TLRUiHandler} callback
-     *
-     * @param handler
-     */
-    public void removeTLRUiHandler(TLRUiHandler handler) {
-        mUiHandlerWrapper.removeTLRUiHandler(handler);
-    }
-
     void move(int y) {
         if (isEnableRefresh) {
             mHeaderView.offsetTopAndBottom(y);
@@ -350,6 +295,45 @@ public final class TLRLinearLayout extends ViewGroup {
         if (!isKeepContentLayout) {
             mContentLayout.offsetTopAndBottom(y);
         }
+    }
+
+    /**
+     * call by child
+     *
+     * @return
+     */
+    TLRCalculator calculator() {
+        return mCalculator;
+    }
+
+    private boolean isTouchMoveRefresh(float x, float y) {
+        boolean refresh = false;
+        for (View view : mContentViews) {
+            if (isTouchViewRefresh(view, x, y)) {
+                refresh = true;
+            }
+        }
+        refresh &= isEnableRefresh;
+        return refresh;
+    }
+
+    private boolean isTouchMoveLoad(float x, float y) {
+        boolean load = false;
+        for (View view : mContentViews) {
+            if (isTouchViewLoad(view, x, y)) {
+                load = true;
+            }
+        }
+        load &= isEnableLoad;
+        return load;
+    }
+
+    private boolean inView(View view, float x, float y) {
+        final int scrollY = getScrollY();
+        return !(y < view.getTop() - scrollY
+                || y >= view.getBottom() - scrollY
+                || x < view.getLeft()
+                || x >= view.getRight());
     }
 
     private boolean isTouchViewRefresh(View target, float x, float y) {
@@ -396,6 +380,287 @@ public final class TLRLinearLayout extends ViewGroup {
         return generateDefaultLayoutParams();
     }
 
+    /**
+     * start auto refresh
+     */
+    public void autoRefresh() {
+        mCalculator.startAutoRefresh();
+    }
+
+    /**
+     * 恢复view到初始状态
+     */
+    public void resetKeepView() {
+        mCalculator.resetKeepView();
+    }
+
+    /**
+     * add {@link TLRUiHandler} callback
+     *
+     * @param handler
+     */
+    public void addTLRUiHandler(TLRUiHandler handler) {
+        mUiHandlerWrapper.addTLRUiHandler(handler);
+    }
+
+    /**
+     * remove {@link TLRUiHandler} callback
+     *
+     * @param handler
+     */
+    public void removeTLRUiHandler(TLRUiHandler handler) {
+        mUiHandlerWrapper.removeTLRUiHandler(handler);
+    }
+
+    /**
+     * return load is enable or not
+     *
+     * @return
+     */
+    public boolean isEnableLoad() {
+        return isEnableLoad;
+    }
+
+    /**
+     * set load is enable or not
+     *
+     * @param enableLoad
+     */
+    public void setEnableLoad(boolean enableLoad) {
+        isEnableLoad = enableLoad;
+    }
+
+    /**
+     * return refresh is enable or not
+     *
+     * @return
+     */
+    public boolean isEnableRefresh() {
+        return isEnableRefresh;
+    }
+
+    /**
+     * set refresh is enable or not
+     *
+     * @param enableRefresh
+     */
+    public void setEnableRefresh(boolean enableRefresh) {
+        isEnableRefresh = enableRefresh;
+    }
+
+    /**
+     * return contentLayout can not move on refresh or load
+     *
+     * @return
+     */
+    public boolean isKeepContentLayout() {
+        return isKeepContentLayout;
+    }
+
+    /**
+     * set contentLayout can not move on refresh or load
+     *
+     * @param keepContentLayout
+     */
+    public void setKeepContentLayout(boolean keepContentLayout) {
+        isKeepContentLayout = keepContentLayout;
+    }
+
+    /**
+     * get head view
+     *
+     * @return
+     */
+    public View getHeaderView() {
+        return mHeaderView;
+    }
+
+    /**
+     * set head view
+     *
+     * @param headerView
+     */
+    public void setHeaderView(View headerView) {
+        if (mHeaderView == headerView) {
+            return;
+        }
+        mHeaderView = headerView;
+        if (mHeaderView instanceof TLRUiHandler) {
+            addTLRUiHandler((TLRUiHandler) mHeaderView);
+        }
+    }
+
+    /**
+     * set foot view
+     *
+     * @param footerView
+     */
+    public void setFooterView(View footerView) {
+        if (mFooterView == footerView) {
+            return;
+        }
+        mFooterView = footerView;
+        if (mFooterView instanceof TLRUiHandler) {
+            addTLRUiHandler((TLRUiHandler) mFooterView);
+        }
+    }
+
+    /**
+     * get foot view
+     *
+     * @return
+     */
+    public View getFooterView() {
+        return mFooterView;
+    }
+
+    /**
+     * get the refresh factor
+     *
+     * @return
+     */
+    public float getRefreshThreshold() {
+        return mCalculator.getRefreshThreshold();
+    }
+
+    /**
+     * Set the refresh factor
+     */
+    public void setRefreshThreshold(float refreshThreshold) {
+        mCalculator.setRefreshThreshold(refreshThreshold);
+    }
+
+    /**
+     * get the load factor
+     *
+     * @return
+     */
+    public float getLoadThreshold() {
+        return mCalculator.getLoadThreshold();
+    }
+
+    /**
+     * Set the load factor
+     */
+    public void setLoadThreshold(float loadThreshold) {
+        mCalculator.setLoadThreshold(loadThreshold);
+    }
+
+    /**
+     * get the damping coefficient
+     *
+     * @return
+     */
+    public float getResistance() {
+        return mCalculator.getResistance();
+    }
+
+    /**
+     * set the damping coefficient
+     */
+    public void setResistance(float resistance) {
+        mCalculator.setResistance(resistance);
+    }
+
+    /**
+     * Set the reset the animation duration
+     *
+     * @param closeAnimDuration
+     */
+    public void setCloseAnimDuration(int closeAnimDuration) {
+        mCalculator.setCloseAnimDuration(closeAnimDuration);
+    }
+
+    /**
+     * Set the auto refresh to open the animation duration
+     *
+     * @param openAnimDuration
+     */
+    public void setOpenAnimDuration(int openAnimDuration) {
+        mCalculator.setOpenAnimDuration(openAnimDuration);
+    }
+
+    /**
+     * return keep head view when refreshing
+     *
+     * @return
+     */
+    public boolean isKeepHeadRefreshing() {
+        return mCalculator.isKeepHeadRefreshing();
+    }
+
+    /**
+     * When refresh, whether or not to stay head view
+     *
+     * @param keepHeadRefreshing
+     */
+    public void setKeepHeadRefreshing(boolean keepHeadRefreshing) {
+        mCalculator.setKeepHeadRefreshing(keepHeadRefreshing);
+    }
+
+    /**
+     * return keep foot view when loading
+     *
+     * @return
+     */
+    public boolean isKeepFootLoading() {
+        return mCalculator.isKeepFootLoading();
+    }
+
+    /**
+     * When loaded, whether to stay foot view
+     *
+     * @param keepFootLoading
+     */
+    public void setKeepFootLoading(boolean keepFootLoading) {
+        mCalculator.setKeepFootLoading(keepFootLoading);
+    }
+
+    /**
+     * Whether to release the refresh
+     *
+     * @return
+     */
+    public boolean isReleaseRefresh() {
+        return mCalculator.isReleaseRefresh();
+    }
+
+    /**
+     * set whether to release the refresh
+     *
+     * @param releaseRefresh
+     */
+    public void setReleaseRefresh(boolean releaseRefresh) {
+        mCalculator.setReleaseRefresh(releaseRefresh);
+    }
+
+    /**
+     * Whether to release the load
+     *
+     * @return
+     */
+    public boolean isReleaseLoad() {
+        return mCalculator.isReleaseLoad();
+    }
+
+    /**
+     * set whether to release the load
+     *
+     * @param releaseLoad
+     */
+    public void setReleaseLoad(boolean releaseLoad) {
+        mCalculator.setReleaseLoad(releaseLoad);
+    }
+
+    /**
+     * return has any animation is running
+     *
+     * @return
+     */
+    public boolean hasAnyAnimatorRunning() {
+        return mCalculator.hasAnyAnimatorRunning();
+    }
+
     public static class LayoutParams extends ViewGroup.MarginLayoutParams {
 
         int label = 0;
@@ -431,26 +696,20 @@ public final class TLRLinearLayout extends ViewGroup {
     }
 
     private static class TLRUiHandlerWrapper implements TLRUiHandler {
-        private final List<WeakReference<TLRUiHandler>> mTLRUiHandlers = new CopyOnWriteArrayList<>();
+        private final List<TLRUiHandler> mTLRUiHandlers = new ArrayList<>();
 
         public void addTLRUiHandler(TLRUiHandler handler) {
             if (handler != null) {
-                mTLRUiHandlers.add(new WeakReference<TLRUiHandler>(handler));
+                mTLRUiHandlers.add(handler);
             }
         }
 
         public void removeTLRUiHandler(TLRUiHandler handler) {
             if (handler != null) {
-                Iterator<WeakReference<TLRUiHandler>> iterator = mTLRUiHandlers.iterator();
-                while (iterator.hasNext()) {
-                    WeakReference<TLRUiHandler> wefUiHandler = iterator.next();
-                    TLRUiHandler h = wefUiHandler.get();
-                    if (h != null) {
-                        if (handler.equals(h)) {
-                            iterator.remove();
-                        }
-                    } else {
-                        iterator.remove();
+                for (TLRUiHandler uiHandler : mTLRUiHandlers) {
+                    if (uiHandler.equals(handler)) {
+                        mTLRUiHandlers.remove(uiHandler);
+                        break;
                     }
                 }
             }
@@ -458,46 +717,25 @@ public final class TLRLinearLayout extends ViewGroup {
 
         @Override
         public void onRefreshStatusChanged(RefreshStatus status) {
-            Log.d("onRefreshStatusChanged status:" + status);
-            Iterator<WeakReference<TLRUiHandler>> iterator = mTLRUiHandlers.iterator();
-            while (iterator.hasNext()) {
-                WeakReference<TLRUiHandler> wefUiHandler = iterator.next();
-                TLRUiHandler handler = wefUiHandler.get();
-                if (handler != null) {
-                    handler.onRefreshStatusChanged(status);
-                } else {
-                    iterator.remove();
-                }
+            Log.d("onRefreshStatusChanged status:" + status + " size:" + mTLRUiHandlers.size());
+            for (TLRUiHandler handler : mTLRUiHandlers) {
+                handler.onRefreshStatusChanged(status);
             }
         }
 
         @Override
         public void onLoadStatusChanged(LoadStatus status) {
-            Log.i("onLoadStatusChanged status:" + status);
-            Iterator<WeakReference<TLRUiHandler>> iterator = mTLRUiHandlers.iterator();
-            while (iterator.hasNext()) {
-                WeakReference<TLRUiHandler> wefUiHandler = iterator.next();
-                TLRUiHandler handler = wefUiHandler.get();
-                if (handler != null) {
-                    handler.onLoadStatusChanged(status);
-                } else {
-                    iterator.remove();
-                }
+            Log.i("onLoadStatusChanged status:" + status + " size:" + mTLRUiHandlers.size());
+            for (TLRUiHandler handler : mTLRUiHandlers) {
+                handler.onLoadStatusChanged(status);
             }
         }
 
         @Override
         public void onOffsetChanged(int totalOffsetY, int totalThresholdY, int offsetY, float threshOffset) {
             //Log.v("onOffsetChanged totalOffsetY:" + totalOffsetY + " totalThresholdY:" + totalThresholdY + " offsetY:" + offsetY + " threshOffset:" + threshOffset);
-            Iterator<WeakReference<TLRUiHandler>> iterator = mTLRUiHandlers.iterator();
-            while (iterator.hasNext()) {
-                WeakReference<TLRUiHandler> wefUiHandler = iterator.next();
-                TLRUiHandler handler = wefUiHandler.get();
-                if (handler != null) {
-                    handler.onOffsetChanged(totalOffsetY, totalThresholdY, offsetY, threshOffset);
-                } else {
-                    iterator.remove();
-                }
+            for (TLRUiHandler handler : mTLRUiHandlers) {
+                handler.onOffsetChanged(totalOffsetY, totalThresholdY, offsetY, threshOffset);
             }
         }
     }

@@ -2,6 +2,7 @@ package com.think.uiloader.ui.di.components;
 
 
 import com.think.uiloader.ui.TLRListActivity;
+import com.think.uiloader.ui.TLRRecyclerActivity;
 import com.think.uiloader.ui.di.AScope;
 
 import dagger.Component;
@@ -14,4 +15,5 @@ import dagger.Component;
 @Component(dependencies = {ApplicationComponent.class})
 public interface ActivityComponent {
     void inject(TLRListActivity activity);
+    void inject(TLRRecyclerActivity activity);
 }

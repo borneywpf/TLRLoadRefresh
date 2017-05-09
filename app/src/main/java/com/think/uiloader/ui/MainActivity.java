@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
                 add(new ListItem("TLRList", TLRListActivity.class));
                 add(new ListItem("TLRTextView", TLRTextViewActivity.class));
                 add(new ListItem("TLRViewGroup", TLRViewGroupActivity.class));
-                add(new ListItem("NestedLoaderView", NestedActivity.class));
+                add(new ListItem("TLRRecyclerView", TLRRecyclerActivity.class));
             }
         };
     }

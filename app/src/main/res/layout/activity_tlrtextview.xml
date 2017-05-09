@@ -27,7 +27,6 @@
             android:gravity="center"
             android:text="I'm Header"
             android:textSize="18sp"
-            android:layout_alignParentBottom="true"
             android:textColor="@android:color/holo_red_dark"
             uiloader:label="head"/>
 
@@ -49,7 +48,6 @@
             android:text="Content"
             android:textSize="36dp"
             android:textStyle="bold"
-            android:layout_below="@id/contentHead"
             android:background="@android:color/holo_green_light"/>
 
         <TextView
@@ -58,7 +56,6 @@
             android:background="@android:color/transparent"
             android:gravity="center"
             android:text="I'm Footer"
-            android:layout_alignParentTop="true"
             android:textSize="18sp"
             android:textColor="@android:color/holo_red_dark"
             uiloader:label="foot"/>

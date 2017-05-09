@@ -3,12 +3,15 @@ package com.think.uiloader.ui;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.think.tlr.Log;
+import com.bumptech.glide.Glide;
 import com.think.tlr.TLRLinearLayout;
 import com.think.tlr.TLRUiHandler;
 import com.think.uiloader.App;
@@ -25,15 +28,15 @@ import java.util.List;
 import javax.inject.Inject;
 
 /**
- * Created by borney on 4/28/17.
+ * Created by borney on 5/9/17.
  */
-public class TLRListActivity extends AppCompatActivity implements ImageContract.View {
-    private ListView mListView;
+public class TLRRecyclerActivity extends AppCompatActivity implements ImageContract.View {
     private TLRLinearLayout mTLRLinearLayout;
-    private ListImageAdapter mAdapter;
+    private RecyclerView mRecyclerView;
     private List<ImageEntity.Image> mImageList = new ArrayList<>();
     private App mApp;
     private int curIndex = 0;
+    private MyAdapter mAdapter;
 
     @Inject
     ImagePresenter mPresenter;
@@ -43,8 +46,21 @@ public class TLRListActivity extends AppCompatActivity implements ImageContract.
         super.onCreate(savedInstanceState);
         mApp = (App) getApplication();
         initActivityComponent();
-        setContentView(R.layout.activity_tlrlistview);
-        mListView = (ListView) findViewById(R.id.content);
+        setContentView(R.layout.activity_tlrrecyclerview);
+        initTlrLayout();
+        initRecyclerView();
+        mTLRLinearLayout.autoRefresh();
+    }
+
+    private void initRecyclerView() {
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.addItemDecoration(new ItemDecorationVerticalDivider(this));
+        mAdapter = new MyAdapter();
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void initTlrLayout() {
         mTLRLinearLayout = (TLRLinearLayout) findViewById(R.id.tlrlayout);
         mTLRLinearLayout.addTLRUiHandler(new TLRUiHandler() {
             @Override
@@ -64,16 +80,6 @@ public class TLRListActivity extends AppCompatActivity implements ImageContract.
 
             }
         });
-        mAdapter = new ListImageAdapter();
-        mListView.setAdapter(mAdapter);
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(TLRListActivity.this, "onclick " + position, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        mTLRLinearLayout.autoRefresh();
     }
 
     private void initActivityComponent() {
@@ -84,18 +90,12 @@ public class TLRListActivity extends AppCompatActivity implements ImageContract.
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
     public void startImages() {
 
     }
 
     @Override
     public void imagesSuccess(List<ImageEntity.Image> images) {
-        Log.w(images.toString());
         if (images != null) {
             mImageList.addAll(0, images);
             curIndex += images.size();
@@ -111,5 +111,43 @@ public class TLRListActivity extends AppCompatActivity implements ImageContract.
     @Override
     public void error(int errorCode) {
 
+    }
+
+    private class MyAdapter extends RecyclerView.Adapter<MyHolder> {
+        private final List<ImageEntity.Image> mList = new ArrayList<>();
+
+        @Override
+        public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new MyHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(MyHolder holder, int position) {
+            ImageEntity.Image image = mList.get(position);
+            Glide.with(TLRRecyclerActivity.this).load(image.getThumbnailUrl()).into(holder.imageView);
+            holder.textView.setText(image.getDesc());
+        }
+
+        @Override
+        public int getItemCount() {
+            return mList.size();
+        }
+
+        public void notifyImages(List<ImageEntity.Image> list) {
+            mList.clear();
+            mList.addAll(list);
+            notifyDataSetChanged();
+        }
+    }
+
+    private class MyHolder extends RecyclerView.ViewHolder {
+        private ImageView imageView;
+        private TextView textView;
+
+        public MyHolder(View itemView) {
+            super(itemView);
+            imageView = (ImageView) itemView.findViewById(R.id.image);
+            textView = (TextView) itemView.findViewById(R.id.text);
+        }
     }
 }

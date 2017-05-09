@@ -174,6 +174,10 @@ class TLRStatusController {
         isAutoRefresh = autoRefresh;
     }
 
+    public boolean isAutoRefresh() {
+        return isAutoRefresh;
+    }
+
     public void setLoadThresholdHeight(int height) {
         mLoadThresholdHeight = height;
     }
@@ -188,5 +192,21 @@ class TLRStatusController {
 
     public RefreshStatus getRefreshStatus() {
         return mRefreshStatus;
+    }
+
+    public boolean isReleaseRefresh() {
+        return isReleaseRefresh;
+    }
+
+    public void setReleaseRefresh(boolean releaseRefresh) {
+        isReleaseRefresh = releaseRefresh;
+    }
+
+    public boolean isReleaseLoad() {
+        return isReleaseLoad;
+    }
+
+    public void setReleaseLoad(boolean releaseLoad) {
+        isReleaseLoad = releaseLoad;
     }
 }
