@@ -228,9 +228,8 @@ class TLRCalculator {
         if (totalThresholdY != 0) {
             offset = (float) (Math.round(((float) totalThresholdY / height) * 100)) / 100;
         }
-        if (mTLRUiHandler != null) {
-            mTLRUiHandler.onOffsetChanged(totalOffsetY, totalThresholdY, y, offset);
-        }
+
+        mTLRUiHandler.onOffsetChanged(totalOffsetY, totalThresholdY, y, offset);
     }
 
     private void setDirection(float xDiff, float yDiff) {

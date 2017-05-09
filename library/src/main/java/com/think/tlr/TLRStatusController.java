@@ -127,7 +127,7 @@ class TLRStatusController {
                 notifyLoadStatusChanged(LoadStatus.LOADING);
             }
             notifyLoadStatusChanged(LoadStatus.IDLE);
-            
+
         } else if (mLoadStatus != LoadStatus.IDLE) {
             notifyLoadStatusChanged(LoadStatus.IDLE);
         }
@@ -155,9 +155,7 @@ class TLRStatusController {
         if (mRefreshStatus == RefreshStatus.IDLE) {
             isAutoRefresh = false;
         }
-        if (mTLRUiHandler != null) {
-            mTLRUiHandler.onRefreshStatusChanged(mRefreshStatus);
-        }
+        mTLRUiHandler.onRefreshStatusChanged(mRefreshStatus);
     }
 
     private void notifyLoadStatusChanged(LoadStatus status) {
@@ -165,9 +163,7 @@ class TLRStatusController {
             return;
         }
         mLoadStatus = status;
-        if (mTLRUiHandler != null) {
-            mTLRUiHandler.onLoadStatusChanged(mLoadStatus);
-        }
+        mTLRUiHandler.onLoadStatusChanged(mLoadStatus);
     }
 
     public void setTLRUiHandler(TLRUiHandler uiHandler) {

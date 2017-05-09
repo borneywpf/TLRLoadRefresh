@@ -16,8 +16,10 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- *
- * Created by borney on 4/28/17.
+ * @author borney
+ * @date 4/28/17
+ * @see android.view.View
+ * @see android.view.ViewGroup
  */
 public final class TLRLinearLayout extends ViewGroup {
     public static final int LABEL_HEAD = 1;
@@ -37,7 +39,7 @@ public final class TLRLinearLayout extends ViewGroup {
     private boolean isKeepContentLayout = false;
     private View mHeaderView;
     /**
-     * flag 是 {@link TLRLinearLayout#LABEL_CONTENT} 的view,
+     * flag is {@link TLRLinearLayout#LABEL_CONTENT} view,
      * 只有标记为content的view才能触发刷新或加载操作
      */
     private List<View> mContentViews;
@@ -306,12 +308,36 @@ public final class TLRLinearLayout extends ViewGroup {
                 || x >= view.getRight());
     }
 
+    /**
+     * start auto refresh
+     */
     public void autoRefresh() {
         mCalculator.startAutoRefresh();
     }
 
+    /**
+     * 恢复view到初始状态
+     */
     public void resetKeepView() {
         mCalculator.resetKeepView();
+    }
+
+    /**
+     * add {@link TLRUiHandler} callback
+     *
+     * @param handler
+     */
+    public void addTLRUiHandler(TLRUiHandler handler) {
+        mUiHandlerWrapper.addTLRUiHandler(handler);
+    }
+
+    /**
+     * remove {@link TLRUiHandler} callback
+     *
+     * @param handler
+     */
+    public void removeTLRUiHandler(TLRUiHandler handler) {
+        mUiHandlerWrapper.removeTLRUiHandler(handler);
     }
 
     void move(int y) {
@@ -406,6 +432,29 @@ public final class TLRLinearLayout extends ViewGroup {
 
     private static class TLRUiHandlerWrapper implements TLRUiHandler {
         private final List<WeakReference<TLRUiHandler>> mTLRUiHandlers = new CopyOnWriteArrayList<>();
+
+        public void addTLRUiHandler(TLRUiHandler handler) {
+            if (handler != null) {
+                mTLRUiHandlers.add(new WeakReference<TLRUiHandler>(handler));
+            }
+        }
+
+        public void removeTLRUiHandler(TLRUiHandler handler) {
+            if (handler != null) {
+                Iterator<WeakReference<TLRUiHandler>> iterator = mTLRUiHandlers.iterator();
+                while (iterator.hasNext()) {
+                    WeakReference<TLRUiHandler> wefUiHandler = iterator.next();
+                    TLRUiHandler h = wefUiHandler.get();
+                    if (h != null) {
+                        if (handler.equals(h)) {
+                            iterator.remove();
+                        }
+                    } else {
+                        iterator.remove();
+                    }
+                }
+            }
+        }
 
         @Override
         public void onRefreshStatusChanged(RefreshStatus status) {
