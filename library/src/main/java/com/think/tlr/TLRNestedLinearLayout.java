@@ -33,7 +33,6 @@ public class TLRNestedLinearLayout extends TLRLinearLayout implements NestedScro
 
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
-        Log.d("onStartNestedScroll child = " + child.getClass().getSimpleName() + " target = " + target.getClass().getSimpleName() + " nestedScrollAxes = " + nestedScrollAxes);
         if (!isEnableLoad() && !isEnableRefresh()) {
             return false;
         }

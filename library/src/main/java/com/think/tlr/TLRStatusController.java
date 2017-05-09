@@ -77,6 +77,7 @@ class TLRStatusController {
                     notifyRefreshStatusChanged(RefreshStatus.RELEASE_REFRESH);
                     if (isAutoRefresh) {
                         notifyRefreshStatusChanged(RefreshStatus.REFRESHING);
+                        notifyRefreshStatusChanged(RefreshStatus.REFRESH_COMPLETE);
                         notifyRefreshStatusChanged(RefreshStatus.IDLE);
                         isAutoRefresh = false;
                     }
@@ -119,31 +120,33 @@ class TLRStatusController {
     }
 
     /**
-     * calculate load view status when up motionevent
-     */
-    public void calculatorUpLoadStatus() {
-        if (mLoadStatus == LoadStatus.RELEASE_LOAD) {
-            if (isReleaseLoad) {
-                notifyLoadStatusChanged(LoadStatus.LOADING);
-            }
-            notifyLoadStatusChanged(LoadStatus.IDLE);
-
-        } else if (mLoadStatus != LoadStatus.IDLE) {
-            notifyLoadStatusChanged(LoadStatus.IDLE);
-        }
-    }
-
-    /**
      * calculate refresh view status when up motionevent
      */
     public void calculatorUpRefreshStatus() {
         if (mRefreshStatus == RefreshStatus.RELEASE_REFRESH) {
             if (isReleaseRefresh) {
                 notifyRefreshStatusChanged(RefreshStatus.REFRESHING);
+                notifyRefreshStatusChanged(RefreshStatus.REFRESH_COMPLETE);
             }
             notifyRefreshStatusChanged(RefreshStatus.IDLE);
         } else if (mRefreshStatus != RefreshStatus.IDLE) {
             notifyRefreshStatusChanged(RefreshStatus.IDLE);
+        }
+    }
+
+    /**
+     * calculate load view status when up motionevent
+     */
+    public void calculatorUpLoadStatus() {
+        if (mLoadStatus == LoadStatus.RELEASE_LOAD) {
+            if (isReleaseLoad) {
+                notifyLoadStatusChanged(LoadStatus.LOADING);
+                notifyLoadStatusChanged(LoadStatus.LOAD_COMPLETE);
+            }
+            notifyLoadStatusChanged(LoadStatus.IDLE);
+
+        } else if (mLoadStatus != LoadStatus.IDLE) {
+            notifyLoadStatusChanged(LoadStatus.IDLE);
         }
     }
 

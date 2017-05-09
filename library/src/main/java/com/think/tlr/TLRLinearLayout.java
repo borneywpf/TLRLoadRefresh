@@ -54,14 +54,14 @@ public class TLRLinearLayout extends ViewGroup {
      * 刷新状态
      */
     public enum RefreshStatus {
-        IDLE, PULL_DOWN, RELEASE_REFRESH, REFRESHING
+        IDLE, PULL_DOWN, RELEASE_REFRESH, REFRESHING, REFRESH_COMPLETE
     }
 
     /**
      * 加载状态
      */
     public enum LoadStatus {
-        IDLE, PULL_UP, RELEASE_LOAD, LOADING
+        IDLE, PULL_UP, RELEASE_LOAD, LOADING, LOAD_COMPLETE
     }
 
     public TLRLinearLayout(Context context) {
@@ -155,11 +155,15 @@ public class TLRLinearLayout extends ViewGroup {
         }
 
         if (mHeaderView == null) {
-            Log.d("has not header view!");
+            Log.e("has not header view!");
         }
 
         if (mFooterView == null) {
-            Log.d("has not footer view!");
+            Log.e("has not footer view!");
+        }
+
+        if (mContentChilds.size() == 0) {
+            throw new RuntimeException("must have content view !!!");
         }
 
         for (View view : mContentChilds) {
@@ -286,10 +290,10 @@ public class TLRLinearLayout extends ViewGroup {
     }
 
     void move(int y) {
-        if (isEnableRefresh) {
+        if (isEnableRefresh && mHeaderView != null) {
             mHeaderView.offsetTopAndBottom(y);
         }
-        if (isEnableLoad) {
+        if (isEnableLoad && mFooterView != null) {
             mFooterView.offsetTopAndBottom(y);
         }
         if (!isKeepContentLayout) {

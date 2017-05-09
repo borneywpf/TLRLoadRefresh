@@ -7,7 +7,8 @@
     android:layout_height="match_parent"
     uiloader:enableRefresh="true"
     uiloader:enableLoad="false"
-    uiloader:keepHeadRefreshing="false">
+    uiloader:keepHeadRefreshing="false"
+    uiloader:keepFootLoading="false">
 
     <TextView
         android:layout_width="match_parent"
@@ -22,4 +23,13 @@
         android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@android:color/holo_blue_bright"
+        android:gravity="center"
+        android:text="I'm Footer"
+        android:textSize="18sp"
+        uiloader:label="foot"/>
 </com.think.tlr.TLRNestedLinearLayout>
