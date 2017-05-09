@@ -16,17 +16,34 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
+ *
  * Created by borney on 4/28/17.
  */
 public final class TLRLinearLayout extends ViewGroup {
     public static final int LABEL_HEAD = 1;
     public static final int LABEL_CONTENT = 2;
     public static final int LABEL_FOOT = 3;
+    /**
+     * 上拉加载功能是否可用
+     */
     private boolean isEnableLoad = false;
+    /**
+     * 下拉刷新功能是否可用
+     */
     private boolean isEnableRefresh = false;
+    /**
+     * 操作过程中是否保持contentLayout不移动
+     */
     private boolean isKeepContentLayout = false;
     private View mHeaderView;
+    /**
+     * flag 是 {@link TLRLinearLayout#LABEL_CONTENT} 的view,
+     * 只有标记为content的view才能触发刷新或加载操作
+     */
     private List<View> mContentViews;
+    /**
+     * 需要向ContentLayout中添加的子view
+     */
     private List<View> mContentChilds;
     private LinearLayout mContentLayout;
     private View mFooterView;
@@ -34,10 +51,16 @@ public final class TLRLinearLayout extends ViewGroup {
     private TLRUiHandlerWrapper mUiHandlerWrapper;
     private boolean isAddViewSelf = false;
 
+    /**
+     * 刷新状态
+     */
     public enum RefreshStatus {
         IDLE, PULL_DOWN, RELEASE_REFRESH, REFRESHING
     }
 
+    /**
+     * 加载状态
+     */
     public enum LoadStatus {
         IDLE, PULL_UP, RELEASE_LOAD, LOADING
     }
@@ -229,32 +252,49 @@ public final class TLRLinearLayout extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-//        if (mCalculator.hasAnimatorRunning()) {
-//            return;
-//        }
+        int totalOffsetY = mCalculator.getTotalOffsetY();
+
         int parentLeft = getPaddingLeft();
         int parentTop = getPaddingTop();
-        int count = getChildCount();
+        int parentBottom = parentTop + getMeasuredHeight();
 
-        int contentLeft = parentLeft;
-        int contentTop = parentTop;
-        int contentRight = contentLeft + mContentLayout.getMeasuredWidth();
-        int contentBottom = contentTop + mContentLayout.getMeasuredHeight();
-        Log.i("change:" + changed + " contentLeft:" + contentLeft + " contentTop:" + contentTop + " contentRight:" + contentRight + " contentBottom:" + b);
-        mContentLayout.layout(contentLeft, contentTop, contentRight, contentBottom);
-        for (int i = 0; i < count; i++) {
-            View child = getChildAt(i);
-            int left = parentLeft;
-            int right = left + child.getMeasuredWidth();
-            if (child.equals(mHeaderView)) {
-                int bottom = contentTop;
-                int top = bottom - child.getMeasuredHeight();
-                child.layout(left, top, right, bottom);
-            } else if (child.equals(mFooterView)) {
-                int top = contentBottom;
-                int bottom = top + child.getMeasuredHeight();
-                child.layout(left, top, right, bottom);
+        if (mContentLayout != null && mContentLayout.getVisibility() != GONE) {
+            LayoutParams lp = (LayoutParams) mContentLayout.getLayoutParams();
+            int left = parentLeft + lp.leftMargin;
+            int top = parentTop + lp.topMargin;
+            if (!isKeepContentLayout) {
+                top += totalOffsetY;
             }
+            int right = left + mContentLayout.getMeasuredWidth();
+            int bottom = top + mContentLayout.getMeasuredHeight();
+            Log.i("ContentLayout left:" + left + " right:" + right + " top:" + top + " bottom:" + bottom);
+            mContentLayout.layout(left, top, right, bottom);
+        }
+
+        if (mHeaderView != null && mHeaderView.getVisibility() != GONE) {
+            LayoutParams lp = (LayoutParams) mHeaderView.getLayoutParams();
+            int left = parentLeft + lp.leftMargin;
+            int bottom = parentTop - lp.bottomMargin;//layout head calculator bottom first
+            if (isEnableRefresh) { //refresh is enabled
+                bottom += totalOffsetY;
+            }
+            int right = left + mHeaderView.getMeasuredWidth();
+            int top = bottom - mHeaderView.getMeasuredHeight();
+            Log.i("HeaderView left:" + left + " right:" + right + " top:" + top + " bottom:" + bottom);
+            mHeaderView.layout(left, top, right, bottom);
+        }
+
+        if (mFooterView != null && mFooterView.getVisibility() != GONE) {
+            LayoutParams lp = (LayoutParams) mFooterView.getLayoutParams();
+            int left = parentLeft + lp.leftMargin;
+            int top = parentBottom + lp.topMargin;//layout foot calculator top first
+            if (isEnableLoad) { //load is enabled
+                top += totalOffsetY;
+            }
+            int right = left + mFooterView.getMeasuredWidth();
+            int bottom = top + mFooterView.getMeasuredHeight();
+            Log.i("FooterView left:" + left + " right:" + right + " top:" + top + " bottom:" + bottom);
+            mFooterView.layout(left, top, right, bottom);
         }
     }
 
@@ -275,8 +315,12 @@ public final class TLRLinearLayout extends ViewGroup {
     }
 
     void move(int y) {
-        mHeaderView.offsetTopAndBottom(y);
-        mFooterView.offsetTopAndBottom(y);
+        if (isEnableRefresh) {
+            mHeaderView.offsetTopAndBottom(y);
+        }
+        if (isEnableLoad) {
+            mFooterView.offsetTopAndBottom(y);
+        }
         if (!isKeepContentLayout) {
             mContentLayout.offsetTopAndBottom(y);
         }
