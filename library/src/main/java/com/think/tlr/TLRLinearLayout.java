@@ -172,9 +172,10 @@ public class TLRLinearLayout extends ViewGroup {
         }
 
         for (View view : mContentChilds) {
-            ViewGroup.LayoutParams params = view.getLayoutParams();
             removeView(view);
-            mContentLayout.addView(view, new LinearLayout.LayoutParams(params.width, params.height));
+            ViewGroup.MarginLayoutParams params = (MarginLayoutParams) view.getLayoutParams();
+            LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(params);
+            mContentLayout.addView(view, llp);
         }
         addSelfView(mContentLayout, 0, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         Log.i("ContentLayout count:" + mContentLayout.getChildCount());

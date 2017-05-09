@@ -40,10 +40,10 @@ public class MainActivity extends AppCompatActivity {
     private List<ListItem<AppCompatActivity>> initList() {
         return new ArrayList<ListItem<AppCompatActivity>>() {
             {
-                add(new ListItem("TLRList", TLRListActivity.class));
-                add(new ListItem("TLRTextView", TLRTextViewActivity.class));
-                add(new ListItem("TLRViewGroup", TLRViewGroupActivity.class));
-                add(new ListItem("TLRRecyclerView", TLRRecyclerActivity.class));
+                add(new ListItem(getString(R.string.label_listview), TLRListActivity.class));
+                add(new ListItem(getString(R.string.label_recyclerview), TLRRecyclerActivity.class));
+                add(new ListItem(getString(R.string.label_viewgroup), TLRViewGroupActivity.class));
+                add(new ListItem(getString(R.string.label_textview), TLRTextViewActivity.class));
             }
         };
     }

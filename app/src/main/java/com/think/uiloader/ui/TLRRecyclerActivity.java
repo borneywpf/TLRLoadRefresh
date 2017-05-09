@@ -49,7 +49,6 @@ public class TLRRecyclerActivity extends AppCompatActivity implements ImageContr
         setContentView(R.layout.activity_tlrrecyclerview);
         initTlrLayout();
         initRecyclerView();
-        mTLRLinearLayout.autoRefresh();
     }
 
     private void initRecyclerView() {

@@ -25,10 +25,10 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ui.TLRViewGroupActivity"/>
-        <activity android:name=".ui.TLRListActivity"/>
-        <activity android:name=".ui.TLRTextViewActivity"/>
-        <activity android:name=".ui.TLRRecyclerActivity"/>
+        <activity android:name=".ui.TLRListActivity" android:label="@string/label_listview"/>
+        <activity android:name=".ui.TLRRecyclerActivity" android:label="@string/label_recyclerview"/>
+        <activity android:name=".ui.TLRViewGroupActivity" android:label="@string/label_viewgroup"/>
+        <activity android:name=".ui.TLRTextViewActivity" android:label="@string/label_textview"/>
     </application>
 
 </manifest>

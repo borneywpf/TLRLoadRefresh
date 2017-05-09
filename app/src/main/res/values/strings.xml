@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">UILoader</string>
+    <string name="app_name">TLR</string>
+    <string name="label_listview">ListView下拉刷新</string>
+    <string name="label_recyclerview">RecyclerView下拉刷新</string>
+    <string name="label_viewgroup">ViewGroup下拉刷新</string>
+    <string name="label_textview">TextView下拉刷新</string>
 </resources>
