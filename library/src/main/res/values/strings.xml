@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Library</string>
+    <string name="tlr_def_head_pull_down">下拉</string>
+    <string name="tlr_def_head_release_refresh">释放刷新</string>
+    <string name="tlr_def_head_refreshing">刷新中...</string>
+    <string name="tlr_def_head_refresh_complete">刷新完成</string>
+
+    <string name="tlr_def_foot_pull_up">上拉加载</string>
+    <string name="tlr_def_foot_release_load">释放加载</string>
+    <string name="tlr_def_foot_loading">加载中...</string>
+    <string name="tlr_def_foot_load_complete">加载完成</string>
 </resources>

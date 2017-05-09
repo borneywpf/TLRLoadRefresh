@@ -19,6 +19,7 @@ import java.util.List;
  * @see android.view.ViewGroup
  */
 public class TLRLinearLayout extends ViewGroup {
+    private static final boolean DEBUG = false;
     public static final int LABEL_HEAD = 1;
     public static final int LABEL_CONTENT = 2;
     public static final int LABEL_FOOT = 3;
@@ -155,7 +156,11 @@ public class TLRLinearLayout extends ViewGroup {
         }
 
         if (mHeaderView == null) {
-            Log.e("has not header view!");
+            Log.e("has not header view!!!");
+            if (isEnableRefresh) {
+                Log.v("use default head view!!!");
+                setHeaderView(new TLRDefHeadView(getContext()));
+            }
         }
 
         if (mFooterView == null) {
@@ -235,7 +240,9 @@ public class TLRLinearLayout extends ViewGroup {
                 } else if (child.equals(mFooterView)) {
                     mCalculator.setFootViewHeight(child.getMeasuredHeight());
                 }
-                Log.d(child.getClass().getSimpleName() + " mw:" + child.getMeasuredWidth() + " mh:" + child.getMeasuredHeight());
+                if (DEBUG) {
+                    Log.d(child.getClass().getSimpleName() + " mw:" + child.getMeasuredWidth() + " mh:" + child.getMeasuredHeight());
+                }
             }
         }
         setMeasuredDimension(width, height);
@@ -258,7 +265,11 @@ public class TLRLinearLayout extends ViewGroup {
             }
             int right = left + mContentLayout.getMeasuredWidth();
             int bottom = top + mContentLayout.getMeasuredHeight();
-            Log.i("ContentLayout left:" + left + " right:" + right + " top:" + top + " bottom:" + bottom);
+
+            if (DEBUG) {
+                Log.i("ContentLayout left:" + left + " right:" + right + " top:" + top + " bottom:" + bottom);
+            }
+
             mContentLayout.layout(left, top, right, bottom);
         }
 
@@ -271,7 +282,11 @@ public class TLRLinearLayout extends ViewGroup {
             }
             int right = left + mHeaderView.getMeasuredWidth();
             int top = bottom - mHeaderView.getMeasuredHeight();
-            Log.i("HeaderView left:" + left + " right:" + right + " top:" + top + " bottom:" + bottom);
+
+            if (DEBUG) {
+                Log.i("HeaderView left:" + left + " right:" + right + " top:" + top + " bottom:" + bottom);
+            }
+
             mHeaderView.layout(left, top, right, bottom);
         }
 
@@ -284,7 +299,11 @@ public class TLRLinearLayout extends ViewGroup {
             }
             int right = left + mFooterView.getMeasuredWidth();
             int bottom = top + mFooterView.getMeasuredHeight();
-            Log.i("FooterView left:" + left + " right:" + right + " top:" + top + " bottom:" + bottom);
+
+            if (DEBUG) {
+                Log.i("FooterView left:" + left + " right:" + right + " top:" + top + " bottom:" + bottom);
+            }
+
             mFooterView.layout(left, top, right, bottom);
         }
     }
@@ -485,10 +504,19 @@ public class TLRLinearLayout extends ViewGroup {
      * @param headerView
      */
     public void setHeaderView(View headerView) {
-        if (mHeaderView == headerView) {
+        if (headerView == null || mHeaderView == headerView) {
             return;
         }
-        mHeaderView = headerView;
+        if (mHeaderView == null) {
+            mHeaderView = headerView;
+            LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.label = LABEL_HEAD;
+            mHeaderView.setLayoutParams(params);
+            addView(mHeaderView);
+        } else {
+            mHeaderView = headerView;
+        }
+        Log.d("setHeaderView:" + mHeaderView.getClass().getSimpleName());
         if (mHeaderView instanceof TLRUiHandler) {
             addTLRUiHandler((TLRUiHandler) mHeaderView);
         }

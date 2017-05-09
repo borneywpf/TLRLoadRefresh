@@ -8,7 +8,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.think.tlr.Log;
 import com.think.tlr.TLRLinearLayout;
 import com.think.tlr.TLRUiHandler;
 import com.think.uiloader.App;
@@ -72,8 +71,6 @@ public class TLRListActivity extends AppCompatActivity implements ImageContract.
                 Toast.makeText(TLRListActivity.this, "onclick " + position, Toast.LENGTH_SHORT).show();
             }
         });
-
-        mTLRLinearLayout.autoRefresh();
     }
 
     private void initActivityComponent() {
@@ -95,7 +92,6 @@ public class TLRListActivity extends AppCompatActivity implements ImageContract.
 
     @Override
     public void imagesSuccess(List<ImageEntity.Image> images) {
-        Log.w(images.toString());
         if (images != null) {
             mImageList.addAll(0, images);
             curIndex += images.size();

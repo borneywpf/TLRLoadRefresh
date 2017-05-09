@@ -1,59 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:uiloader="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+<com.think.tlr.TLRLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:uiloader="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tlrlayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    uiloader:enableRefresh="true"
+    uiloader:enableLoad="false"
+    uiloader:keepHeadRefreshing="false"
+    uiloader:keepContentLayout="false">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:src="@drawable/list_top_image"
-        android:scaleType="fitXY"
-        android:background="@android:color/holo_blue_light"/>
-
-    <com.think.tlr.TLRLinearLayout
-        android:id="@+id/tlrlayout"
+    <ListView
+        android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        uiloader:enableRefresh="true"
-        uiloader:enableLoad="false"
-        uiloader:keepHeadRefreshing="false"
-        uiloader:keepContentLayout="false">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="@android:color/holo_red_light"
-            android:gravity="center"
-            android:text="I'm Header"
-            android:textSize="18sp"
-            uiloader:label="head"/>
-
-        <TextView
-            android:id="@+id/contentHead"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="I'm Content Head"
-            android:textSize="20sp"
-            android:gravity="center"
-            android:background="@android:color/holo_orange_light"/>
-
-        <ListView
-            android:id="@+id/content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            uiloader:label="content"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="@android:color/holo_blue_bright"
-            android:gravity="center"
-            android:text="I'm Footer"
-            android:textSize="18sp"
-            uiloader:label="foot"/>
+        uiloader:label="content"/>
 
 
-    </com.think.tlr.TLRLinearLayout>
-</LinearLayout>
+</com.think.tlr.TLRLinearLayout>
