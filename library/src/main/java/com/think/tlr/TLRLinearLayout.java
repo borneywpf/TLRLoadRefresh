@@ -295,7 +295,7 @@ public class TLRLinearLayout extends ViewGroup {
             LayoutParams lp = (LayoutParams) mHeaderView.getLayoutParams();
             int left = parentLeft + lp.leftMargin;
             int bottom = parentTop - lp.bottomMargin;//layout head calculator bottom first
-            if (isEnableRefresh) { //refresh is enabled
+            if (isEnableRefresh && canMoveHeadByTLR) { //refresh is enabled
                 bottom += totalOffsetY;
             }
             int right = left + mHeaderView.getMeasuredWidth();
@@ -312,7 +312,7 @@ public class TLRLinearLayout extends ViewGroup {
             LayoutParams lp = (LayoutParams) mFooterView.getLayoutParams();
             int left = parentLeft + lp.leftMargin;
             int top = parentBottom + lp.topMargin;//layout foot calculator top first
-            if (isEnableLoad) { //load is enabled
+            if (isEnableLoad && canMoveFootByTLR) { //load is enabled
                 top += totalOffsetY;
             }
             int right = left + mFooterView.getMeasuredWidth();
@@ -626,6 +626,38 @@ public class TLRLinearLayout extends ViewGroup {
      */
     public void setLoadThreshold(float loadThreshold) {
         mCalculator.setLoadThreshold(loadThreshold);
+    }
+
+    /**
+     * get the maximum travel distance to refresh
+     */
+    public int getRefreshMaxMoveDistance() {
+        return mCalculator.getRefreshMaxMoveDistance();
+    }
+
+    /**
+     * Set the maximum travel distance to refresh
+     *
+     * @param refreshMaxMoveDistance
+     */
+    public void setRefreshMaxMoveDistance(int refreshMaxMoveDistance) {
+        mCalculator.setRefreshMaxMoveDistance(refreshMaxMoveDistance);
+    }
+
+    /**
+     * get the maximum travel distance to load
+     */
+    public int getLoadMaxMoveDistance() {
+        return mCalculator.getLoadMaxMoveDistance();
+    }
+
+    /**
+     * Set the maximum travel distance to load
+     *
+     * @param loadMaxMoveDistance
+     */
+    public void setLoadMaxMoveDistance(int loadMaxMoveDistance) {
+        mCalculator.setLoadMaxMoveDistance(loadMaxMoveDistance);
     }
 
     /**

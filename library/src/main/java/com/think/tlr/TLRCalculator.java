@@ -51,6 +51,11 @@ class TLRCalculator {
     private int mRefreshThresholdHeight, mLoadThresholdHeight;
 
     /**
+     * 刷新或加载移动的最大距离
+     */
+    private int mRefreshMaxMoveDistance = -1, mLoadMaxMoveDistance = -1;
+
+    /**
      * 是否保存刷新view/加载view
      */
     private boolean isKeepHeadRefreshing = true, isKeepFootLoading = true;
@@ -102,6 +107,10 @@ class TLRCalculator {
                     isKeepHeadRefreshing = array.getBoolean(index, isKeepHeadRefreshing);
                 } else if (index == R.styleable.TLRLinearLayout_keepFootLoading) {
                     isKeepFootLoading = array.getBoolean(index, isKeepFootLoading);
+                } else if (index == R.styleable.TLRLinearLayout_refreshMaxMoveDistance) {
+                    mRefreshMaxMoveDistance = array.getDimensionPixelOffset(index, mRefreshMaxMoveDistance);
+                } else if (index == R.styleable.TLRLinearLayout_loadMaxMoveDistance) {
+                    mLoadMaxMoveDistance = array.getDimensionPixelOffset(index, mLoadMaxMoveDistance);
                 }
             }
         } finally {
@@ -109,6 +118,8 @@ class TLRCalculator {
         }
         Log.v("isKeepHeadRefreshing = " + isKeepHeadRefreshing);
         Log.v("isKeepFootLoading = " + isKeepFootLoading);
+        Log.v("mRefreshMaxMoveDistance = " + mRefreshMaxMoveDistance);
+        Log.v("mLoadMaxMoveDistance = " + mLoadMaxMoveDistance);
     }
 
     public void setTLRUiHandler(TLRUiHandler uiHandler) {
@@ -198,10 +209,17 @@ class TLRCalculator {
             isBackStatus = false;
         }
 
+        y = calculateMaxMoveDistance(y, mTotalOffsetY);
+
+        if (y == 0) {
+            return;
+        }
+
         //Log.d("mTotalOffsetY:" + mTotalOffsetY + " y:" + y);
 
         //move view
         mTotalOffsetY += y;
+
         mTLRLinearLayout.move(y);
 
         //calculate move status
@@ -221,6 +239,21 @@ class TLRCalculator {
             isBackStatus = true;
             notifyPixOffset(0, 0, y);
         }
+    }
+
+    private int calculateMaxMoveDistance(int y, int totalOffsetY) {
+        int tempTotalOffsetY = totalOffsetY + y;
+
+        // calculate refresh over max move distance
+        if (tempTotalOffsetY > 0 && mRefreshMaxMoveDistance > 0 && tempTotalOffsetY > mRefreshMaxMoveDistance) {
+            y = mRefreshMaxMoveDistance - mTotalOffsetY;
+        }
+
+        // calculate load over max move distance
+        if (tempTotalOffsetY < 0 && mLoadMaxMoveDistance > 0 && -tempTotalOffsetY > mLoadMaxMoveDistance) {
+            y = -mLoadMaxMoveDistance - mTotalOffsetY;
+        }
+        return y;
     }
 
     private void notifyPixOffset(int totalOffsetY, int height, int y) {
@@ -378,6 +411,22 @@ class TLRCalculator {
     public void setLoadThreshold(float loadThreshold) {
         mLoadThreshold = loadThreshold;
         setFootViewHeight(mFootHeight);
+    }
+
+    public int getRefreshMaxMoveDistance() {
+        return mRefreshMaxMoveDistance;
+    }
+
+    public void setRefreshMaxMoveDistance(int refreshMaxMoveDistance) {
+        mRefreshMaxMoveDistance = refreshMaxMoveDistance;
+    }
+
+    public int getLoadMaxMoveDistance() {
+        return mLoadMaxMoveDistance;
+    }
+
+    public void setLoadMaxMoveDistance(int loadMaxMoveDistance) {
+        mLoadMaxMoveDistance = loadMaxMoveDistance;
     }
 
     public float getResistance() {

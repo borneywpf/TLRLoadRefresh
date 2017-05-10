@@ -5,6 +5,8 @@
         <attr name="enableLoad" format="boolean"/>
         <attr name="refreshThreshold" format="float"/>
         <attr name="loadThreshold" format="float"/>
+        <attr name="refreshMaxMoveDistance" format="dimension"/>
+        <attr name="loadMaxMoveDistance" format="dimension"/>
         <attr name="closeAnimDuration" format="integer"/>
         <attr name="openAnimDuration" format="integer"/>
         <attr name="resistance" format="float"/>
