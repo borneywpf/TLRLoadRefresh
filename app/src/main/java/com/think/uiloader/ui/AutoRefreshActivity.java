@@ -94,7 +94,7 @@ public class AutoRefreshActivity extends AppCompatActivity implements ImageContr
                     mAdapter.notifyImages(mImageList);
                     mTLRLinearLayout.finishRefresh(true);
                 }
-            }, 2000);
+            }, 1500);
         }
     }
 

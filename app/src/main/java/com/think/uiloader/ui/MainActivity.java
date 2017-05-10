@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
                 add(new ListItem(getString(R.string.label_keephead), KeepHeadActivity.class));
                 add(new ListItem(getString(R.string.label_autorefresh), AutoRefreshActivity.class));
                 add(new ListItem(getString(R.string.label_cannot_move_head_by_tlr), CannotMoveHeadByTLRActivity.class));
+                add(new ListItem(getString(R.string.label_refresh_max_move_distance), RefreshMaxMoveDistanceActivity.class));
             }
         };
     }

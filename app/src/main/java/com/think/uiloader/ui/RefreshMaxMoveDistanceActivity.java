@@ -27,7 +27,7 @@ import javax.inject.Inject;
 /**
  * Created by borney on 4/28/17.
  */
-public class KeepHeadActivity extends AppCompatActivity implements ImageContract.View {
+public class RefreshMaxMoveDistanceActivity extends AppCompatActivity implements ImageContract.View {
     private ListView mListView;
     private TLRLinearLayout mTLRLinearLayout;
     private ListImageAdapter mAdapter;
@@ -44,7 +44,7 @@ public class KeepHeadActivity extends AppCompatActivity implements ImageContract
         super.onCreate(savedInstanceState);
         mApp = (App) getApplication();
         initActivityComponent();
-        setContentView(R.layout.activity_tlrkeephead);
+        setContentView(R.layout.activity_tlrrefresh_max_move_distance);
         mListView = (ListView) findViewById(R.id.content);
         mTLRLinearLayout = (TLRLinearLayout) findViewById(R.id.tlrlayout);
         mTLRLinearLayout.addTLRUiHandler(new TLRUiHandlerAdapter() {
@@ -60,7 +60,7 @@ public class KeepHeadActivity extends AppCompatActivity implements ImageContract
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(KeepHeadActivity.this, "onclick " + position, Toast.LENGTH_SHORT).show();
+                Toast.makeText(RefreshMaxMoveDistanceActivity.this, "onclick " + position, Toast.LENGTH_SHORT).show();
             }
         });
     }
