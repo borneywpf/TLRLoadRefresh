@@ -406,7 +406,7 @@ class TLRCalculator {
         if (isKeepHeadRefreshing) {
             resetKeepView();
         }
-        
+
         mTLRUiHandler.onFinish(true, isSuccess, errorCode);
 
         mStatusController.finishRefresh();
