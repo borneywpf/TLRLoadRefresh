@@ -265,7 +265,7 @@ class TLRCalculator {
         if (totalThresholdY != 0) {
             offset = (float) (Math.round(((float) totalThresholdY / height) * 100)) / 100;
         }
-        boolean isRefresh = totalOffsetY > 0;
+        boolean isRefresh = totalOffsetY != 0 ? totalOffsetY > 0 : y < 0;
         mTLRUiHandler.onOffsetChanged(isRefresh, totalOffsetY, totalThresholdY, y, offset);
     }
 

@@ -1,8 +1,9 @@
 package com.think.tlr;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 public class TLRDefHeadView extends LinearLayout implements TLRUiHandler {
     private ImageView mImageView;
     private TextView mTextView;
+    private ValueAnimator mReleaseAnimator, mRefreshAnimator;
 
     public TLRDefHeadView(Context context) {
         this(context, null);
@@ -28,6 +30,35 @@ public class TLRDefHeadView extends LinearLayout implements TLRUiHandler {
         setWillNotDraw(true);
         mImageView = (ImageView) findViewById(R.id.tlr_def_icon);
         mTextView = (TextView) findViewById(R.id.tlr_def_text);
+        initRefreshAnimator();
+        initReleaseAnimator();
+    }
+
+    private void initRefreshAnimator() {
+        mRefreshAnimator = ValueAnimator.ofFloat(0, 360);
+        mRefreshAnimator.setDuration(500);
+        mRefreshAnimator.setInterpolator(new LinearInterpolator());
+        mRefreshAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (float) animation.getAnimatedValue();
+                mImageView.setRotation(value);
+            }
+        });
+        mRefreshAnimator.setRepeatCount(ValueAnimator.INFINITE);
+    }
+
+    private void initReleaseAnimator() {
+        mReleaseAnimator = ValueAnimator.ofFloat(0, 180);
+        mReleaseAnimator.setDuration(200);
+        mReleaseAnimator.setInterpolator(new LinearInterpolator());
+        mReleaseAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (float) animation.getAnimatedValue();
+                mImageView.setRotation(value);
+            }
+        });
     }
 
     @Override
@@ -38,9 +69,17 @@ public class TLRDefHeadView extends LinearLayout implements TLRUiHandler {
                 break;
             case RELEASE_REFRESH:
                 mTextView.setText(R.string.tlr_def_head_release_refresh);
+                mReleaseAnimator.start();
                 break;
             case REFRESHING:
+                if (mReleaseAnimator.isRunning()) {
+                    mReleaseAnimator.end();
+                }
+                mImageView.setImageResource(R.drawable.tlr_def_refresh_icon);
                 mTextView.setText(R.string.tlr_def_head_refreshing);
+                mRefreshAnimator.start();
+                break;
+            case IDLE:
                 break;
         }
     }
@@ -51,18 +90,6 @@ public class TLRDefHeadView extends LinearLayout implements TLRUiHandler {
         }
     }
 
-    public void setImageResource(int id) {
-        if (mImageView != null) {
-            mImageView.setImageResource(id);
-        }
-    }
-
-    public void setImageDrawable(Drawable drawalbe) {
-        if (mImageView != null) {
-            mImageView.setImageDrawable(drawalbe);
-        }
-    }
-
     @Override
     public void onLoadStatusChanged(TLRLinearLayout.LoadStatus status) {
 
@@ -70,12 +97,18 @@ public class TLRDefHeadView extends LinearLayout implements TLRUiHandler {
 
     @Override
     public void onOffsetChanged(boolean isRefresh, int totalOffsetY, int totalThresholdY, int offsetY, float threshOffset) {
-        mImageView.setRotation(threshOffset * 360);
-        mImageView.invalidate();
+        if (isRefresh && totalOffsetY == 0) {
+            mImageView.setRotation(0);
+        }
     }
 
     @Override
     public void onFinish(boolean isRefresh, boolean isSuccess, int errorCode) {
         mTextView.setText(R.string.tlr_def_head_refresh_complete);
+        if (isRefresh) {
+            mRefreshAnimator.end();
+            mImageView.setRotation(180);
+            mImageView.setImageResource(R.drawable.tlr_def_icon);
+        }
     }
 }

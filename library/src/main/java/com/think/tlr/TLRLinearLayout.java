@@ -891,6 +891,7 @@ public class TLRLinearLayout extends ViewGroup {
 
         @Override
         public void onOffsetChanged(boolean isRefresh, int totalOffsetY, int totalThresholdY, int offsetY, float threshOffset) {
+            Log.v("isRefresh:" + isRefresh + " totalOffsetY:" + totalOffsetY + " y:" + offsetY);
             for (TLRUiHandler handler : mTLRUiHandlers) {
                 handler.onOffsetChanged(isRefresh, totalOffsetY, totalThresholdY, offsetY, threshOffset);
             }

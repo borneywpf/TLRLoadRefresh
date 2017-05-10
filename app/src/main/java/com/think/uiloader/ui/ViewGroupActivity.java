@@ -28,6 +28,12 @@ public class ViewGroupActivity extends AppCompatActivity {
                 if (status == TLRLinearLayout.RefreshStatus.REFRESHING) {
                     refreshCount += 1;
                     mTextView.setText("刷新了 " + refreshCount + " 次.");
+                    mTLRLinearLayout.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mTLRLinearLayout.finishRefresh(true);
+                        }
+                    }, 500);
                 }
             }
         });
