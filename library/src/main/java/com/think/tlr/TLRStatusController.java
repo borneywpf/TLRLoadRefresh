@@ -34,7 +34,7 @@ class TLRStatusController {
     /**
      * 是否是自动刷新
      */
-    private boolean isAutoRefresh = false;
+    private boolean isAutoRefreshing = false;
 
     private TLRUiHandler mTLRUiHandler;
 
@@ -52,7 +52,7 @@ class TLRStatusController {
                 if (index == R.styleable.TLRLinearLayout_releaseRefresh) {
                     isReleaseRefresh = array.getBoolean(index, isReleaseRefresh);
                 } else if (index == R.styleable.TLRLinearLayout_releaseLoad) {
-                    isAutoRefresh = array.getBoolean(index, isAutoRefresh);
+                    isReleaseLoad = array.getBoolean(index, isReleaseLoad);
                 }
             }
         } finally {
@@ -75,10 +75,9 @@ class TLRStatusController {
                 }
                 if (totalOffsetY >= mRefreshThresholdHeight && mRefreshStatus == RefreshStatus.PULL_DOWN) {
                     notifyRefreshStatusChanged(RefreshStatus.RELEASE_REFRESH);
-                    if (isAutoRefresh) {
+                    if (isAutoRefreshing) {
                         notifyRefreshStatusChanged(RefreshStatus.REFRESHING);
                         notifyRefreshStatusChanged(RefreshStatus.IDLE);
-                        isAutoRefresh = false;
                     }
                 }
             } else {//view向上运动
@@ -152,9 +151,6 @@ class TLRStatusController {
             return;
         }
         mRefreshStatus = status;
-        if (mRefreshStatus == RefreshStatus.IDLE) {
-            isAutoRefresh = false;
-        }
         mTLRUiHandler.onRefreshStatusChanged(mRefreshStatus);
     }
 
@@ -170,12 +166,13 @@ class TLRStatusController {
         mTLRUiHandler = uiHandler;
     }
 
-    public void setAutoRefresh(boolean autoRefresh) {
-        isAutoRefresh = autoRefresh;
+    public void setAutoRefreshing(boolean autoRefreshing) {
+        Log.v("setAutoRefreshing:" + autoRefreshing);
+        isAutoRefreshing = autoRefreshing;
     }
 
-    public boolean isAutoRefresh() {
-        return isAutoRefresh;
+    public boolean isAutoRefreshing() {
+        return isAutoRefreshing;
     }
 
     public void setLoadThresholdHeight(int height) {

@@ -292,7 +292,7 @@ class TLRCalculator {
 
     public void startAutoRefresh() {
         Log.d("autoRefresh mHeadHeight:" + mHeadHeight);
-        mStatusController.setAutoRefresh(true);
+        mStatusController.setAutoRefreshing(true);
         if (mHeadHeight == 0) {
             mTLRLinearLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
@@ -323,7 +323,7 @@ class TLRCalculator {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     mAutoAnimator.removeListener(this);
-                    Log.e("isKeepHeadRefreshing:" + isKeepHeadRefreshing);
+                    Log.v("startAutoRefreshAnimator isKeepHeadRefreshing:" + isKeepHeadRefreshing);
                     if (isKeepHeadRefreshing) {
                         startKeepAnimator();
                     } else {
@@ -400,6 +400,9 @@ class TLRCalculator {
     }
 
     public void finishRefresh(boolean isSuccess, int errorCode) {
+        if (mStatusController.isAutoRefreshing()) {
+            mStatusController.setAutoRefreshing(false);
+        }
         if (isKeepHeadRefreshing) {
             resetKeepView();
         }
@@ -497,6 +500,10 @@ class TLRCalculator {
 
     public void setReleaseLoad(boolean releaseLoad) {
         mStatusController.setReleaseLoad(releaseLoad);
+    }
+
+    public boolean isAutoRefreshing() {
+        return mStatusController.isAutoRefreshing();
     }
 
     private class AnimUpdateListener implements ValueAnimator.AnimatorUpdateListener {
