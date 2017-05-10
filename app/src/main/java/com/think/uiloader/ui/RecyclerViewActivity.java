@@ -30,7 +30,7 @@ import javax.inject.Inject;
 /**
  * Created by borney on 5/9/17.
  */
-public class TLRRecyclerActivity extends AppCompatActivity implements ImageContract.View {
+public class RecyclerViewActivity extends AppCompatActivity implements ImageContract.View {
     private TLRLinearLayout mTLRLinearLayout;
     private RecyclerView mRecyclerView;
     private List<ImageEntity.Image> mImageList = new ArrayList<>();
@@ -114,7 +114,7 @@ public class TLRRecyclerActivity extends AppCompatActivity implements ImageContr
         @Override
         public void onBindViewHolder(MyHolder holder, int position) {
             ImageEntity.Image image = mList.get(position);
-            Glide.with(TLRRecyclerActivity.this).load(image.getThumbnailUrl()).into(holder.imageView);
+            Glide.with(RecyclerViewActivity.this).load(image.getThumbnailUrl()).into(holder.imageView);
             holder.textView.setText(image.getDesc());
         }
 

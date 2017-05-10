@@ -25,11 +25,12 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ui.TLRListActivity" android:label="@string/label_listview"/>
-        <activity android:name=".ui.TLRRecyclerActivity" android:label="@string/label_recyclerview"/>
-        <activity android:name=".ui.TLRViewGroupActivity" android:label="@string/label_viewgroup"/>
-        <activity android:name=".ui.TLRTextViewActivity" android:label="@string/label_textview"/>
-        <activity android:name=".ui.TLRKeepHeadActivity" android:label="@string/label_keephead"/>
+        <activity android:name=".ui.ListViewActivity" android:label="@string/label_listview"/>
+        <activity android:name=".ui.RecyclerViewActivity" android:label="@string/label_recyclerview"/>
+        <activity android:name=".ui.ViewGroupActivity" android:label="@string/label_viewgroup"/>
+        <activity android:name=".ui.TextViewActivity" android:label="@string/label_textview"/>
+        <activity android:name=".ui.KeepHeadActivity" android:label="@string/label_keephead"/>
+        <activity android:name=".ui.CannotMoveHeadByTLRActivity" android:label="@string/label_cannot_move_head_by_tlr"/>
     </application>
 
 </manifest>

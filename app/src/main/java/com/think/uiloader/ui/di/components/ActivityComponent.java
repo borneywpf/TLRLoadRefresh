@@ -1,9 +1,10 @@
 package com.think.uiloader.ui.di.components;
 
 
-import com.think.uiloader.ui.TLRListActivity;
-import com.think.uiloader.ui.TLRKeepHeadActivity;
-import com.think.uiloader.ui.TLRRecyclerActivity;
+import com.think.uiloader.ui.CannotMoveHeadByTLRActivity;
+import com.think.uiloader.ui.ListViewActivity;
+import com.think.uiloader.ui.KeepHeadActivity;
+import com.think.uiloader.ui.RecyclerViewActivity;
 import com.think.uiloader.ui.di.AScope;
 
 import dagger.Component;
@@ -15,7 +16,8 @@ import dagger.Component;
 @AScope
 @Component(dependencies = {ApplicationComponent.class})
 public interface ActivityComponent {
-    void inject(TLRListActivity activity);
-    void inject(TLRRecyclerActivity activity);
-    void inject(TLRKeepHeadActivity activity);
+    void inject(ListViewActivity activity);
+    void inject(RecyclerViewActivity activity);
+    void inject(KeepHeadActivity activity);
+    void inject(CannotMoveHeadByTLRActivity activity);
 }

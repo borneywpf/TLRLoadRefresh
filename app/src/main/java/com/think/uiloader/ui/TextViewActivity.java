@@ -12,7 +12,7 @@ import com.think.uiloader.R;
 /**
  * Created by borney on 5/2/17.
  */
-public class TLRTextViewActivity extends AppCompatActivity {
+public class TextViewActivity extends AppCompatActivity {
     private TLRLinearLayout mTLRLinearLayout;
     private TextView mTextView;
     private int refreshCount = 0;
