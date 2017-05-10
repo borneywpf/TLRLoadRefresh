@@ -13,6 +13,8 @@
         <attr name="keepHeadRefreshing" format="boolean"/>
         <attr name="keepFootLoading" format="boolean"/>
         <attr name="keepContentLayout" format="boolean"/>
+        <attr name="canMoveHeadByTLR" format="boolean"/>
+        <attr name="canMoveFootByTLR" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="TLRLinearLayout_Layout">

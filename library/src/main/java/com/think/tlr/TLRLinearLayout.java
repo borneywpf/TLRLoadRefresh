@@ -35,6 +35,17 @@ public class TLRLinearLayout extends ViewGroup {
      * 操作过程中是否保持contentLayout不移动
      */
     private boolean isKeepContentLayout = false;
+
+    /**
+     * TLR 是否可以移动head
+     */
+    private boolean canMoveHeadByTLR = true;
+
+    /**
+     * TLR 是否可以移动foot
+     */
+    private boolean canMoveFootByTLR = false;
+
     private View mHeaderView;
     /**
      * flag is {@link TLRLinearLayout#LABEL_CONTENT} view,
@@ -103,6 +114,12 @@ public class TLRLinearLayout extends ViewGroup {
                 } else if (index == R.styleable.TLRLinearLayout_keepContentLayout) {
                     isKeepContentLayout = array.getBoolean(index, false);
                     Log.i("isKeepContentLayout = " + isKeepContentLayout);
+                } else if (index == R.styleable.TLRLinearLayout_canMoveHeadByTLR) {
+                    canMoveHeadByTLR = array.getBoolean(index, canMoveHeadByTLR);
+                    Log.i("canMoveHeadByTLR = " + canMoveHeadByTLR);
+                } else if (index == R.styleable.TLRLinearLayout_canMoveFootByTLR) {
+                    canMoveFootByTLR = array.getBoolean(index, canMoveFootByTLR);
+                    Log.i("canMoveFootByTLR = " + canMoveFootByTLR);
                 }
             }
         } finally {
@@ -190,7 +207,7 @@ public class TLRLinearLayout extends ViewGroup {
         if (isNested) {
             return super.dispatchTouchEvent(ev);
         }
-        if (!isEnableLoad && !isEnableRefresh) {
+        if (!isEnableLoad() && !isEnableRefresh()) {
             return super.dispatchTouchEvent(ev);
         }
         if (mCalculator.hasAnyAnimatorRunning()) {
@@ -310,13 +327,13 @@ public class TLRLinearLayout extends ViewGroup {
     }
 
     void move(int y) {
-        if (isEnableRefresh && mHeaderView != null) {
+        if (isEnableRefresh() && isCanMoveHeadByTLR() && mHeaderView != null) {
             mHeaderView.offsetTopAndBottom(y);
         }
-        if (isEnableLoad && mFooterView != null) {
+        if (isEnableLoad() && isCanMoveFootByTLR() && mFooterView != null) {
             mFooterView.offsetTopAndBottom(y);
         }
-        if (!isKeepContentLayout) {
+        if (!isKeepContentLayout()) {
             mContentLayout.offsetTopAndBottom(y);
         }
     }
@@ -337,7 +354,7 @@ public class TLRLinearLayout extends ViewGroup {
                 refresh = true;
             }
         }
-        refresh &= isEnableRefresh;
+        refresh &= isEnableRefresh();
         return refresh;
     }
 
@@ -348,7 +365,7 @@ public class TLRLinearLayout extends ViewGroup {
                 load = true;
             }
         }
-        load &= isEnableLoad;
+        load &= isEnableLoad();
         return load;
     }
 
@@ -488,6 +505,38 @@ public class TLRLinearLayout extends ViewGroup {
      */
     public void setKeepContentLayout(boolean keepContentLayout) {
         isKeepContentLayout = keepContentLayout;
+    }
+
+    /**
+     * get {@link TLRLinearLayout} can move head view
+     */
+    public boolean isCanMoveHeadByTLR() {
+        return canMoveHeadByTLR;
+    }
+
+    /**
+     * set {@link TLRLinearLayout} can move head view
+     *
+     * @param canMoveHeadByTLR
+     */
+    public void setCanMoveHeadByTLR(boolean canMoveHeadByTLR) {
+        this.canMoveHeadByTLR = canMoveHeadByTLR;
+    }
+
+    /**
+     * get {@link TLRLinearLayout} can move foot view
+     */
+    public boolean isCanMoveFootByTLR() {
+        return canMoveFootByTLR;
+    }
+
+    /**
+     * set {@link TLRLinearLayout} can move foot view
+     *
+     * @param canMoveFootByTLR
+     */
+    public void setCanMoveFootByTLR(boolean canMoveFootByTLR) {
+        this.canMoveFootByTLR = canMoveFootByTLR;
     }
 
     /**

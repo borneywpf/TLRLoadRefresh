@@ -1,6 +1,7 @@
 package com.think.tlr;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -41,6 +42,24 @@ public class TLRDefHeadView extends LinearLayout implements TLRUiHandler {
             case REFRESHING:
                 mTextView.setText(R.string.tlr_def_head_refreshing);
                 break;
+        }
+    }
+
+    public void setTextView(CharSequence sequence) {
+        if (mTextView != null) {
+            mTextView.setText(sequence);
+        }
+    }
+
+    public void setImageResource(int id) {
+        if (mImageView != null) {
+            mImageView.setImageResource(id);
+        }
+    }
+
+    public void setImageDrawable(Drawable drawalbe) {
+        if (mImageView != null) {
+            mImageView.setImageDrawable(drawalbe);
         }
     }
 
