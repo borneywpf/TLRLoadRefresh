@@ -4,4 +4,5 @@
     <string name="label_recyclerview">RecyclerView下拉刷新</string>
     <string name="label_viewgroup">ViewGroup下拉刷新</string>
     <string name="label_textview">TextView下拉刷新</string>
+    <string name="label_keephead">刷新时保持Head</string>
 </resources>

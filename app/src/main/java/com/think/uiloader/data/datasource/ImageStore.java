@@ -33,10 +33,7 @@ public class ImageStore extends AbstractStore {
             return mCache.get(key);
         }
 
-        return Observable.concat(
-                mCache.get(key)
-                        .onErrorResumeNext(this.<ImageEntity>errorResumeNext()),
-                api.images(fromIndex, returnNum))
+        return api.images(fromIndex, returnNum)
                 .filter(new Predicate<ImageEntity>() {
                     @Override
                     public boolean test(ImageEntity entity) throws Exception {

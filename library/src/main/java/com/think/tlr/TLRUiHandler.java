@@ -20,5 +20,12 @@ public interface TLRUiHandler {
      * @param offsetY
      * @param threshOffset
      */
-    void onOffsetChanged(int totalOffsetY, int totalThresholdY, int offsetY, float threshOffset);
+    void onOffsetChanged(boolean isRefresh, int totalOffsetY, int totalThresholdY, int offsetY, float threshOffset);
+
+    /**
+     * @param isRefresh
+     * @param isSuccess
+     * @param errorCode
+     */
+    void onFinish(boolean isRefresh, boolean isSuccess, int errorCode);
 }

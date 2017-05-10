@@ -69,8 +69,13 @@ public class TLRDefHeadView extends LinearLayout implements TLRUiHandler {
     }
 
     @Override
-    public void onOffsetChanged(int totalOffsetY, int totalThresholdY, int offsetY, float threshOffset) {
+    public void onOffsetChanged(boolean isRefresh, int totalOffsetY, int totalThresholdY, int offsetY, float threshOffset) {
         mImageView.setRotation(threshOffset * 360);
         mImageView.invalidate();
+    }
+
+    @Override
+    public void onFinish(boolean isRefresh, boolean isSuccess, int errorCode) {
+        mTextView.setText(R.string.tlr_def_head_refresh_complete);
     }
 }

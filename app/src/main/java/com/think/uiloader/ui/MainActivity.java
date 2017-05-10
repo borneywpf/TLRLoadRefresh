@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
                 add(new ListItem(getString(R.string.label_recyclerview), TLRRecyclerActivity.class));
                 add(new ListItem(getString(R.string.label_viewgroup), TLRViewGroupActivity.class));
                 add(new ListItem(getString(R.string.label_textview), TLRTextViewActivity.class));
+                add(new ListItem(getString(R.string.label_keephead), TLRKeepHeadActivity.class));
             }
         };
     }

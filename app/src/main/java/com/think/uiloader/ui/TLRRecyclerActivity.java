@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.think.tlr.TLRLinearLayout;
-import com.think.tlr.TLRUiHandler;
+import com.think.tlr.TLRUiHandlerAdapter;
 import com.think.uiloader.App;
 import com.think.uiloader.R;
 import com.think.uiloader.data.entity.ImageEntity;
@@ -61,22 +61,12 @@ public class TLRRecyclerActivity extends AppCompatActivity implements ImageContr
 
     private void initTlrLayout() {
         mTLRLinearLayout = (TLRLinearLayout) findViewById(R.id.tlrlayout);
-        mTLRLinearLayout.addTLRUiHandler(new TLRUiHandler() {
+        mTLRLinearLayout.addTLRUiHandler(new TLRUiHandlerAdapter() {
             @Override
             public void onRefreshStatusChanged(TLRLinearLayout.RefreshStatus status) {
                 if (status == TLRLinearLayout.RefreshStatus.REFRESHING) {
                     mPresenter.images(curIndex, 10);
                 }
-            }
-
-            @Override
-            public void onLoadStatusChanged(TLRLinearLayout.LoadStatus status) {
-
-            }
-
-            @Override
-            public void onOffsetChanged(int totalOffsetY, int totalThresholdY, int offsetY, float threshOffset) {
-
             }
         });
     }
@@ -99,6 +89,7 @@ public class TLRRecyclerActivity extends AppCompatActivity implements ImageContr
             mImageList.addAll(0, images);
             curIndex += images.size();
             mAdapter.notifyImages(mImageList);
+            mTLRLinearLayout.finishRefresh(true);
         }
     }
 

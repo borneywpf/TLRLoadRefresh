@@ -1,6 +1,7 @@
 package com.think.uiloader.ui;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -26,13 +27,14 @@ import javax.inject.Inject;
 /**
  * Created by borney on 4/28/17.
  */
-public class TLRListActivity extends AppCompatActivity implements ImageContract.View {
+public class TLRKeepHeadActivity extends AppCompatActivity implements ImageContract.View {
     private ListView mListView;
     private TLRLinearLayout mTLRLinearLayout;
     private ListImageAdapter mAdapter;
     private List<ImageEntity.Image> mImageList = new ArrayList<>();
     private App mApp;
     private int curIndex = 0;
+    private Handler mHandler = new Handler();
 
     @Inject
     ImagePresenter mPresenter;
@@ -42,7 +44,7 @@ public class TLRListActivity extends AppCompatActivity implements ImageContract.
         super.onCreate(savedInstanceState);
         mApp = (App) getApplication();
         initActivityComponent();
-        setContentView(R.layout.activity_tlrlistview);
+        setContentView(R.layout.activity_tlrkeephead);
         mListView = (ListView) findViewById(R.id.content);
         mTLRLinearLayout = (TLRLinearLayout) findViewById(R.id.tlrlayout);
         mTLRLinearLayout.addTLRUiHandler(new TLRUiHandlerAdapter() {
@@ -58,7 +60,7 @@ public class TLRListActivity extends AppCompatActivity implements ImageContract.
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(TLRListActivity.this, "onclick " + position, Toast.LENGTH_SHORT).show();
+                Toast.makeText(TLRKeepHeadActivity.this, "onclick " + position, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -81,12 +83,17 @@ public class TLRListActivity extends AppCompatActivity implements ImageContract.
     }
 
     @Override
-    public void imagesSuccess(List<ImageEntity.Image> images) {
+    public void imagesSuccess(final List<ImageEntity.Image> images) {
         if (images != null) {
-            mImageList.addAll(0, images);
-            curIndex += images.size();
-            mAdapter.notifyImages(mImageList);
-            mTLRLinearLayout.finishRefresh(true);
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mImageList.addAll(0, images);
+                    curIndex += images.size();
+                    mAdapter.notifyImages(mImageList);
+                    mTLRLinearLayout.finishRefresh(true);
+                }
+            }, 2000);
         }
     }
 

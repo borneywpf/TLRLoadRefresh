@@ -158,12 +158,12 @@ public class TLRLinearLayout extends ViewGroup {
                 if (i != 0) {
                     throw new RuntimeException("head must in first");
                 }
-                setHeaderView(child);
+                setHeaderView(true, child);
             } else if (params.label == LABEL_FOOT) {
                 if (i != count - 1) {
                     throw new RuntimeException("foot must in last!!!");
                 }
-                setFooterView(child);
+                setFooterView(true, child);
             } else if (params.label == LABEL_CONTENT) {
                 mContentViews.add(child);
                 mContentChilds.add(child);
@@ -176,7 +176,7 @@ public class TLRLinearLayout extends ViewGroup {
             Log.e("has not header view!!!");
             if (isEnableRefresh) {
                 Log.v("use default head view!!!");
-                setHeaderView(new TLRDefHeadView(getContext()));
+                setHeaderView(false, new TLRDefHeadView(getContext()));
             }
         }
 
@@ -429,10 +429,39 @@ public class TLRLinearLayout extends ViewGroup {
     }
 
     /**
-     * 恢复view到初始状态
+     * finish refresh success or not
+     *
+     * @param isSuccess
      */
-    public void resetKeepView() {
-        mCalculator.resetKeepView();
+    public void finishRefresh(boolean isSuccess) {
+        finishRefresh(isSuccess, -1);
+    }
+
+    /**
+     * finish refresh success or not, cotain errorCode
+     *
+     * @param isSuccess
+     */
+    public void finishRefresh(boolean isSuccess, int errorCode) {
+        mCalculator.finishRefresh(isSuccess, errorCode);
+    }
+
+    /**
+     * finish load success or not
+     *
+     * @param isSuccess
+     */
+    public void finishLoad(boolean isSuccess) {
+        finishLoad(isSuccess, -1);
+    }
+
+    /**
+     * finish load success or not, cotain errorCode
+     *
+     * @param isSuccess
+     */
+    public void finishLoad(boolean isSuccess, int errorCode) {
+        mCalculator.finishLoad(isSuccess, errorCode);
     }
 
     /**
@@ -554,17 +583,20 @@ public class TLRLinearLayout extends ViewGroup {
      * @param headerView
      */
     public void setHeaderView(View headerView) {
+        setHeaderView(false, headerView);
+    }
+
+    private void setHeaderView(boolean isAdded, View headerView) {
         if (headerView == null || mHeaderView == headerView) {
             return;
         }
-        if (mHeaderView == null) {
+        if (isAdded) {
+            mHeaderView = headerView;
+        } else {
             mHeaderView = headerView;
             LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             params.label = LABEL_HEAD;
-            mHeaderView.setLayoutParams(params);
-            addView(mHeaderView);
-        } else {
-            mHeaderView = headerView;
+            addView(mHeaderView, params);
         }
         Log.d("setHeaderView:" + mHeaderView.getClass().getSimpleName());
         if (mHeaderView instanceof TLRUiHandler) {
@@ -578,10 +610,22 @@ public class TLRLinearLayout extends ViewGroup {
      * @param footerView
      */
     public void setFooterView(View footerView) {
-        if (mFooterView == footerView) {
+        setFooterView(false, footerView);
+    }
+
+    private void setFooterView(boolean isAdded, View footerView) {
+        if (footerView == null || mFooterView == footerView) {
             return;
         }
-        mFooterView = footerView;
+        if (isAdded) {
+            mFooterView = footerView;
+        } else {
+            mFooterView = footerView;
+            LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.label = LABEL_FOOT;
+            addView(mFooterView, params);
+        }
+        Log.d("setFooterView:" + mFooterView.getClass().getSimpleName());
         if (mFooterView instanceof TLRUiHandler) {
             addTLRUiHandler((TLRUiHandler) mFooterView);
         }
@@ -846,10 +890,17 @@ public class TLRLinearLayout extends ViewGroup {
         }
 
         @Override
-        public void onOffsetChanged(int totalOffsetY, int totalThresholdY, int offsetY, float threshOffset) {
-            //Log.v("onOffsetChanged totalOffsetY:" + totalOffsetY + " totalThresholdY:" + totalThresholdY + " offsetY:" + offsetY + " threshOffset:" + threshOffset);
+        public void onOffsetChanged(boolean isRefresh, int totalOffsetY, int totalThresholdY, int offsetY, float threshOffset) {
             for (TLRUiHandler handler : mTLRUiHandlers) {
-                handler.onOffsetChanged(totalOffsetY, totalThresholdY, offsetY, threshOffset);
+                handler.onOffsetChanged(isRefresh, totalOffsetY, totalThresholdY, offsetY, threshOffset);
+            }
+        }
+
+        @Override
+        public void onFinish(boolean isRefresh, boolean isSuccess, int errorCode) {
+            Log.i("onFinish isRefresh:" + isRefresh + " isSuccess:" + isSuccess + " errorCode:" + errorCode);
+            for (TLRUiHandler handler : mTLRUiHandlers) {
+                handler.onFinish(isRefresh, isSuccess, errorCode);
             }
         }
     }

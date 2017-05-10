@@ -29,6 +29,7 @@
         <activity android:name=".ui.TLRRecyclerActivity" android:label="@string/label_recyclerview"/>
         <activity android:name=".ui.TLRViewGroupActivity" android:label="@string/label_viewgroup"/>
         <activity android:name=".ui.TLRTextViewActivity" android:label="@string/label_textview"/>
+        <activity android:name=".ui.TLRKeepHeadActivity" android:label="@string/label_keephead"/>
     </application>
 
 </manifest>

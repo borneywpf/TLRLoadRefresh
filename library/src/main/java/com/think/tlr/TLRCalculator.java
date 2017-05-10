@@ -188,11 +188,11 @@ class TLRCalculator {
     }
 
     public void touchMoveLayoutView() {
-        moveLayoutView((int) mOffsetY);
+        touchMoveLayoutView((int) mOffsetY);
     }
 
     public void touchMoveLayoutView(int offsetY) {
-        moveLayoutView(offsetY);
+        moveOffsetY(offsetY);
     }
 
     /**
@@ -200,7 +200,7 @@ class TLRCalculator {
      *
      * @return
      */
-    private void moveLayoutView(int y) {
+    private void moveOffsetY(int y) {
         if (y == 0) {
             return;
         }
@@ -265,8 +265,8 @@ class TLRCalculator {
         if (totalThresholdY != 0) {
             offset = (float) (Math.round(((float) totalThresholdY / height) * 100)) / 100;
         }
-
-        mTLRUiHandler.onOffsetChanged(totalOffsetY, totalThresholdY, y, offset);
+        boolean isRefresh = totalOffsetY > 0;
+        mTLRUiHandler.onOffsetChanged(isRefresh, totalOffsetY, totalThresholdY, y, offset);
     }
 
     private void setDirection(float xDiff, float yDiff) {
@@ -313,9 +313,7 @@ class TLRCalculator {
 
     private void startAutoRefreshAnimator() {
         if (mHeadHeight != 0) {
-            if (mAutoAnimator != null && mAutoAnimator.isRunning()) {
-                mAutoAnimator.end();
-            }
+            endAllRunningAnimator();
             int startY = -mHeadHeight;
             mAutoAnimator = ValueAnimator.ofInt(startY, 0);
             mAutoAnimator.setDuration(mOpenAnimDuration);
@@ -350,9 +348,7 @@ class TLRCalculator {
     }
 
     private void startKeepAnimator() {
-        if (mKeepAnimator != null && mKeepAnimator.isRunning()) {
-            mKeepAnimator.end();
-        }
+        endAllRunningAnimator();
         int startY = mTotalOffsetY;
         int endY;
         if (mTotalOffsetY > 0) {
@@ -371,15 +367,25 @@ class TLRCalculator {
 
     private void startResetAnimator() {
         if (mTotalOffsetY != 0) {
-            if (mResetAnimator != null && mResetAnimator.isRunning()) {
-                mResetAnimator.end();
-            }
+            endAllRunningAnimator();
             int startY = mTotalOffsetY;
             mResetAnimator = ValueAnimator.ofInt(startY, 0);
             mResetAnimator.setDuration(mCloseAnimDuration);
             mResetAnimator.setInterpolator(new DecelerateInterpolator());
             mResetAnimator.addUpdateListener(new AnimUpdateListener(startY));
             mResetAnimator.start();
+        }
+    }
+
+    private void endAllRunningAnimator() {
+        if (mAutoAnimator != null && mAutoAnimator.isRunning()) {
+            mAutoAnimator.end();
+        }
+        if (mResetAnimator != null && mResetAnimator.isRunning()) {
+            mResetAnimator.end();
+        }
+        if (mKeepAnimator != null && mKeepAnimator.isRunning()) {
+            mKeepAnimator.end();
         }
     }
 
@@ -391,7 +397,21 @@ class TLRCalculator {
         return mDirection;
     }
 
-    public void resetKeepView() {
+    public void finishRefresh(boolean isSuccess, int errorCode) {
+        if (isKeepHeadRefreshing) {
+            resetKeepView();
+        }
+        mTLRUiHandler.onFinish(true, isSuccess, errorCode);
+    }
+
+    public void finishLoad(boolean isSuccess, int errorCode) {
+        if (isKeepFootLoading) {
+            resetKeepView();
+        }
+        mTLRUiHandler.onFinish(false, isSuccess, errorCode);
+    }
+
+    private void resetKeepView() {
         startResetAnimator();
     }
 
@@ -487,7 +507,7 @@ class TLRCalculator {
         @Override
         public void onAnimationUpdate(ValueAnimator animation) {
             int value = (int) animation.getAnimatedValue();
-            moveLayoutView(value - lastY);
+            moveOffsetY(value - lastY);
             lastY = value;
         }
     }
