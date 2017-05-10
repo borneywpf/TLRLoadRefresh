@@ -36,6 +36,8 @@ class TLRStatusController {
      */
     private boolean isAutoRefreshing = false;
 
+    private boolean isRefreshing = false, isLoading = false;
+
     private TLRUiHandler mTLRUiHandler;
 
     TLRStatusController(TLRCalculator calculator, Context context, AttributeSet attrs) {
@@ -70,7 +72,7 @@ class TLRStatusController {
         //y 方向移动正值,切Load为初始状态
         if (totalOffsetY > 0 && mLoadStatus == LoadStatus.IDLE) {
             if (moveDown) {//view向下运动
-                if (mRefreshStatus == RefreshStatus.IDLE) {
+                if (mRefreshStatus == RefreshStatus.IDLE && !isRefreshing) {
                     notifyRefreshStatusChanged(RefreshStatus.PULL_DOWN);
                 }
                 if (totalOffsetY >= mRefreshThresholdHeight && mRefreshStatus == RefreshStatus.PULL_DOWN) {
@@ -100,7 +102,7 @@ class TLRStatusController {
         int totalOffsetY = mCalculator.getTotalOffsetY();
         if (totalOffsetY < 0 && mRefreshStatus == RefreshStatus.IDLE) {
             if (moveUp) {//view向上运动
-                if (totalOffsetY < 0 && mLoadStatus == LoadStatus.IDLE) {
+                if (mLoadStatus == LoadStatus.IDLE && !isLoading) {
                     notifyLoadStatusChanged(LoadStatus.PULL_UP);
                 }
                 if (Math.abs(totalOffsetY) >= mLoadThresholdHeight && mLoadStatus == LoadStatus.PULL_UP) {
@@ -151,6 +153,9 @@ class TLRStatusController {
             return;
         }
         mRefreshStatus = status;
+        if (mRefreshStatus == RefreshStatus.REFRESHING) {
+            isRefreshing = true;
+        }
         mTLRUiHandler.onRefreshStatusChanged(mRefreshStatus);
     }
 
@@ -159,6 +164,9 @@ class TLRStatusController {
             return;
         }
         mLoadStatus = status;
+        if (mLoadStatus == LoadStatus.LOADING) {
+            isLoading = true;
+        }
         mTLRUiHandler.onLoadStatusChanged(mLoadStatus);
     }
 
@@ -205,5 +213,13 @@ class TLRStatusController {
 
     public void setReleaseLoad(boolean releaseLoad) {
         isReleaseLoad = releaseLoad;
+    }
+
+    public void finishRefresh() {
+        isRefreshing = false;
+    }
+
+    public void finishLoad() {
+        isLoading = false;
     }
 }

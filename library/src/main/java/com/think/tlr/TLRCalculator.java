@@ -406,13 +406,17 @@ class TLRCalculator {
         if (isKeepHeadRefreshing) {
             resetKeepView();
         }
+        
         mTLRUiHandler.onFinish(true, isSuccess, errorCode);
+
+        mStatusController.finishRefresh();
     }
 
     public void finishLoad(boolean isSuccess, int errorCode) {
         if (isKeepFootLoading) {
             resetKeepView();
         }
+        mStatusController.finishLoad();
         mTLRUiHandler.onFinish(false, isSuccess, errorCode);
     }
 
