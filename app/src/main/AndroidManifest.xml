@@ -31,6 +31,7 @@
         <activity android:name=".ui.TextViewActivity" android:label="@string/label_textview"/>
         <activity android:name=".ui.KeepHeadActivity" android:label="@string/label_keephead"/>
         <activity android:name=".ui.CannotMoveHeadByTLRActivity" android:label="@string/label_cannot_move_head_by_tlr"/>
+        <activity android:name=".ui.AutoRefreshActivity" android:label="@string/label_autorefresh"/>
     </application>
 
 </manifest>

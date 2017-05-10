@@ -6,4 +6,5 @@
     <string name="label_textview">TextView下拉刷新</string>
     <string name="label_keephead">刷新时保持Head</string>
     <string name="label_cannot_move_head_by_tlr">刷新时不移动头部</string>
+    <string name="label_autorefresh">自动刷新</string>
 </resources>

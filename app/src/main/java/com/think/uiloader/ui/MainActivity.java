@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
                 add(new ListItem(getString(R.string.label_viewgroup), ViewGroupActivity.class));
                 add(new ListItem(getString(R.string.label_textview), TextViewActivity.class));
                 add(new ListItem(getString(R.string.label_keephead), KeepHeadActivity.class));
+                add(new ListItem(getString(R.string.label_autorefresh), AutoRefreshActivity.class));
                 add(new ListItem(getString(R.string.label_cannot_move_head_by_tlr), CannotMoveHeadByTLRActivity.class));
             }
         };

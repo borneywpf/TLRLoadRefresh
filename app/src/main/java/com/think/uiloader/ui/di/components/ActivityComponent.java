@@ -1,6 +1,7 @@
 package com.think.uiloader.ui.di.components;
 
 
+import com.think.uiloader.ui.AutoRefreshActivity;
 import com.think.uiloader.ui.CannotMoveHeadByTLRActivity;
 import com.think.uiloader.ui.ListViewActivity;
 import com.think.uiloader.ui.KeepHeadActivity;
@@ -20,4 +21,5 @@ public interface ActivityComponent {
     void inject(RecyclerViewActivity activity);
     void inject(KeepHeadActivity activity);
     void inject(CannotMoveHeadByTLRActivity activity);
+    void inject(AutoRefreshActivity activity);
 }
