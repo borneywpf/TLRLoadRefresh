@@ -1,6 +1,7 @@
 package com.think.uiloader.ui;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -33,6 +34,7 @@ public class AutoRefreshActivity extends AppCompatActivity implements ImageContr
     private List<ImageEntity.Image> mImageList = new ArrayList<>();
     private App mApp;
     private int curIndex = 0;
+    private Handler mHandler = new Handler();
 
     @Inject
     ImagePresenter mPresenter;
@@ -82,12 +84,17 @@ public class AutoRefreshActivity extends AppCompatActivity implements ImageContr
     }
 
     @Override
-    public void imagesSuccess(List<ImageEntity.Image> images) {
+    public void imagesSuccess(final List<ImageEntity.Image> images) {
         if (images != null) {
-            mImageList.addAll(0, images);
-            curIndex += images.size();
-            mAdapter.notifyImages(mImageList);
-            mTLRLinearLayout.finishRefresh(true);
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mImageList.addAll(0, images);
+                    curIndex += images.size();
+                    mAdapter.notifyImages(mImageList);
+                    mTLRLinearLayout.finishRefresh(true);
+                }
+            }, 2000);
         }
     }
 

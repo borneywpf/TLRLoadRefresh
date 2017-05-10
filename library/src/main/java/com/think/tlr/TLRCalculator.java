@@ -322,6 +322,7 @@ class TLRCalculator {
             mAutoAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
+                    mAutoAnimator.removeListener(this);
                     Log.e("isKeepHeadRefreshing:" + isKeepHeadRefreshing);
                     if (isKeepHeadRefreshing) {
                         startKeepAnimator();
@@ -356,6 +357,7 @@ class TLRCalculator {
         } else {
             endY = -mLoadThresholdHeight;
         }
+        Log.d("startKeepAnimator startY:" + startY + " endY:" + endY);
         if (startY != 0 && startY != endY) {
             mKeepAnimator = ValueAnimator.ofInt(startY, endY);
             mKeepAnimator.setDuration(200);
