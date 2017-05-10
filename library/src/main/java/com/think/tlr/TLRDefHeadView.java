@@ -31,7 +31,6 @@ public class TLRDefHeadView extends LinearLayout implements TLRUiHandler {
 
     @Override
     public void onRefreshStatusChanged(TLRLinearLayout.RefreshStatus status) {
-        Log.d("Def HeadView onRefreshStatusChanged status:" + status);
         switch (status) {
             case PULL_DOWN:
                 mTextView.setText(R.string.tlr_def_head_pull_down);
@@ -41,9 +40,6 @@ public class TLRDefHeadView extends LinearLayout implements TLRUiHandler {
                 break;
             case REFRESHING:
                 mTextView.setText(R.string.tlr_def_head_refreshing);
-                break;
-            case REFRESH_COMPLETE:
-                mTextView.setText(R.string.tlr_def_head_refresh_complete);
                 break;
         }
     }

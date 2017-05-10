@@ -77,7 +77,6 @@ class TLRStatusController {
                     notifyRefreshStatusChanged(RefreshStatus.RELEASE_REFRESH);
                     if (isAutoRefresh) {
                         notifyRefreshStatusChanged(RefreshStatus.REFRESHING);
-                        notifyRefreshStatusChanged(RefreshStatus.REFRESH_COMPLETE);
                         notifyRefreshStatusChanged(RefreshStatus.IDLE);
                         isAutoRefresh = false;
                     }
@@ -126,7 +125,6 @@ class TLRStatusController {
         if (mRefreshStatus == RefreshStatus.RELEASE_REFRESH) {
             if (isReleaseRefresh) {
                 notifyRefreshStatusChanged(RefreshStatus.REFRESHING);
-                notifyRefreshStatusChanged(RefreshStatus.REFRESH_COMPLETE);
             }
             notifyRefreshStatusChanged(RefreshStatus.IDLE);
         } else if (mRefreshStatus != RefreshStatus.IDLE) {
@@ -141,7 +139,6 @@ class TLRStatusController {
         if (mLoadStatus == LoadStatus.RELEASE_LOAD) {
             if (isReleaseLoad) {
                 notifyLoadStatusChanged(LoadStatus.LOADING);
-                notifyLoadStatusChanged(LoadStatus.LOAD_COMPLETE);
             }
             notifyLoadStatusChanged(LoadStatus.IDLE);
 

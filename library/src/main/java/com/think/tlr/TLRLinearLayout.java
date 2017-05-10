@@ -55,14 +55,14 @@ public class TLRLinearLayout extends ViewGroup {
      * 刷新状态
      */
     public enum RefreshStatus {
-        IDLE, PULL_DOWN, RELEASE_REFRESH, REFRESHING, REFRESH_COMPLETE
+        IDLE, PULL_DOWN, RELEASE_REFRESH, REFRESHING
     }
 
     /**
      * 加载状态
      */
     public enum LoadStatus {
-        IDLE, PULL_UP, RELEASE_LOAD, LOADING, LOAD_COMPLETE
+        IDLE, PULL_UP, RELEASE_LOAD, LOADING
     }
 
     public TLRLinearLayout(Context context) {
