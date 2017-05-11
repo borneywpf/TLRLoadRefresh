@@ -3,6 +3,7 @@ package com.think.uiloader.ui.di.components;
 
 import com.think.uiloader.ui.RAutoRefreshActivity;
 import com.think.uiloader.ui.RCannotMoveHeadByTLRActivity;
+import com.think.uiloader.ui.RGridViewActivity;
 import com.think.uiloader.ui.RListViewActivity;
 import com.think.uiloader.ui.RKeepHeadActivity;
 import com.think.uiloader.ui.RRecyclerViewActivity;
@@ -24,4 +25,5 @@ public interface ActivityComponent {
     void inject(RCannotMoveHeadByTLRActivity activity);
     void inject(RAutoRefreshActivity activity);
     void inject(RRefreshMaxMoveDistanceActivity activity);
+    void inject(RGridViewActivity activity);
 }

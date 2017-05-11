@@ -30,6 +30,7 @@
         <activity android:name=".ui.RViewGroupActivity" android:label="@string/label_viewgroup"/>
         <activity android:name=".ui.RTextViewActivity" android:label="@string/label_textview"/>
         <activity android:name=".ui.RWebViewActivity" android:label="@string/label_webview"/>
+        <activity android:name=".ui.RGridViewActivity" android:label="@string/label_gridview"/>
         <activity android:name=".ui.RKeepHeadActivity" android:label="@string/label_keephead"/>
         <activity android:name=".ui.RCannotMoveHeadByTLRActivity" android:label="@string/label_cannot_move_head_by_tlr"/>
         <activity android:name=".ui.RAutoRefreshActivity" android:label="@string/label_autorefresh"/>
