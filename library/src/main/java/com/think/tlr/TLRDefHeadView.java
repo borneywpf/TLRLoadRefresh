@@ -2,6 +2,7 @@ package com.think.tlr;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.drawable.AnimationDrawable;
 import android.util.AttributeSet;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
@@ -14,7 +15,8 @@ import android.widget.TextView;
 public class TLRDefHeadView extends LinearLayout implements TLRUiHandler {
     private ImageView mImageView;
     private TextView mTextView;
-    private ValueAnimator mReleaseAnimator, mRefreshAnimator;
+    private ValueAnimator mReleaseAnimator;
+    private AnimationDrawable mAnimationDrawable;
 
     public TLRDefHeadView(Context context) {
         this(context, null);
@@ -30,27 +32,12 @@ public class TLRDefHeadView extends LinearLayout implements TLRUiHandler {
         setWillNotDraw(true);
         mImageView = (ImageView) findViewById(R.id.tlr_def_icon);
         mTextView = (TextView) findViewById(R.id.tlr_def_text);
-        initRefreshAnimator();
         initReleaseAnimator();
-    }
-
-    private void initRefreshAnimator() {
-        mRefreshAnimator = ValueAnimator.ofFloat(0, 360);
-        mRefreshAnimator.setDuration(500);
-        mRefreshAnimator.setInterpolator(new LinearInterpolator());
-        mRefreshAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float value = (float) animation.getAnimatedValue();
-                mImageView.setRotation(value);
-            }
-        });
-        mRefreshAnimator.setRepeatCount(ValueAnimator.INFINITE);
     }
 
     private void initReleaseAnimator() {
         mReleaseAnimator = ValueAnimator.ofFloat(0, 180);
-        mReleaseAnimator.setDuration(200);
+        mReleaseAnimator.setDuration(210);
         mReleaseAnimator.setInterpolator(new LinearInterpolator());
         mReleaseAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -75,9 +62,10 @@ public class TLRDefHeadView extends LinearLayout implements TLRUiHandler {
                 if (mReleaseAnimator.isRunning()) {
                     mReleaseAnimator.end();
                 }
-                mImageView.setImageResource(R.drawable.tlr_def_refresh_icon);
+                mImageView.setImageResource(R.drawable.tlr_def_refresh_loading);
+                mAnimationDrawable = (AnimationDrawable) mImageView.getDrawable();
+                mAnimationDrawable.start();
                 mTextView.setText(R.string.tlr_def_head_refreshing);
-                mRefreshAnimator.start();
                 break;
             case IDLE:
                 break;
@@ -106,9 +94,9 @@ public class TLRDefHeadView extends LinearLayout implements TLRUiHandler {
     public void onFinish(boolean isRefresh, boolean isSuccess, int errorCode) {
         mTextView.setText(R.string.tlr_def_head_refresh_complete);
         if (isRefresh) {
-            mRefreshAnimator.end();
+            mAnimationDrawable.stop();
             mImageView.setRotation(180);
-            mImageView.setImageResource(R.drawable.tlr_def_icon);
+            mImageView.setImageResource(R.drawable.tlr_def_refresh_load);
         }
     }
 }

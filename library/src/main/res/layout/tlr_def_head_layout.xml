@@ -11,12 +11,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scaleType="center"
-        android:src="@drawable/tlr_def_icon"/>
+        android:src="@drawable/tlr_def_refresh_load"/>
 
     <TextView
         android:id="@+id/tlr_def_text"
-        android:layout_width="@dimen/tlr_def_head_text_width"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:textColor="#777"
         android:textSize="@dimen/tlr_def_head_text_size"
         android:gravity="center"
         android:typeface="monospace"/>
