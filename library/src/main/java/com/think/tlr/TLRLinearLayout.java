@@ -55,13 +55,13 @@ public class TLRLinearLayout extends ViewGroup {
     /**
      * 需要向ContentLayout中添加的子view
      */
-    private View mTouchView;
     private List<View> mContentChilds;
     private LinearLayout mContentLayout;
     private View mFooterView;
     private TLRCalculator mCalculator;
     private TLRUiHandlerWrapper mUiHandlerWrapper;
     private boolean isAddViewSelf = false;
+    private View mTouchView;
 
     /**
      * 刷新状态
@@ -214,11 +214,16 @@ public class TLRLinearLayout extends ViewGroup {
         if (mCalculator.hasAnyAnimatorRunning()) {
             return super.dispatchTouchEvent(ev);
         }
+
         int action = ev.getAction();
         float x = ev.getX();
         float y = ev.getY();
+
         switch (action) {
             case MotionEvent.ACTION_DOWN:
+                if (!isRefreshing() && !isLoading()) {
+                    setTouchView(x, y);
+                }
                 mCalculator.eventDown(x, y);
                 super.dispatchTouchEvent(ev);
                 return true;
@@ -348,6 +353,15 @@ public class TLRLinearLayout extends ViewGroup {
         return mCalculator;
     }
 
+    private void setTouchView(float downx, float downy) {
+        for (View view : mContentViews) {
+            if (inView(view, downx, downy)) {
+                setTouchView(view);
+                break;
+            }
+        }
+    }
+
     void setTouchView(View touchView) {
         if (mTouchView != touchView) {
             mTouchView = touchView;
@@ -362,7 +376,6 @@ public class TLRLinearLayout extends ViewGroup {
         boolean refresh = false;
         for (View view : mContentViews) {
             if (isTouchViewRefresh(view, x, y)) {
-                setTouchView(view);
                 refresh = true;
                 break;
             }
@@ -375,7 +388,6 @@ public class TLRLinearLayout extends ViewGroup {
         boolean load = false;
         for (View view : mContentViews) {
             if (isTouchViewLoad(view, x, y)) {
-                setTouchView(view);
                 load = true;
                 break;
             }
@@ -908,7 +920,7 @@ public class TLRLinearLayout extends ViewGroup {
 
         @Override
         public void onRefreshStatusChanged(View target, RefreshStatus status) {
-            TLRLog.d("onRefreshStatusChanged target:" + target.getClass().getSimpleName() + " status:" + status + " size:" + mTLRUiHandlers.size());
+            TLRLog.d("onRefreshStatusChanged target:" + target + " status:" + status + " size:" + mTLRUiHandlers.size());
             for (TLRUiHandler handler : mTLRUiHandlers) {
                 handler.onRefreshStatusChanged(target, status);
             }
@@ -916,7 +928,7 @@ public class TLRLinearLayout extends ViewGroup {
 
         @Override
         public void onLoadStatusChanged(View target, LoadStatus status) {
-            TLRLog.i("onLoadStatusChanged target:" + target.getClass().getSimpleName() + " status:" + status + " size:" + mTLRUiHandlers.size());
+            TLRLog.i("onLoadStatusChanged target:" + target + " status:" + status + " size:" + mTLRUiHandlers.size());
             for (TLRUiHandler handler : mTLRUiHandlers) {
                 handler.onLoadStatusChanged(target, status);
             }
@@ -932,7 +944,7 @@ public class TLRLinearLayout extends ViewGroup {
 
         @Override
         public void onFinish(View target, boolean isRefresh, boolean isSuccess, int errorCode) {
-            TLRLog.i("onFinish target:" + target.getClass().getSimpleName() + " isRefresh:" + isRefresh + " isSuccess:" + isSuccess + " errorCode:" + errorCode);
+            TLRLog.i("onFinish target:" + target + " isRefresh:" + isRefresh + " isSuccess:" + isSuccess + " errorCode:" + errorCode);
             for (TLRUiHandler handler : mTLRUiHandlers) {
                 handler.onFinish(target, isRefresh, isSuccess, errorCode);
             }

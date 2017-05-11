@@ -12,4 +12,5 @@
     <string name="label_cannot_move_head_by_tlr">下拉刷新过程中不移动头部(HeadView)</string>
     <string name="label_autorefresh">自动刷新</string>
     <string name="label_refresh_max_move_distance">刷新时,设置最大移动距离</string>
+    <string name="label_multicontent">多个刷新体</string>
 </resources>

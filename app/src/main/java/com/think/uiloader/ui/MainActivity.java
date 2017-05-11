@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 add(new ListItem(getString(R.string.label_autorefresh), RAutoRefreshActivity.class));
                 add(new ListItem(getString(R.string.label_cannot_move_head_by_tlr), RCannotMoveHeadByTLRActivity.class));
                 add(new ListItem(getString(R.string.label_refresh_max_move_distance), RRefreshMaxMoveDistanceActivity.class));
+                add(new ListItem(getString(R.string.label_multicontent), TLRMultiContentActivity.class));
             }
         };
     }

@@ -9,6 +9,7 @@ import com.think.uiloader.ui.RNotKeepHeadActivity;
 import com.think.uiloader.ui.ROtherLibraryActivity;
 import com.think.uiloader.ui.RRecyclerViewActivity;
 import com.think.uiloader.ui.RRefreshMaxMoveDistanceActivity;
+import com.think.uiloader.ui.TLRMultiContentActivity;
 import com.think.uiloader.ui.di.AScope;
 
 import dagger.Component;
@@ -28,4 +29,5 @@ public interface ActivityComponent {
     void inject(RRefreshMaxMoveDistanceActivity activity);
     void inject(RGridViewActivity activity);
     void inject(ROtherLibraryActivity activity);
+    void inject(TLRMultiContentActivity activity);
 }

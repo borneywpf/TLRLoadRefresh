@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.think.tlr.TLRLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:uiloader="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tlrlayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    uiloader:enableRefresh="true"
+    uiloader:enableLoad="false"
+    uiloader:keepHeadRefreshing="true"
+    uiloader:keepContentLayout="false">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        uiloader:label="content">
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/demo_refresh_viewgroup_img"
+            android:scaleType="center"/>
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/image"
+            android:layout_alignBottom="@id/image"
+            android:layout_alignLeft="@id/image"
+            android:layout_alignRight="@id/image"
+            android:gravity="center"
+            android:textSize="24dp"
+            android:typeface="monospace"/>
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        uiloader:label="content"/>
+
+
+</com.think.tlr.TLRLinearLayout>
