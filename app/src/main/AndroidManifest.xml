@@ -32,6 +32,7 @@
         <activity android:name=".ui.RWebViewActivity" android:label="@string/label_webview"/>
         <activity android:name=".ui.RGridViewActivity" android:label="@string/label_gridview"/>
         <activity android:name=".ui.RViewPagerActivity" android:label="@string/label_viewpage"/>
+        <activity android:name=".ui.RScrollViewActivity" android:label="@string/label_scrollview"/>
         <activity android:name=".ui.RNotKeepHeadActivity" android:label="@string/label_notkeephead"/>
         <activity android:name=".ui.RCannotMoveHeadByTLRActivity" android:label="@string/label_cannot_move_head_by_tlr"/>
         <activity android:name=".ui.RAutoRefreshActivity" android:label="@string/label_autorefresh"/>

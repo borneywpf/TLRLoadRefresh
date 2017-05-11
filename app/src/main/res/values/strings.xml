@@ -7,6 +7,7 @@
     <string name="label_webview">下拉刷新-WebView</string>
     <string name="label_gridview">下拉刷新-GridView</string>
     <string name="label_viewpage">下拉刷新-ViewPager</string>
+    <string name="label_scrollview">下拉刷新-ScrollView</string>
     <string name="label_otherlibrary">下拉刷新-三方库兼容(Banner)</string>
     <string name="label_notkeephead">刷新时不保持头部(HeadView)</string>
     <string name="label_cannot_move_head_by_tlr">下拉刷新过程中不移动头部(HeadView)</string>

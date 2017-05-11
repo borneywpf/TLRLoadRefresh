@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.think.tlr.TLRLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:uiloader="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tlrlayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    uiloader:enableRefresh="true"
+    uiloader:enableLoad="false"
+    uiloader:keepHeadRefreshing="true"
+    uiloader:keepContentLayout="false">
+
+    <ScrollView
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        uiloader:label="content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="500dp">
+
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="24dp"
+                android:background="@drawable/demo_refresh_text_bg"/>
+        </LinearLayout>
+    </ScrollView>
+
+
+</com.think.tlr.TLRLinearLayout>
