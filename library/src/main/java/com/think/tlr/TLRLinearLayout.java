@@ -98,7 +98,7 @@ public class TLRLinearLayout extends ViewGroup {
     private void initAttrs(AttributeSet attrs) {
         TypedArray array = getContext().obtainStyledAttributes(attrs, R.styleable.TLRLinearLayout);
         if (array == null) {
-            Log.e("initAttrs array is null");
+            TLRLog.e("initAttrs array is null");
             return;
         }
         try {
@@ -107,19 +107,19 @@ public class TLRLinearLayout extends ViewGroup {
                 int index = array.getIndex(i);
                 if (index == R.styleable.TLRLinearLayout_enableLoad) {
                     isEnableLoad = array.getBoolean(index, false);
-                    Log.i("isEnableLoad = " + isEnableLoad);
+                    TLRLog.i("isEnableLoad = " + isEnableLoad);
                 } else if (index == R.styleable.TLRLinearLayout_enableRefresh) {
                     isEnableRefresh = array.getBoolean(index, false);
-                    Log.i("isEnableRefresh = " + isEnableRefresh);
+                    TLRLog.i("isEnableRefresh = " + isEnableRefresh);
                 } else if (index == R.styleable.TLRLinearLayout_keepContentLayout) {
                     isKeepContentLayout = array.getBoolean(index, false);
-                    Log.i("isKeepContentLayout = " + isKeepContentLayout);
+                    TLRLog.i("isKeepContentLayout = " + isKeepContentLayout);
                 } else if (index == R.styleable.TLRLinearLayout_canMoveHeadByTLR) {
                     canMoveHeadByTLR = array.getBoolean(index, canMoveHeadByTLR);
-                    Log.i("canMoveHeadByTLR = " + canMoveHeadByTLR);
+                    TLRLog.i("canMoveHeadByTLR = " + canMoveHeadByTLR);
                 } else if (index == R.styleable.TLRLinearLayout_canMoveFootByTLR) {
                     canMoveFootByTLR = array.getBoolean(index, canMoveFootByTLR);
-                    Log.i("canMoveFootByTLR = " + canMoveFootByTLR);
+                    TLRLog.i("canMoveFootByTLR = " + canMoveFootByTLR);
                 }
             }
         } finally {
@@ -136,7 +136,7 @@ public class TLRLinearLayout extends ViewGroup {
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
         if (index == 0 && !isAddViewSelf) {
-            Log.e("can't add view index 0!!!");
+            TLRLog.e("can't add view index 0!!!");
             return;
         }
         super.addView(child, index, params);
@@ -153,7 +153,7 @@ public class TLRLinearLayout extends ViewGroup {
         for (int i = 0; i < count; i++) {
             View child = getChildAt(i);
             LayoutParams params = (LayoutParams) child.getLayoutParams();
-            Log.d("child = " + child.getClass().getSimpleName() + " params.label = " + params.label);
+            TLRLog.d("child = " + child.getClass().getSimpleName() + " params.label = " + params.label);
             if (params.label == LABEL_HEAD) {
                 if (i != 0) {
                     throw new RuntimeException("head must in first");
@@ -173,15 +173,15 @@ public class TLRLinearLayout extends ViewGroup {
         }
 
         if (mHeaderView == null) {
-            Log.e("has not header view!!!");
+            TLRLog.e("has not header view!!!");
             if (isEnableRefresh) {
-                Log.v("use default head view!!!");
+                TLRLog.v("use default head view!!!");
                 setHeaderView(false, new TLRDefHeadView(getContext()));
             }
         }
 
         if (mFooterView == null) {
-            Log.e("has not footer view!");
+            TLRLog.e("has not footer view!");
         }
 
         if (mContentChilds.size() == 0) {
@@ -195,7 +195,7 @@ public class TLRLinearLayout extends ViewGroup {
             mContentLayout.addView(view, llp);
         }
         addSelfView(mContentLayout, 0, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        Log.i("ContentLayout count:" + mContentLayout.getChildCount());
+        TLRLog.i("ContentLayout count:" + mContentLayout.getChildCount());
     }
 
     @Override
@@ -259,7 +259,7 @@ public class TLRLinearLayout extends ViewGroup {
                     mCalculator.setFootViewHeight(child.getMeasuredHeight());
                 }
                 if (DEBUG) {
-                    Log.d(child.getClass().getSimpleName() + " mw:" + child.getMeasuredWidth() + " mh:" + child.getMeasuredHeight());
+                    TLRLog.d(child.getClass().getSimpleName() + " mw:" + child.getMeasuredWidth() + " mh:" + child.getMeasuredHeight());
                 }
             }
         }
@@ -285,7 +285,7 @@ public class TLRLinearLayout extends ViewGroup {
             int bottom = top + mContentLayout.getMeasuredHeight();
 
             if (DEBUG) {
-                Log.i("ContentLayout left:" + left + " right:" + right + " top:" + top + " bottom:" + bottom);
+                TLRLog.i("ContentLayout left:" + left + " right:" + right + " top:" + top + " bottom:" + bottom);
             }
 
             mContentLayout.layout(left, top, right, bottom);
@@ -302,7 +302,7 @@ public class TLRLinearLayout extends ViewGroup {
             int top = bottom - mHeaderView.getMeasuredHeight();
 
             if (DEBUG) {
-                Log.i("HeaderView left:" + left + " right:" + right + " top:" + top + " bottom:" + bottom);
+                TLRLog.i("HeaderView left:" + left + " right:" + right + " top:" + top + " bottom:" + bottom);
             }
 
             mHeaderView.layout(left, top, right, bottom);
@@ -319,7 +319,7 @@ public class TLRLinearLayout extends ViewGroup {
             int bottom = top + mFooterView.getMeasuredHeight();
 
             if (DEBUG) {
-                Log.i("FooterView left:" + left + " right:" + right + " top:" + top + " bottom:" + bottom);
+                TLRLog.i("FooterView left:" + left + " right:" + right + " top:" + top + " bottom:" + bottom);
             }
 
             mFooterView.layout(left, top, right, bottom);
@@ -598,7 +598,7 @@ public class TLRLinearLayout extends ViewGroup {
             params.label = LABEL_HEAD;
             addView(mHeaderView, params);
         }
-        Log.d("setHeaderView:" + mHeaderView.getClass().getSimpleName());
+        TLRLog.d("setHeaderView:" + mHeaderView.getClass().getSimpleName());
         if (mHeaderView instanceof TLRUiHandler) {
             addTLRUiHandler((TLRUiHandler) mHeaderView);
         }
@@ -625,7 +625,7 @@ public class TLRLinearLayout extends ViewGroup {
             params.label = LABEL_FOOT;
             addView(mFooterView, params);
         }
-        Log.d("setFooterView:" + mFooterView.getClass().getSimpleName());
+        TLRLog.d("setFooterView:" + mFooterView.getClass().getSimpleName());
         if (mFooterView instanceof TLRUiHandler) {
             addTLRUiHandler((TLRUiHandler) mFooterView);
         }
@@ -819,6 +819,24 @@ public class TLRLinearLayout extends ViewGroup {
         return mCalculator.hasAnyAnimatorRunning();
     }
 
+    /**
+     * Returns whether it is refreshing
+     *
+     * @return
+     */
+    public boolean isRefreshing() {
+        return mCalculator.isRefreshing();
+    }
+
+    /**
+     * Returns whether it is loading
+     *
+     * @return
+     */
+    public boolean isLoading() {
+        return mCalculator.isLoading();
+    }
+
     public static class LayoutParams extends ViewGroup.MarginLayoutParams {
 
         int label = 0;
@@ -875,7 +893,7 @@ public class TLRLinearLayout extends ViewGroup {
 
         @Override
         public void onRefreshStatusChanged(RefreshStatus status) {
-            Log.d("onRefreshStatusChanged status:" + status + " size:" + mTLRUiHandlers.size());
+            TLRLog.d("onRefreshStatusChanged status:" + status + " size:" + mTLRUiHandlers.size());
             for (TLRUiHandler handler : mTLRUiHandlers) {
                 handler.onRefreshStatusChanged(status);
             }
@@ -883,7 +901,7 @@ public class TLRLinearLayout extends ViewGroup {
 
         @Override
         public void onLoadStatusChanged(LoadStatus status) {
-            Log.i("onLoadStatusChanged status:" + status + " size:" + mTLRUiHandlers.size());
+            TLRLog.i("onLoadStatusChanged status:" + status + " size:" + mTLRUiHandlers.size());
             for (TLRUiHandler handler : mTLRUiHandlers) {
                 handler.onLoadStatusChanged(status);
             }
@@ -891,7 +909,7 @@ public class TLRLinearLayout extends ViewGroup {
 
         @Override
         public void onOffsetChanged(boolean isRefresh, int totalOffsetY, int totalThresholdY, int offsetY, float threshOffset) {
-            //Log.v("isRefresh:" + isRefresh + " totalOffsetY:" + totalOffsetY + " y:" + offsetY);
+            //TLRLog.v("isRefresh:" + isRefresh + " totalOffsetY:" + totalOffsetY + " y:" + offsetY);
             for (TLRUiHandler handler : mTLRUiHandlers) {
                 handler.onOffsetChanged(isRefresh, totalOffsetY, totalThresholdY, offsetY, threshOffset);
             }
@@ -899,7 +917,7 @@ public class TLRLinearLayout extends ViewGroup {
 
         @Override
         public void onFinish(boolean isRefresh, boolean isSuccess, int errorCode) {
-            Log.i("onFinish isRefresh:" + isRefresh + " isSuccess:" + isSuccess + " errorCode:" + errorCode);
+            TLRLog.i("onFinish isRefresh:" + isRefresh + " isSuccess:" + isSuccess + " errorCode:" + errorCode);
             for (TLRUiHandler handler : mTLRUiHandlers) {
                 handler.onFinish(isRefresh, isSuccess, errorCode);
             }

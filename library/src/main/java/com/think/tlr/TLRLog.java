@@ -6,7 +6,7 @@ import java.io.StringWriter;
 /**
  * Created by borney on 4/28/17.
  */
-public class Log {
+public class TLRLog {
     private static final String DEF_TAG = "TLRLoadRefresh";
 
     public static void d(String msg) {

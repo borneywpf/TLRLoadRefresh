@@ -27,7 +27,7 @@ import javax.inject.Inject;
 /**
  * Created by borney on 4/28/17.
  */
-public class KeepHeadActivity extends AppCompatActivity implements ImageContract.View {
+public class RKeepHeadActivity extends AppCompatActivity implements ImageContract.View {
     private ListView mListView;
     private TLRLinearLayout mTLRLinearLayout;
     private ListImageAdapter mAdapter;
@@ -60,7 +60,7 @@ public class KeepHeadActivity extends AppCompatActivity implements ImageContract
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(KeepHeadActivity.this, "onclick " + position, Toast.LENGTH_SHORT).show();
+                Toast.makeText(RKeepHeadActivity.this, "onclick " + position, Toast.LENGTH_SHORT).show();
             }
         });
     }

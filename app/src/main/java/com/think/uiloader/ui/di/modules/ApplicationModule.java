@@ -3,7 +3,7 @@ package com.think.uiloader.ui.di.modules;
 
 import android.content.Context;
 
-import com.think.tlr.Log;
+import com.think.tlr.TLRLog;
 import com.think.uiloader.data.executor.JobExecutor;
 import com.think.uiloader.data.executor.PostExecutionThread;
 import com.think.uiloader.data.executor.ThreadExecutor;
@@ -83,13 +83,13 @@ public class ApplicationModule {
             Request request = chain.request();
 
             long t1 = System.nanoTime();
-            Log.i(TAG, String.format("Sending request %s on %s%n%s",
+            TLRLog.i(TAG, String.format("Sending request %s on %s%n%s",
                     request.url(), chain.connection(), request.headers()));
 
             Response response = chain.proceed(request);
 
             long t2 = System.nanoTime();
-            Log.i(TAG, String.format("Received response for %s in %.1fms%n%s",
+            TLRLog.i(TAG, String.format("Received response for %s in %.1fms%n%s",
                     response.request().url(), (t2 - t1) / 1e6d, response.headers()));
 
             return response;

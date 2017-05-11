@@ -26,7 +26,7 @@ import javax.inject.Inject;
 /**
  * Created by borney on 4/28/17.
  */
-public class CannotMoveHeadByTLRActivity extends AppCompatActivity implements ImageContract.View {
+public class RListViewActivity extends AppCompatActivity implements ImageContract.View {
     private ListView mListView;
     private TLRLinearLayout mTLRLinearLayout;
     private ListImageAdapter mAdapter;
@@ -42,7 +42,7 @@ public class CannotMoveHeadByTLRActivity extends AppCompatActivity implements Im
         super.onCreate(savedInstanceState);
         mApp = (App) getApplication();
         initActivityComponent();
-        setContentView(R.layout.activity_cannot_movehead_bytlr);
+        setContentView(R.layout.activity_tlrlistview);
         mListView = (ListView) findViewById(R.id.content);
         mTLRLinearLayout = (TLRLinearLayout) findViewById(R.id.tlrlayout);
         mTLRLinearLayout.addTLRUiHandler(new TLRUiHandlerAdapter() {
@@ -58,7 +58,7 @@ public class CannotMoveHeadByTLRActivity extends AppCompatActivity implements Im
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(CannotMoveHeadByTLRActivity.this, "onclick " + position, Toast.LENGTH_SHORT).show();
+                Toast.makeText(RListViewActivity.this, "onclick " + position, Toast.LENGTH_SHORT).show();
             }
         });
     }

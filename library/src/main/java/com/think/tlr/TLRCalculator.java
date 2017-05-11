@@ -19,6 +19,7 @@ import com.think.tlr.TLRLinearLayout.RefreshStatus;
  * Created by borney on 5/3/17.
  */
 class TLRCalculator {
+    private static final boolean DEBUG = false;
     private float mDownX, mDownY;
     private float mLastX, mLastY;
     /**
@@ -86,7 +87,7 @@ class TLRCalculator {
     private void initAttrs(Context context, AttributeSet attrs) {
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.TLRLinearLayout);
         if (array == null) {
-            Log.e("initAttrs array is null");
+            TLRLog.e("initAttrs array is null");
             return;
         }
         try {
@@ -116,10 +117,10 @@ class TLRCalculator {
         } finally {
             array.recycle();
         }
-        Log.v("isKeepHeadRefreshing = " + isKeepHeadRefreshing);
-        Log.v("isKeepFootLoading = " + isKeepFootLoading);
-        Log.v("mRefreshMaxMoveDistance = " + mRefreshMaxMoveDistance);
-        Log.v("mLoadMaxMoveDistance = " + mLoadMaxMoveDistance);
+        TLRLog.v("isKeepHeadRefreshing = " + isKeepHeadRefreshing);
+        TLRLog.v("isKeepFootLoading = " + isKeepFootLoading);
+        TLRLog.v("mRefreshMaxMoveDistance = " + mRefreshMaxMoveDistance);
+        TLRLog.v("mLoadMaxMoveDistance = " + mLoadMaxMoveDistance);
     }
 
     public void setTLRUiHandler(TLRUiHandler uiHandler) {
@@ -215,7 +216,7 @@ class TLRCalculator {
             return;
         }
 
-        //Log.d("mTotalOffsetY:" + mTotalOffsetY + " y:" + y);
+        //TLRLog.d("mTotalOffsetY:" + mTotalOffsetY + " y:" + y);
 
         //move view
         mTotalOffsetY += y;
@@ -291,13 +292,13 @@ class TLRCalculator {
     }
 
     public void startAutoRefresh() {
-        Log.d("autoRefresh mHeadHeight:" + mHeadHeight);
+        TLRLog.d("autoRefresh mHeadHeight:" + mHeadHeight);
         mStatusController.setAutoRefreshing(true);
         if (mHeadHeight == 0) {
             mTLRLinearLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
-                    Log.d("autoRefresh onGlobalLayout mHeadHeight:" + mHeadHeight);
+                    TLRLog.d("autoRefresh onGlobalLayout mHeadHeight:" + mHeadHeight);
                     startAutoRefreshAnimator();
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                         mTLRLinearLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -323,7 +324,7 @@ class TLRCalculator {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     mAutoAnimator.removeListener(this);
-                    Log.v("startAutoRefreshAnimator isKeepHeadRefreshing:" + isKeepHeadRefreshing);
+                    TLRLog.v("startAutoRefreshAnimator isKeepHeadRefreshing:" + isKeepHeadRefreshing);
                     if (isKeepHeadRefreshing) {
                         startKeepAnimator();
                     } else {
@@ -357,7 +358,9 @@ class TLRCalculator {
         } else {
             endY = -mLoadThresholdHeight;
         }
-        Log.d("startKeepAnimator startY:" + startY + " endY:" + endY);
+        if (DEBUG) {
+            TLRLog.d("startKeepAnimator startY:" + startY + " endY:" + endY);
+        }
         if (startY != 0 && startY != endY) {
             mKeepAnimator = ValueAnimator.ofInt(startY, endY);
             mKeepAnimator.setDuration(200);
@@ -506,6 +509,14 @@ class TLRCalculator {
 
     public boolean isAutoRefreshing() {
         return mStatusController.isAutoRefreshing();
+    }
+
+    public boolean isRefreshing() {
+        return mStatusController.isRefreshing();
+    }
+
+    public boolean isLoading() {
+        return mStatusController.isLoading();
     }
 
     private class AnimUpdateListener implements ValueAnimator.AnimatorUpdateListener {

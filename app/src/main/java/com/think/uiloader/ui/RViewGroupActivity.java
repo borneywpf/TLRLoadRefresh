@@ -10,9 +10,9 @@ import com.think.tlr.TLRUiHandlerAdapter;
 import com.think.uiloader.R;
 
 /**
- * Created by borney on 5/2/17.
+ * Created by borney on 4/28/17.
  */
-public class TextViewActivity extends AppCompatActivity {
+public class RViewGroupActivity extends AppCompatActivity {
     private TLRLinearLayout mTLRLinearLayout;
     private TextView mTextView;
     private int refreshCount = 0;
@@ -20,7 +20,7 @@ public class TextViewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tlrtextview);
+        setContentView(R.layout.activity_tlrviewgroup);
         mTLRLinearLayout = (TLRLinearLayout) findViewById(R.id.tlrlayout);
         mTLRLinearLayout.addTLRUiHandler(new TLRUiHandlerAdapter() {
             @Override

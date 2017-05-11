@@ -27,7 +27,7 @@ import javax.inject.Inject;
 /**
  * Created by borney on 4/28/17.
  */
-public class AutoRefreshActivity extends AppCompatActivity implements ImageContract.View {
+public class RAutoRefreshActivity extends AppCompatActivity implements ImageContract.View {
     private ListView mListView;
     private TLRLinearLayout mTLRLinearLayout;
     private ListImageAdapter mAdapter;
@@ -60,7 +60,7 @@ public class AutoRefreshActivity extends AppCompatActivity implements ImageContr
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(AutoRefreshActivity.this, "onclick " + position, Toast.LENGTH_SHORT).show();
+                Toast.makeText(RAutoRefreshActivity.this, "onclick " + position, Toast.LENGTH_SHORT).show();
             }
         });
         mTLRLinearLayout.autoRefresh();

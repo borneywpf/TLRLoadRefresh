@@ -1,6 +1,7 @@
 package com.think.uiloader.ui.mvp.presenter;
 
 import com.google.common.base.Optional;
+import com.think.tlr.TLRLog;
 import com.think.uiloader.data.entity.ImageEntity;
 import com.think.uiloader.domain.DefaultObserver;
 import com.think.uiloader.domain.ImageCase;
@@ -31,6 +32,7 @@ public class ImagePresenter implements ImageContract.Presenter {
         mImageCase.images(startIndex, returnNum, new DefaultObserver<ImageEntity>() {
             @Override
             public void onNext(ImageEntity entity) {
+                TLRLog.v("-----------------------get images success!!!-------------------");
                 if (getView().isPresent()) {
                     getView().get().imagesSuccess(entity.getImgs());
                 }

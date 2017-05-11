@@ -40,14 +40,15 @@ public class MainActivity extends AppCompatActivity {
     private List<ListItem<AppCompatActivity>> initList() {
         return new ArrayList<ListItem<AppCompatActivity>>() {
             {
-                add(new ListItem(getString(R.string.label_listview), ListViewActivity.class));
-                add(new ListItem(getString(R.string.label_recyclerview), RecyclerViewActivity.class));
-                add(new ListItem(getString(R.string.label_viewgroup), ViewGroupActivity.class));
-                add(new ListItem(getString(R.string.label_textview), TextViewActivity.class));
-                add(new ListItem(getString(R.string.label_keephead), KeepHeadActivity.class));
-                add(new ListItem(getString(R.string.label_autorefresh), AutoRefreshActivity.class));
-                add(new ListItem(getString(R.string.label_cannot_move_head_by_tlr), CannotMoveHeadByTLRActivity.class));
-                add(new ListItem(getString(R.string.label_refresh_max_move_distance), RefreshMaxMoveDistanceActivity.class));
+                add(new ListItem(getString(R.string.label_listview), RListViewActivity.class));
+                add(new ListItem(getString(R.string.label_recyclerview), RRecyclerViewActivity.class));
+                add(new ListItem(getString(R.string.label_viewgroup), RViewGroupActivity.class));
+                add(new ListItem(getString(R.string.label_textview), RTextViewActivity.class));
+                add(new ListItem(getString(R.string.label_webview), RWebViewActivity.class));
+                add(new ListItem(getString(R.string.label_keephead), RKeepHeadActivity.class));
+                add(new ListItem(getString(R.string.label_autorefresh), RAutoRefreshActivity.class));
+                add(new ListItem(getString(R.string.label_cannot_move_head_by_tlr), RCannotMoveHeadByTLRActivity.class));
+                add(new ListItem(getString(R.string.label_refresh_max_move_distance), RRefreshMaxMoveDistanceActivity.class));
             }
         };
     }

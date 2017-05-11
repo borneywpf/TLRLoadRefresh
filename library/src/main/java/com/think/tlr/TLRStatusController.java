@@ -44,7 +44,7 @@ class TLRStatusController {
         mCalculator = calculator;
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.TLRLinearLayout);
         if (array == null) {
-            Log.e("initAttrs array is null");
+            TLRLog.e("initAttrs array is null");
             return;
         }
         try {
@@ -175,7 +175,7 @@ class TLRStatusController {
     }
 
     public void setAutoRefreshing(boolean autoRefreshing) {
-        Log.v("setAutoRefreshing:" + autoRefreshing);
+        TLRLog.v("setAutoRefreshing:" + autoRefreshing);
         isAutoRefreshing = autoRefreshing;
     }
 
@@ -221,5 +221,13 @@ class TLRStatusController {
 
     public void finishLoad() {
         isLoading = false;
+    }
+
+    public boolean isRefreshing() {
+        return isRefreshing;
+    }
+
+    public boolean isLoading() {
+        return isLoading;
     }
 }

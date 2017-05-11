@@ -27,7 +27,7 @@ import javax.inject.Inject;
 /**
  * Created by borney on 4/28/17.
  */
-public class RefreshMaxMoveDistanceActivity extends AppCompatActivity implements ImageContract.View {
+public class RRefreshMaxMoveDistanceActivity extends AppCompatActivity implements ImageContract.View {
     private ListView mListView;
     private TLRLinearLayout mTLRLinearLayout;
     private ListImageAdapter mAdapter;
@@ -60,7 +60,7 @@ public class RefreshMaxMoveDistanceActivity extends AppCompatActivity implements
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(RefreshMaxMoveDistanceActivity.this, "onclick " + position, Toast.LENGTH_SHORT).show();
+                Toast.makeText(RRefreshMaxMoveDistanceActivity.this, "onclick " + position, Toast.LENGTH_SHORT).show();
             }
         });
     }
