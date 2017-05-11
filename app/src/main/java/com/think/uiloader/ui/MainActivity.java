@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
                 add(new ListItem(getString(R.string.label_textview), RTextViewActivity.class));
                 add(new ListItem(getString(R.string.label_webview), RWebViewActivity.class));
                 add(new ListItem(getString(R.string.label_gridview), RGridViewActivity.class));
+                add(new ListItem(getString(R.string.label_viewpage), RViewPagerActivity.class));
                 add(new ListItem(getString(R.string.label_keephead), RKeepHeadActivity.class));
                 add(new ListItem(getString(R.string.label_autorefresh), RAutoRefreshActivity.class));
                 add(new ListItem(getString(R.string.label_cannot_move_head_by_tlr), RCannotMoveHeadByTLRActivity.class));
