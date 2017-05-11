@@ -7,9 +7,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.think.tlr.TLRLinearLayout;
@@ -60,6 +62,12 @@ public class RGridViewActivity extends AppCompatActivity implements ImageContrac
         mGridView = (GridView) findViewById(R.id.content);
         mAdapter = new MyAdapter();
         mGridView.setAdapter(mAdapter);
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(RGridViewActivity.this, "onclick " + position, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void initActivityComponent() {
