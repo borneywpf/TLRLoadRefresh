@@ -41,6 +41,7 @@
         <activity android:name=".ui.TLRSunofOtherActivity" android:label="@string/label_sunofother"/>
         <activity android:name=".ui.TLRMultiContentActivity" android:label="@string/label_multicontent"/>
         <activity android:name=".ui.LListViewActivity" android:label="@string/label_listview_load"/>
+        <activity android:name=".ui.RLListViewActivity" android:label="@string/label_listview_refresh_load"/>
     </application>
 
 </manifest>

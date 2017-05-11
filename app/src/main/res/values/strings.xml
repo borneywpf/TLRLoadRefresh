@@ -17,4 +17,5 @@
     <string name="label_sunofother">TLR做为子控件被集成</string>
     <string name="tip">Tips:更多内容敬请期待...</string>
     <string name="label_listview_load">上拉加载-ListView</string>
+    <string name="label_listview_refresh_load">上拉加载-下拉刷新-ListView</string>
 </resources>

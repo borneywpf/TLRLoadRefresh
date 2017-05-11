@@ -5,6 +5,7 @@ import com.think.uiloader.ui.LListViewActivity;
 import com.think.uiloader.ui.RAutoRefreshActivity;
 import com.think.uiloader.ui.RCannotMoveHeadByTLRActivity;
 import com.think.uiloader.ui.RGridViewActivity;
+import com.think.uiloader.ui.RLListViewActivity;
 import com.think.uiloader.ui.RListViewActivity;
 import com.think.uiloader.ui.RNotKeepHeadActivity;
 import com.think.uiloader.ui.ROtherLibraryActivity;
@@ -34,4 +35,5 @@ public interface ActivityComponent {
     void inject(TLRMultiContentActivity activity);
     void inject(TLRSunofOtherActivity activity);
     void inject(LListViewActivity activity);
+    void inject(RLListViewActivity activity);
 }
