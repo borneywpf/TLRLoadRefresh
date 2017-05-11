@@ -5,7 +5,8 @@ import com.think.uiloader.ui.RAutoRefreshActivity;
 import com.think.uiloader.ui.RCannotMoveHeadByTLRActivity;
 import com.think.uiloader.ui.RGridViewActivity;
 import com.think.uiloader.ui.RListViewActivity;
-import com.think.uiloader.ui.RKeepHeadActivity;
+import com.think.uiloader.ui.RNotKeepHeadActivity;
+import com.think.uiloader.ui.ROtherLibraryActivity;
 import com.think.uiloader.ui.RRecyclerViewActivity;
 import com.think.uiloader.ui.RRefreshMaxMoveDistanceActivity;
 import com.think.uiloader.ui.di.AScope;
@@ -21,9 +22,10 @@ import dagger.Component;
 public interface ActivityComponent {
     void inject(RListViewActivity activity);
     void inject(RRecyclerViewActivity activity);
-    void inject(RKeepHeadActivity activity);
+    void inject(RNotKeepHeadActivity activity);
     void inject(RCannotMoveHeadByTLRActivity activity);
     void inject(RAutoRefreshActivity activity);
     void inject(RRefreshMaxMoveDistanceActivity activity);
     void inject(RGridViewActivity activity);
+    void inject(ROtherLibraryActivity activity);
 }

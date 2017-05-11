@@ -1,6 +1,7 @@
 package com.think.uiloader.ui;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,6 +38,7 @@ public class RRecyclerViewActivity extends AppCompatActivity implements ImageCon
     private App mApp;
     private int curIndex = 0;
     private MyAdapter mAdapter;
+    private Handler mHandler = new Handler();
 
     @Inject
     ImagePresenter mPresenter;
@@ -84,13 +86,16 @@ public class RRecyclerViewActivity extends AppCompatActivity implements ImageCon
     }
 
     @Override
-    public void imagesSuccess(List<ImageEntity.Image> images) {
-        if (images != null) {
-            mImageList.addAll(0, images);
-            curIndex += images.size();
-            mAdapter.notifyImages(mImageList);
-            mTLRLinearLayout.finishRefresh(true);
-        }
+    public void imagesSuccess(final List<ImageEntity.Image> images) {
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mImageList.addAll(0, images);
+                curIndex += images.size();
+                mAdapter.notifyImages(mImageList);
+                mTLRLinearLayout.finishRefresh(true);
+            }
+        }, 1500);
     }
 
     @Override

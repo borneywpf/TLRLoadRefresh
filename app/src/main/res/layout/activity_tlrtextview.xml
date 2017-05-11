@@ -8,7 +8,7 @@
     uiloader:enableRefresh="true"
     uiloader:enableLoad="false"
     uiloader:keepContentLayout="false"
-    uiloader:keepHeadRefreshing="false">
+    uiloader:keepHeadRefreshing="true">
 
     <TextView
         android:id="@+id/text"

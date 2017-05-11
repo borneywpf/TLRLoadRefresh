@@ -9,7 +9,7 @@
     uiloader:enableLoad="false"
     uiloader:enableRefresh="true"
     uiloader:keepContentLayout="false"
-    uiloader:keepHeadRefreshing="false">
+    uiloader:keepHeadRefreshing="true">
 
     <RelativeLayout
         android:layout_width="match_parent"

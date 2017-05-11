@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     uiloader:enableRefresh="true"
     uiloader:enableLoad="false"
-    uiloader:keepHeadRefreshing="true"
+    uiloader:keepHeadRefreshing="false"
     uiloader:keepContentLayout="false">
 
     <ListView

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     uiloader:enableRefresh="true"
     uiloader:enableLoad="false"
-    uiloader:keepHeadRefreshing="false"
+    uiloader:keepHeadRefreshing="true"
     uiloader:keepFootLoading="false">
 
     <android.support.v7.widget.RecyclerView

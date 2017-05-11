@@ -1,6 +1,7 @@
 package com.think.uiloader.ui;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
@@ -16,6 +17,7 @@ public class RViewGroupActivity extends AppCompatActivity {
     private TLRLinearLayout mTLRLinearLayout;
     private TextView mTextView;
     private int refreshCount = 0;
+    private Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -27,13 +29,13 @@ public class RViewGroupActivity extends AppCompatActivity {
             public void onRefreshStatusChanged(TLRLinearLayout.RefreshStatus status) {
                 if (status == TLRLinearLayout.RefreshStatus.REFRESHING) {
                     refreshCount += 1;
-                    mTextView.setText("刷新了 " + refreshCount + " 次.");
                     mTLRLinearLayout.postDelayed(new Runnable() {
                         @Override
                         public void run() {
+                            mTextView.setText("刷新了 " + refreshCount + " 次.");
                             mTLRLinearLayout.finishRefresh(true);
                         }
-                    }, 500);
+                    }, 1500);
                 }
             }
         });

@@ -27,7 +27,7 @@ import javax.inject.Inject;
 /**
  * Created by borney on 4/28/17.
  */
-public class RKeepHeadActivity extends AppCompatActivity implements ImageContract.View {
+public class RNotKeepHeadActivity extends AppCompatActivity implements ImageContract.View {
     private ListView mListView;
     private TLRLinearLayout mTLRLinearLayout;
     private ListImageAdapter mAdapter;
@@ -44,7 +44,7 @@ public class RKeepHeadActivity extends AppCompatActivity implements ImageContrac
         super.onCreate(savedInstanceState);
         mApp = (App) getApplication();
         initActivityComponent();
-        setContentView(R.layout.activity_tlrkeephead);
+        setContentView(R.layout.activity_tlrnotkeephead);
         mListView = (ListView) findViewById(R.id.content);
         mTLRLinearLayout = (TLRLinearLayout) findViewById(R.id.tlrlayout);
         mTLRLinearLayout.addTLRUiHandler(new TLRUiHandlerAdapter() {
@@ -60,7 +60,7 @@ public class RKeepHeadActivity extends AppCompatActivity implements ImageContrac
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(RKeepHeadActivity.this, "onclick " + position, Toast.LENGTH_SHORT).show();
+                Toast.makeText(RNotKeepHeadActivity.this, "onclick " + position, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -85,15 +85,10 @@ public class RKeepHeadActivity extends AppCompatActivity implements ImageContrac
     @Override
     public void imagesSuccess(final List<ImageEntity.Image> images) {
         if (images != null) {
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mImageList.addAll(0, images);
-                    curIndex += images.size();
-                    mAdapter.notifyImages(mImageList);
-                    mTLRLinearLayout.finishRefresh(true);
-                }
-            }, 1500);
+            mImageList.addAll(0, images);
+            curIndex += images.size();
+            mAdapter.notifyImages(mImageList);
+            mTLRLinearLayout.finishRefresh(true);
         }
     }
 
