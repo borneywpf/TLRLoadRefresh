@@ -44,7 +44,7 @@ public class TLRLinearLayout extends ViewGroup {
     /**
      * TLR 是否可以移动foot
      */
-    private boolean canMoveFootByTLR = false;
+    private boolean canMoveFootByTLR = true;
 
     private View mHeaderView;
     /**
@@ -183,6 +183,10 @@ public class TLRLinearLayout extends ViewGroup {
 
         if (mFooterView == null) {
             TLRLog.e("has not footer view!");
+            if (isEnableLoad()) {
+                TLRLog.v("use default foot view!!!");
+                setFooterView(false, new TLRDefFootView(getContext()));
+            }
         }
 
         if (mContentChilds.size() == 0) {

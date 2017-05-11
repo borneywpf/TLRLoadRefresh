@@ -1,6 +1,7 @@
 package com.think.uiloader.ui.di.components;
 
 
+import com.think.uiloader.ui.LListViewActivity;
 import com.think.uiloader.ui.RAutoRefreshActivity;
 import com.think.uiloader.ui.RCannotMoveHeadByTLRActivity;
 import com.think.uiloader.ui.RGridViewActivity;
@@ -32,4 +33,5 @@ public interface ActivityComponent {
     void inject(ROtherLibraryActivity activity);
     void inject(TLRMultiContentActivity activity);
     void inject(TLRSunofOtherActivity activity);
+    void inject(LListViewActivity activity);
 }
