@@ -1,7 +1,8 @@
 package com.think.tlr;
 
 /**
- * Created by borney on 4/27/17.
+ * @author borney
+ * @date 4/28/17
  */
 public interface TLRUiHandler {
     /**

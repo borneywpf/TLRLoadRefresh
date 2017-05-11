@@ -16,7 +16,8 @@ import com.think.tlr.TLRLinearLayout.LoadStatus;
 import com.think.tlr.TLRLinearLayout.RefreshStatus;
 
 /**
- * Created by borney on 5/3/17.
+ * @author borney
+ * @date 4/28/17
  */
 class TLRCalculator {
     private static final boolean DEBUG = false;

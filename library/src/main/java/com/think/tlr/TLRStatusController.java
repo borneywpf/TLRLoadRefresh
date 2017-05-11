@@ -8,7 +8,9 @@ import com.think.tlr.TLRLinearLayout.LoadStatus;
 import com.think.tlr.TLRLinearLayout.RefreshStatus;
 
 /**
- * Created by borney on 5/5/17.
+ * @author borney
+ * @date 4/28/17
+ * @see TLRCalculator
  */
 class TLRStatusController {
     private TLRCalculator mCalculator;

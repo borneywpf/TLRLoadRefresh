@@ -4,7 +4,10 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 /**
- * Created by borney on 4/28/17.
+ * @author borney
+ * @date 4/28/17
+ * @see android.view.View
+ * @see android.view.ViewGroup
  */
 public class TLRLog {
     private static final String DEF_TAG = "TLRLoadRefresh";

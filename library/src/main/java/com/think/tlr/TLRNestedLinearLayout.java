@@ -10,7 +10,9 @@ import android.view.MotionEvent;
 import android.view.View;
 
 /**
- * Created by borney on 5/9/17.
+ * @author borney
+ * @date 4/28/17
+ * @see TLRLinearLayout
  */
 public class TLRNestedLinearLayout extends TLRLinearLayout implements NestedScrollingParent {
     private TLRCalculator mCalculator;

@@ -10,7 +10,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
- * Created by borney on 5/9/17.
+ * @author borney
+ * @date 4/28/17
+ * @see TLRUiHandler
  */
 public class TLRDefHeadView extends LinearLayout implements TLRUiHandler {
     private ImageView mImageView;
