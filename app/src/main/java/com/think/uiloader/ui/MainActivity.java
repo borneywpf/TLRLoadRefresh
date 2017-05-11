@@ -29,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mContentView = (RecyclerView) LayoutInflater.from(this).inflate(R.layout.activity_main, null);
-        setContentView(mContentView);
+        setContentView(R.layout.activity_main);
+        mContentView = (RecyclerView) findViewById(R.id.recycler);
         mContentView.setLayoutManager(new LinearLayoutManager(this));
         mContentView.setHasFixedSize(true);
         mContentView.addItemDecoration(new ItemDecorationVerticalDivider(this));
@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 add(new ListItem(getString(R.string.label_autorefresh), RAutoRefreshActivity.class));
                 add(new ListItem(getString(R.string.label_cannot_move_head_by_tlr), RCannotMoveHeadByTLRActivity.class));
                 add(new ListItem(getString(R.string.label_refresh_max_move_distance), RRefreshMaxMoveDistanceActivity.class));
+                add(new ListItem(getString(R.string.label_sunofother), TLRSunofOtherActivity.class));
                 add(new ListItem(getString(R.string.label_multicontent), TLRMultiContentActivity.class));
             }
         };
@@ -118,12 +119,19 @@ public class MainActivity extends AppCompatActivity {
         private String name;
         private Class<T> activityClass;
 
+        ListItem(String name) {
+            this(name, null);
+        }
+
         ListItem(String name, Class<T> activityClass) {
             this.name = name;
             this.activityClass = activityClass;
         }
 
         void start() {
+            if (activityClass == null) {
+                return;
+            }
             Intent intent = new Intent(MainActivity.this, activityClass);
             if (intent.resolveActivity(getPackageManager()) != null) {
                 startActivity(intent);
