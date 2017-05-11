@@ -47,10 +47,6 @@ class TLRCalculator {
 
     private int mHeadHeight;
     private int mFootHeight;
-    /**
-     * 刷新阀值(高度), 加载阀值
-     */
-    private int mRefreshThresholdHeight, mLoadThresholdHeight;
 
     /**
      * 刷新或加载移动的最大距离
@@ -72,13 +68,17 @@ class TLRCalculator {
     private TLRUiHandler mTLRUiHandler;
 
     private ValueAnimator mAutoAnimator, mResetAnimator, mKeepAnimator;
+    /**
+     * 刷新阀值(高度), 加载阀值
+     */
+    int refreshThresholdHeight, loadThresholdHeight;
 
-    private TLRLinearLayout mTLRLinearLayout;
+    TLRLinearLayout tLRLinearLayout;
     private int mTouchSlop;
     private Direction mDirection = Direction.NONE;
 
     public TLRCalculator(TLRLinearLayout layout, AttributeSet attrs) {
-        mTLRLinearLayout = layout;
+        tLRLinearLayout = layout;
         Context context = layout.getContext();
         initAttrs(context, attrs);
         mStatusController = new TLRStatusController(this, context, attrs);
@@ -131,14 +131,12 @@ class TLRCalculator {
 
     public void setHeadViewHeight(int height) {
         mHeadHeight = height;
-        mRefreshThresholdHeight = (int) (mHeadHeight * mRefreshThreshold);
-        mStatusController.setRefreshThresholdHeight(mRefreshThresholdHeight);
+        refreshThresholdHeight = (int) (mHeadHeight * mRefreshThreshold);
     }
 
     public void setFootViewHeight(int height) {
         mFootHeight = height;
-        mLoadThresholdHeight = (int) (mFootHeight * mLoadThreshold);
-        mStatusController.setLoadThresholdHeight(mLoadThresholdHeight);
+        loadThresholdHeight = (int) (mFootHeight * mLoadThreshold);
     }
 
     /**
@@ -168,9 +166,9 @@ class TLRCalculator {
         mDirection = Direction.NONE;
         mStatusController.calculatorUpRefreshStatus();
         mStatusController.calculatorUpLoadStatus();
-        if (isKeepFootLoading && mTotalOffsetY <= -mLoadThresholdHeight) {
+        if (isKeepFootLoading && mTotalOffsetY <= -loadThresholdHeight) {
             startKeepAnimator();
-        } else if (isKeepHeadRefreshing && mTotalOffsetY >= mRefreshThresholdHeight) {
+        } else if (isKeepHeadRefreshing && mTotalOffsetY >= refreshThresholdHeight) {
             startKeepAnimator();
         } else {
             startResetAnimator();
@@ -222,7 +220,7 @@ class TLRCalculator {
         //move view
         mTotalOffsetY += y;
 
-        mTLRLinearLayout.move(y);
+        tLRLinearLayout.move(y);
 
         //calculate move status
         mStatusController.calculateMoveRefreshStatus(y > 0);
@@ -230,10 +228,10 @@ class TLRCalculator {
 
         //notify offset
         if (mTotalOffsetY > 0 && mStatusController.getLoadStatus() == LoadStatus.IDLE) {
-            notifyPixOffset(mTotalOffsetY, mRefreshThresholdHeight, y);
+            notifyPixOffset(mTotalOffsetY, refreshThresholdHeight, y);
         }
         if (mTotalOffsetY < 0 && mStatusController.getRefreshStatus() == RefreshStatus.IDLE) {
-            notifyPixOffset(mTotalOffsetY, mLoadThresholdHeight, y);
+            notifyPixOffset(mTotalOffsetY, loadThresholdHeight, y);
         }
 
         //end ui move
@@ -268,7 +266,7 @@ class TLRCalculator {
             offset = (float) (Math.round(((float) totalThresholdY / height) * 100)) / 100;
         }
         boolean isRefresh = totalOffsetY != 0 ? totalOffsetY > 0 : y < 0;
-        mTLRUiHandler.onOffsetChanged(isRefresh, totalOffsetY, totalThresholdY, y, offset);
+        mTLRUiHandler.onOffsetChanged(tLRLinearLayout.getTouchView(), isRefresh, totalOffsetY, totalThresholdY, y, offset);
     }
 
     private void setDirection(float xDiff, float yDiff) {
@@ -296,15 +294,15 @@ class TLRCalculator {
         TLRLog.d("autoRefresh mHeadHeight:" + mHeadHeight);
         mStatusController.setAutoRefreshing(true);
         if (mHeadHeight == 0) {
-            mTLRLinearLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            tLRLinearLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
                     TLRLog.d("autoRefresh onGlobalLayout mHeadHeight:" + mHeadHeight);
                     startAutoRefreshAnimator();
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        mTLRLinearLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        tLRLinearLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     } else {
-                        mTLRLinearLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                        tLRLinearLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                     }
                 }
             });
@@ -355,9 +353,9 @@ class TLRCalculator {
         int startY = mTotalOffsetY;
         int endY;
         if (mTotalOffsetY > 0) {
-            endY = mRefreshThresholdHeight;
+            endY = refreshThresholdHeight;
         } else {
-            endY = -mLoadThresholdHeight;
+            endY = -loadThresholdHeight;
         }
         if (DEBUG) {
             TLRLog.d("startKeepAnimator startY:" + startY + " endY:" + endY);
@@ -411,7 +409,7 @@ class TLRCalculator {
             resetKeepView();
         }
         mStatusController.finishRefresh();
-        mTLRUiHandler.onFinish(true, isSuccess, errorCode);
+        mTLRUiHandler.onFinish(tLRLinearLayout.getTouchView(), true, isSuccess, errorCode);
     }
 
     public void finishLoad(boolean isSuccess, int errorCode) {
@@ -419,7 +417,7 @@ class TLRCalculator {
             resetKeepView();
         }
         mStatusController.finishLoad();
-        mTLRUiHandler.onFinish(false, isSuccess, errorCode);
+        mTLRUiHandler.onFinish(tLRLinearLayout.getTouchView(), false, isSuccess, errorCode);
     }
 
     private void resetKeepView() {

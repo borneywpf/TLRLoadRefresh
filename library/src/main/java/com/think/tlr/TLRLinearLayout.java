@@ -55,6 +55,7 @@ public class TLRLinearLayout extends ViewGroup {
     /**
      * 需要向ContentLayout中添加的子view
      */
+    private View mTouchView;
     private List<View> mContentChilds;
     private LinearLayout mContentLayout;
     private View mFooterView;
@@ -347,11 +348,23 @@ public class TLRLinearLayout extends ViewGroup {
         return mCalculator;
     }
 
+    void setTouchView(View touchView) {
+        if (mTouchView != touchView) {
+            mTouchView = touchView;
+        }
+    }
+
+    View getTouchView() {
+        return mTouchView;
+    }
+
     private boolean isTouchMoveRefresh(float x, float y) {
         boolean refresh = false;
         for (View view : mContentViews) {
             if (isTouchViewRefresh(view, x, y)) {
+                setTouchView(view);
                 refresh = true;
+                break;
             }
         }
         refresh &= isEnableRefresh();
@@ -362,7 +375,9 @@ public class TLRLinearLayout extends ViewGroup {
         boolean load = false;
         for (View view : mContentViews) {
             if (isTouchViewLoad(view, x, y)) {
+                setTouchView(view);
                 load = true;
+                break;
             }
         }
         load &= isEnableLoad();
@@ -892,34 +907,34 @@ public class TLRLinearLayout extends ViewGroup {
         }
 
         @Override
-        public void onRefreshStatusChanged(RefreshStatus status) {
-            TLRLog.d("onRefreshStatusChanged status:" + status + " size:" + mTLRUiHandlers.size());
+        public void onRefreshStatusChanged(View target, RefreshStatus status) {
+            TLRLog.d("onRefreshStatusChanged target:" + target.getClass().getSimpleName() + " status:" + status + " size:" + mTLRUiHandlers.size());
             for (TLRUiHandler handler : mTLRUiHandlers) {
-                handler.onRefreshStatusChanged(status);
+                handler.onRefreshStatusChanged(target, status);
             }
         }
 
         @Override
-        public void onLoadStatusChanged(LoadStatus status) {
-            TLRLog.i("onLoadStatusChanged status:" + status + " size:" + mTLRUiHandlers.size());
+        public void onLoadStatusChanged(View target, LoadStatus status) {
+            TLRLog.i("onLoadStatusChanged target:" + target.getClass().getSimpleName() + " status:" + status + " size:" + mTLRUiHandlers.size());
             for (TLRUiHandler handler : mTLRUiHandlers) {
-                handler.onLoadStatusChanged(status);
+                handler.onLoadStatusChanged(target, status);
             }
         }
 
         @Override
-        public void onOffsetChanged(boolean isRefresh, int totalOffsetY, int totalThresholdY, int offsetY, float threshOffset) {
+        public void onOffsetChanged(View target, boolean isRefresh, int totalOffsetY, int totalThresholdY, int offsetY, float threshOffset) {
             //TLRLog.v("isRefresh:" + isRefresh + " totalOffsetY:" + totalOffsetY + " y:" + offsetY);
             for (TLRUiHandler handler : mTLRUiHandlers) {
-                handler.onOffsetChanged(isRefresh, totalOffsetY, totalThresholdY, offsetY, threshOffset);
+                handler.onOffsetChanged(target, isRefresh, totalOffsetY, totalThresholdY, offsetY, threshOffset);
             }
         }
 
         @Override
-        public void onFinish(boolean isRefresh, boolean isSuccess, int errorCode) {
-            TLRLog.i("onFinish isRefresh:" + isRefresh + " isSuccess:" + isSuccess + " errorCode:" + errorCode);
+        public void onFinish(View target, boolean isRefresh, boolean isSuccess, int errorCode) {
+            TLRLog.i("onFinish target:" + target.getClass().getSimpleName() + " isRefresh:" + isRefresh + " isSuccess:" + isSuccess + " errorCode:" + errorCode);
             for (TLRUiHandler handler : mTLRUiHandlers) {
-                handler.onFinish(isRefresh, isSuccess, errorCode);
+                handler.onFinish(target, isRefresh, isSuccess, errorCode);
             }
         }
     }

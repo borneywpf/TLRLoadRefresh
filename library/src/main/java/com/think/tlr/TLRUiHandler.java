@@ -1,32 +1,39 @@
 package com.think.tlr;
 
+import android.view.View;
+
 /**
  * @author borney
  * @date 4/28/17
  */
 public interface TLRUiHandler {
     /**
+     *
+     * @param target
      * @param status
      */
-    void onRefreshStatusChanged(TLRLinearLayout.RefreshStatus status);
+    void onRefreshStatusChanged(View target, TLRLinearLayout.RefreshStatus status);
 
     /**
+     * @param target
      * @param status
      */
-    void onLoadStatusChanged(TLRLinearLayout.LoadStatus status);
+    void onLoadStatusChanged(View target, TLRLinearLayout.LoadStatus status);
 
     /**
+     * @param target
      * @param totalOffsetY
      * @param totalThresholdY
      * @param offsetY
      * @param threshOffset
      */
-    void onOffsetChanged(boolean isRefresh, int totalOffsetY, int totalThresholdY, int offsetY, float threshOffset);
+    void onOffsetChanged(View target, boolean isRefresh, int totalOffsetY, int totalThresholdY, int offsetY, float threshOffset);
 
     /**
+     * @param target
      * @param isRefresh
      * @param isSuccess
      * @param errorCode
      */
-    void onFinish(boolean isRefresh, boolean isSuccess, int errorCode);
+    void onFinish(View target, boolean isRefresh, boolean isSuccess, int errorCode);
 }

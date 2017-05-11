@@ -51,6 +51,7 @@ public class TLRNestedLinearLayout extends TLRLinearLayout implements NestedScro
 
     @Override
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
+        setTouchView(target);
         mCalculator.touchMoveLayoutView((int) (-dyUnconsumed / getResistance()));
     }
 

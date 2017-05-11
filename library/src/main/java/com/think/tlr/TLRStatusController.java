@@ -14,10 +14,6 @@ import com.think.tlr.TLRLinearLayout.RefreshStatus;
  */
 class TLRStatusController {
     private TLRCalculator mCalculator;
-    /**
-     * 刷新阀值(高度), 加载阀值
-     */
-    private int mRefreshThresholdHeight, mLoadThresholdHeight;
 
     /**
      * 刷新状态机
@@ -77,7 +73,7 @@ class TLRStatusController {
                 if (mRefreshStatus == RefreshStatus.IDLE && !isRefreshing) {
                     notifyRefreshStatusChanged(RefreshStatus.PULL_DOWN);
                 }
-                if (totalOffsetY >= mRefreshThresholdHeight && mRefreshStatus == RefreshStatus.PULL_DOWN) {
+                if (totalOffsetY >= mCalculator.refreshThresholdHeight && mRefreshStatus == RefreshStatus.PULL_DOWN) {
                     notifyRefreshStatusChanged(RefreshStatus.RELEASE_REFRESH);
                     if (isAutoRefreshing) {
                         notifyRefreshStatusChanged(RefreshStatus.REFRESHING);
@@ -85,7 +81,7 @@ class TLRStatusController {
                     }
                 }
             } else {//view向上运动
-                if (totalOffsetY < mRefreshThresholdHeight && mRefreshStatus == RefreshStatus.RELEASE_REFRESH) {
+                if (totalOffsetY < mCalculator.refreshThresholdHeight && mRefreshStatus == RefreshStatus.RELEASE_REFRESH) {
                     notifyRefreshStatusChanged(RefreshStatus.PULL_DOWN);
                 }
                 if (mRefreshStatus == RefreshStatus.PULL_DOWN) {
@@ -107,11 +103,11 @@ class TLRStatusController {
                 if (mLoadStatus == LoadStatus.IDLE && !isLoading) {
                     notifyLoadStatusChanged(LoadStatus.PULL_UP);
                 }
-                if (Math.abs(totalOffsetY) >= mLoadThresholdHeight && mLoadStatus == LoadStatus.PULL_UP) {
+                if (Math.abs(totalOffsetY) >= mCalculator.loadThresholdHeight && mLoadStatus == LoadStatus.PULL_UP) {
                     notifyLoadStatusChanged(LoadStatus.RELEASE_LOAD);
                 }
             } else {//view向下运动
-                if (Math.abs(totalOffsetY) < mLoadThresholdHeight && mLoadStatus == LoadStatus.RELEASE_LOAD) {
+                if (Math.abs(totalOffsetY) < mCalculator.loadThresholdHeight && mLoadStatus == LoadStatus.RELEASE_LOAD) {
                     notifyLoadStatusChanged(LoadStatus.PULL_UP);
                 }
                 if (mLoadStatus == LoadStatus.PULL_UP) {
@@ -158,7 +154,7 @@ class TLRStatusController {
         if (mRefreshStatus == RefreshStatus.REFRESHING) {
             isRefreshing = true;
         }
-        mTLRUiHandler.onRefreshStatusChanged(mRefreshStatus);
+        mTLRUiHandler.onRefreshStatusChanged(mCalculator.tLRLinearLayout.getTouchView(), mRefreshStatus);
     }
 
     private void notifyLoadStatusChanged(LoadStatus status) {
@@ -169,7 +165,7 @@ class TLRStatusController {
         if (mLoadStatus == LoadStatus.LOADING) {
             isLoading = true;
         }
-        mTLRUiHandler.onLoadStatusChanged(mLoadStatus);
+        mTLRUiHandler.onLoadStatusChanged(mCalculator.tLRLinearLayout.getTouchView(), mLoadStatus);
     }
 
     public void setTLRUiHandler(TLRUiHandler uiHandler) {
@@ -183,14 +179,6 @@ class TLRStatusController {
 
     public boolean isAutoRefreshing() {
         return isAutoRefreshing;
-    }
-
-    public void setLoadThresholdHeight(int height) {
-        mLoadThresholdHeight = height;
-    }
-
-    public void setRefreshThresholdHeight(int height) {
-        mRefreshThresholdHeight = height;
     }
 
     public LoadStatus getLoadStatus() {

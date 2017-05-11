@@ -4,6 +4,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -51,7 +52,7 @@ public class TLRDefHeadView extends LinearLayout implements TLRUiHandler {
     }
 
     @Override
-    public void onRefreshStatusChanged(TLRLinearLayout.RefreshStatus status) {
+    public void onRefreshStatusChanged(View target, TLRLinearLayout.RefreshStatus status) {
         switch (status) {
             case PULL_DOWN:
                 mTextView.setText(R.string.tlr_def_head_pull_down);
@@ -81,19 +82,19 @@ public class TLRDefHeadView extends LinearLayout implements TLRUiHandler {
     }
 
     @Override
-    public void onLoadStatusChanged(TLRLinearLayout.LoadStatus status) {
+    public void onLoadStatusChanged(View target, TLRLinearLayout.LoadStatus status) {
 
     }
 
     @Override
-    public void onOffsetChanged(boolean isRefresh, int totalOffsetY, int totalThresholdY, int offsetY, float threshOffset) {
+    public void onOffsetChanged(View target, boolean isRefresh, int totalOffsetY, int totalThresholdY, int offsetY, float threshOffset) {
         if (isRefresh && totalOffsetY == 0) {
             mImageView.setRotation(0);
         }
     }
 
     @Override
-    public void onFinish(boolean isRefresh, boolean isSuccess, int errorCode) {
+    public void onFinish(View target, boolean isRefresh, boolean isSuccess, int errorCode) {
         mTextView.setText(R.string.tlr_def_head_refresh_complete);
         if (isRefresh) {
             mAnimationDrawable.stop();

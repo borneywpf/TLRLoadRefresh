@@ -34,7 +34,7 @@ public class RWebViewActivity extends AppCompatActivity {
         mTLRLinearLayout = (TLRLinearLayout) findViewById(R.id.tlrlayout);
         mTLRLinearLayout.addTLRUiHandler(new TLRUiHandlerAdapter() {
             @Override
-            public void onRefreshStatusChanged(TLRLinearLayout.RefreshStatus status) {
+            public void onRefreshStatusChanged(View target, TLRLinearLayout.RefreshStatus status) {
                 if (status == TLRLinearLayout.RefreshStatus.REFRESHING) {
                     if (refreshCount % 2 == 0) {
                         mWebView.loadUrl("https://developers.google.cn/");

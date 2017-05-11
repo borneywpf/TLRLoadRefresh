@@ -53,7 +53,7 @@ public class RGridViewActivity extends AppCompatActivity implements ImageContrac
         mTLRLinearLayout = (TLRLinearLayout) findViewById(R.id.tlrlayout);
         mTLRLinearLayout.addTLRUiHandler(new TLRUiHandlerAdapter() {
             @Override
-            public void onRefreshStatusChanged(TLRLinearLayout.RefreshStatus status) {
+            public void onRefreshStatusChanged(View target, TLRLinearLayout.RefreshStatus status) {
                 if (status == TLRLinearLayout.RefreshStatus.REFRESHING) {
                     mPresenter.images(curIndex, 10);
                 }

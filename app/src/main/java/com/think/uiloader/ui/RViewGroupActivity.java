@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.TextView;
 
 import com.think.tlr.TLRLinearLayout;
@@ -26,7 +27,7 @@ public class RViewGroupActivity extends AppCompatActivity {
         mTLRLinearLayout = (TLRLinearLayout) findViewById(R.id.tlrlayout);
         mTLRLinearLayout.addTLRUiHandler(new TLRUiHandlerAdapter() {
             @Override
-            public void onRefreshStatusChanged(TLRLinearLayout.RefreshStatus status) {
+            public void onRefreshStatusChanged(View target, TLRLinearLayout.RefreshStatus status) {
                 if (status == TLRLinearLayout.RefreshStatus.REFRESHING) {
                     refreshCount += 1;
                     mTLRLinearLayout.postDelayed(new Runnable() {

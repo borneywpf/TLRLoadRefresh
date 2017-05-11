@@ -81,7 +81,7 @@ public class RViewPagerActivity extends FragmentActivity {
             mTLRLinearLayout = (TLRLinearLayout) rootView.findViewById(R.id.tlrlayout);
             mTLRLinearLayout.addTLRUiHandler(new TLRUiHandlerAdapter() {
                 @Override
-                public void onRefreshStatusChanged(TLRLinearLayout.RefreshStatus status) {
+                public void onRefreshStatusChanged(View target, TLRLinearLayout.RefreshStatus status) {
                     if (status == TLRLinearLayout.RefreshStatus.REFRESHING) {
                         mWebView.loadUrl("https://github.com/borneywpf");
                     }
