@@ -114,7 +114,11 @@ public class MaterialHeaderView extends LinearLayout implements TLRUiHandler {
         if (isRefresh && totalOffsetY == 0) {
             mCircleView.setVisibility(View.VISIBLE);
         }
+
         if (isRefresh && offsetY > 0) {
+            if (threshOffset == 1) {
+                threshOffset += (float) totalOffsetY / totalThresholdY;
+            }
             mProgress.showArrow(true);
             mProgress.setArrowScale(Math.min(1.0f, threshOffset));
             mProgress.setProgressRotation((threshOffset));
