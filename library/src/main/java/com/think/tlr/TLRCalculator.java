@@ -15,6 +15,9 @@ import android.view.animation.DecelerateInterpolator;
 import com.think.tlr.TLRLinearLayout.LoadStatus;
 import com.think.tlr.TLRLinearLayout.RefreshStatus;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author borney
  * @date 4/28/17
@@ -68,6 +71,8 @@ class TLRCalculator {
     private TLRUIHandler mTLRUiHandler;
 
     private ValueAnimator mAutoAnimator, mResetAnimator, mKeepAnimator;
+
+    private final List<TLRUIHandlerHook> mHooks = new ArrayList<>();
     /**
      * 刷新阀值(高度), 加载阀值
      */
@@ -406,7 +411,7 @@ class TLRCalculator {
             mStatusController.setAutoRefreshing(false);
         }
         if (isKeepHeadRefreshing) {
-            resetKeepView();
+            hookKeepView();
         }
         mStatusController.finishRefresh();
         mTLRUiHandler.onFinish(tLRLinearLayout.getTouchView(), true, isSuccess, errorCode);
@@ -414,14 +419,39 @@ class TLRCalculator {
 
     public void finishLoad(boolean isSuccess, int errorCode) {
         if (isKeepFootLoading) {
-            resetKeepView();
+            hookKeepView();
         }
         mStatusController.finishLoad();
         mTLRUiHandler.onFinish(tLRLinearLayout.getTouchView(), false, isSuccess, errorCode);
     }
 
+    private void hookKeepView() {
+        if (mHooks.size() != 0) {
+            for (TLRUIHandlerHook hook : mHooks) {
+                hook.handlerHook();
+            }
+        } else {
+            resetKeepView();
+        }
+    }
+
     private void resetKeepView() {
         startResetAnimator();
+    }
+
+    public void hook(TLRUIHandlerHook hook) {
+        if (hook != null) {
+            mHooks.add(hook);
+        }
+    }
+
+    public void releaseHook(TLRUIHandlerHook hook) {
+        if (hook != null) {
+            mHooks.remove(hook);
+        }
+        if (mHooks.size() == 0) {
+            resetKeepView();
+        }
     }
 
     public float getRefreshThreshold() {

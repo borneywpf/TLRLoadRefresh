@@ -514,6 +514,22 @@ public class TLRLinearLayout extends ViewGroup {
     }
 
     /**
+     *
+     * @param hook
+     */
+    public void hook(TLRUIHandlerHook hook) {
+        mCalculator.hook(hook);
+    }
+
+    /**
+     *
+     * @param hook
+     */
+    public void releaseHook(TLRUIHandlerHook hook) {
+        mCalculator.releaseHook(hook);
+    }
+
+    /**
      * return load is enable or not
      *
      * @return

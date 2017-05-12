@@ -7,7 +7,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.LinearLayout;
 
 /**
@@ -21,15 +21,18 @@ public class MaterialHeaderView extends LinearLayout implements TLRUIHandler {
 
     private static final int CIRCLE_DIAMETER = 40;
 
-    private static final float DECELERATE_INTERPOLATION_FACTOR = 2f;
-
-    private DecelerateInterpolator mDecelerateInterpolator;
-
     private int mMediumAnimationDuration;
 
     private ValueAnimator mScaleAnimator;
 
     private TLRLinearLayout mTLRLinearLayout;
+
+    private TLRUIHandlerHook mHook = new TLRUIHandlerHook() {
+        @Override
+        public void handlerHook() {
+
+        }
+    };
 
     public MaterialHeaderView(Context context) {
         this(context, null);
@@ -46,8 +49,7 @@ public class MaterialHeaderView extends LinearLayout implements TLRUIHandler {
         setGravity(Gravity.CENTER);
 
         mMediumAnimationDuration = getResources().getInteger(
-                android.R.integer.config_mediumAnimTime);
-        mDecelerateInterpolator = new DecelerateInterpolator(DECELERATE_INTERPOLATION_FACTOR);
+                android.R.integer.config_shortAnimTime);
         createProgressView();
         initUpScaleAnimator();
     }
@@ -55,7 +57,7 @@ public class MaterialHeaderView extends LinearLayout implements TLRUIHandler {
     private void initUpScaleAnimator() {
         mScaleAnimator = ValueAnimator.ofFloat(1.0f, 0.0f);
         mScaleAnimator.setDuration(mMediumAnimationDuration);
-        mScaleAnimator.setInterpolator(mDecelerateInterpolator);
+        mScaleAnimator.setInterpolator(new AccelerateInterpolator());
         mScaleAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -68,6 +70,9 @@ public class MaterialHeaderView extends LinearLayout implements TLRUIHandler {
         mScaleAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
+                if (mTLRLinearLayout != null) {
+                    mTLRLinearLayout.releaseHook(mHook);
+                }
                 mCircleView.setScaleX(1.0f);
                 mCircleView.setScaleY(1.0f);
                 invalidate();
@@ -87,9 +92,16 @@ public class MaterialHeaderView extends LinearLayout implements TLRUIHandler {
         addView(mCircleView);
     }
 
+    public void setTLRLinearLayout(TLRLinearLayout TLRLinearLayout) {
+        mTLRLinearLayout = TLRLinearLayout;
+    }
+
     @Override
     public void onRefreshStatusChanged(View target, TLRLinearLayout.RefreshStatus status) {
         if (status == TLRLinearLayout.RefreshStatus.REFRESHING) {
+            if (mTLRLinearLayout != null) {
+                mTLRLinearLayout.hook(mHook);
+            }
             mProgress.setAlpha(255);
             mProgress.start();
         }

@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.think.tlr.MaterialHeaderView;
 import com.think.tlr.TLRLinearLayout;
 import com.think.tlr.TLRUIHandlerAdapter;
 import com.think.uiloader.App;
@@ -29,6 +30,7 @@ import javax.inject.Inject;
  */
 public class RMaterialHeadActivity extends AppCompatActivity implements ImageContract.View {
     private ListView mListView;
+    private MaterialHeaderView mHeaderView;
     private TLRLinearLayout mTLRLinearLayout;
     private ListImageAdapter mAdapter;
     private List<ImageEntity.Image> mImageList = new ArrayList<>();
@@ -55,6 +57,8 @@ public class RMaterialHeadActivity extends AppCompatActivity implements ImageCon
                 }
             }
         });
+        mHeaderView = (MaterialHeaderView) findViewById(R.id.head);
+        mHeaderView.setTLRLinearLayout(mTLRLinearLayout);
         mAdapter = new ListImageAdapter();
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
