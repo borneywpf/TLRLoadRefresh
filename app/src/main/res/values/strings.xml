@@ -18,4 +18,6 @@
     <string name="tip">Tips:更多内容敬请期待...</string>
     <string name="label_listview_load">上拉加载-ListView</string>
     <string name="label_listview_refresh_load">上拉加载-下拉刷新-ListView</string>
+    <string name="label_materialstyle">类似原生Material风格的Head</string>
+    <string name="label_materialstyle_keepcontent">类似原生Material风格(内容体不移动)</string>
 </resources>

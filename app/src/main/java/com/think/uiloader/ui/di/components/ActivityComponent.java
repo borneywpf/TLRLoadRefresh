@@ -7,6 +7,8 @@ import com.think.uiloader.ui.RCannotMoveHeadByTLRActivity;
 import com.think.uiloader.ui.RGridViewActivity;
 import com.think.uiloader.ui.RLListViewActivity;
 import com.think.uiloader.ui.RListViewActivity;
+import com.think.uiloader.ui.RMaterialHeadActivity;
+import com.think.uiloader.ui.RMaterialHeadKeepContentActivity;
 import com.think.uiloader.ui.RNotKeepHeadActivity;
 import com.think.uiloader.ui.ROtherLibraryActivity;
 import com.think.uiloader.ui.RRecyclerViewActivity;
@@ -36,4 +38,6 @@ public interface ActivityComponent {
     void inject(TLRSunofOtherActivity activity);
     void inject(LListViewActivity activity);
     void inject(RLListViewActivity activity);
+    void inject(RMaterialHeadActivity activity);
+    void inject(RMaterialHeadKeepContentActivity activity);
 }

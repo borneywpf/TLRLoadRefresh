@@ -42,6 +42,8 @@
         <activity android:name=".ui.TLRMultiContentActivity" android:label="@string/label_multicontent"/>
         <activity android:name=".ui.LListViewActivity" android:label="@string/label_listview_load"/>
         <activity android:name=".ui.RLListViewActivity" android:label="@string/label_listview_refresh_load"/>
+        <activity android:name=".ui.RMaterialHeadActivity" android:label="@string/label_materialstyle"/>
+        <activity android:name=".ui.RMaterialHeadKeepContentActivity" android:label="@string/label_materialstyle_keepcontent"/>
     </application>
 
 </manifest>

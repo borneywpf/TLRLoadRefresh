@@ -57,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
                 add(new ListItem(getString(R.string.label_multicontent), TLRMultiContentActivity.class));
                 add(new ListItem(getString(R.string.label_listview_load), LListViewActivity.class));
                 add(new ListItem(getString(R.string.label_listview_refresh_load), RLListViewActivity.class));
+                add(new ListItem(getString(R.string.label_materialstyle), RMaterialHeadActivity.class));
+                add(new ListItem(getString(R.string.label_materialstyle_keepcontent), RMaterialHeadKeepContentActivity.class));
             }
         };
     }
