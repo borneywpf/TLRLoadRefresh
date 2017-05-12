@@ -6,7 +6,7 @@ import android.view.View;
  * @author borney
  * @date 4/28/17
  */
-public class TLRUiHandlerAdapter implements TLRUiHandler {
+public class TLRUIHandlerAdapter implements TLRUIHandler {
     @Override
     public void onRefreshStatusChanged(View target, TLRLinearLayout.RefreshStatus status) {
 

@@ -6,7 +6,7 @@ import android.view.View;
  * @author borney
  * @date 4/28/17
  */
-public interface TLRUiHandler {
+public interface TLRUIHandler {
     /**
      *
      * @param target

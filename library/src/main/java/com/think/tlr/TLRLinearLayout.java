@@ -496,20 +496,20 @@ public class TLRLinearLayout extends ViewGroup {
     }
 
     /**
-     * add {@link TLRUiHandler} callback
+     * add {@link TLRUIHandler} callback
      *
      * @param handler
      */
-    public void addTLRUiHandler(TLRUiHandler handler) {
+    public void addTLRUiHandler(TLRUIHandler handler) {
         mUiHandlerWrapper.addTLRUiHandler(handler);
     }
 
     /**
-     * remove {@link TLRUiHandler} callback
+     * remove {@link TLRUIHandler} callback
      *
      * @param handler
      */
-    public void removeTLRUiHandler(TLRUiHandler handler) {
+    public void removeTLRUiHandler(TLRUIHandler handler) {
         mUiHandlerWrapper.removeTLRUiHandler(handler);
     }
 
@@ -630,8 +630,8 @@ public class TLRLinearLayout extends ViewGroup {
             addView(mHeaderView, params);
         }
         TLRLog.d("setHeaderView:" + mHeaderView.getClass().getSimpleName());
-        if (mHeaderView instanceof TLRUiHandler) {
-            addTLRUiHandler((TLRUiHandler) mHeaderView);
+        if (mHeaderView instanceof TLRUIHandler) {
+            addTLRUiHandler((TLRUIHandler) mHeaderView);
         }
     }
 
@@ -657,8 +657,8 @@ public class TLRLinearLayout extends ViewGroup {
             addView(mFooterView, params);
         }
         TLRLog.d("setFooterView:" + mFooterView.getClass().getSimpleName());
-        if (mFooterView instanceof TLRUiHandler) {
-            addTLRUiHandler((TLRUiHandler) mFooterView);
+        if (mFooterView instanceof TLRUIHandler) {
+            addTLRUiHandler((TLRUIHandler) mFooterView);
         }
     }
 
@@ -902,18 +902,18 @@ public class TLRLinearLayout extends ViewGroup {
         }
     }
 
-    private static class TLRUiHandlerWrapper implements TLRUiHandler {
-        private final List<TLRUiHandler> mTLRUiHandlers = new ArrayList<>();
+    private static class TLRUiHandlerWrapper implements TLRUIHandler {
+        private final List<TLRUIHandler> mTLRUiHandlers = new ArrayList<>();
 
-        public void addTLRUiHandler(TLRUiHandler handler) {
+        public void addTLRUiHandler(TLRUIHandler handler) {
             if (handler != null) {
                 mTLRUiHandlers.add(handler);
             }
         }
 
-        public void removeTLRUiHandler(TLRUiHandler handler) {
+        public void removeTLRUiHandler(TLRUIHandler handler) {
             if (handler != null) {
-                for (TLRUiHandler uiHandler : mTLRUiHandlers) {
+                for (TLRUIHandler uiHandler : mTLRUiHandlers) {
                     if (uiHandler.equals(handler)) {
                         mTLRUiHandlers.remove(uiHandler);
                         break;
@@ -925,7 +925,7 @@ public class TLRLinearLayout extends ViewGroup {
         @Override
         public void onRefreshStatusChanged(View target, RefreshStatus status) {
             TLRLog.d("onRefreshStatusChanged target:" + target + " status:" + status + " size:" + mTLRUiHandlers.size());
-            for (TLRUiHandler handler : mTLRUiHandlers) {
+            for (TLRUIHandler handler : mTLRUiHandlers) {
                 handler.onRefreshStatusChanged(target, status);
             }
         }
@@ -933,7 +933,7 @@ public class TLRLinearLayout extends ViewGroup {
         @Override
         public void onLoadStatusChanged(View target, LoadStatus status) {
             TLRLog.i("onLoadStatusChanged target:" + target + " status:" + status + " size:" + mTLRUiHandlers.size());
-            for (TLRUiHandler handler : mTLRUiHandlers) {
+            for (TLRUIHandler handler : mTLRUiHandlers) {
                 handler.onLoadStatusChanged(target, status);
             }
         }
@@ -941,7 +941,7 @@ public class TLRLinearLayout extends ViewGroup {
         @Override
         public void onOffsetChanged(View target, boolean isRefresh, int totalOffsetY, int totalThresholdY, int offsetY, float threshOffset) {
             //TLRLog.v("isRefresh:" + isRefresh + " totalOffsetY:" + totalOffsetY + " y:" + offsetY);
-            for (TLRUiHandler handler : mTLRUiHandlers) {
+            for (TLRUIHandler handler : mTLRUiHandlers) {
                 handler.onOffsetChanged(target, isRefresh, totalOffsetY, totalThresholdY, offsetY, threshOffset);
             }
         }
@@ -949,7 +949,7 @@ public class TLRLinearLayout extends ViewGroup {
         @Override
         public void onFinish(View target, boolean isRefresh, boolean isSuccess, int errorCode) {
             TLRLog.i("onFinish target:" + target + " isRefresh:" + isRefresh + " isSuccess:" + isSuccess + " errorCode:" + errorCode);
-            for (TLRUiHandler handler : mTLRUiHandlers) {
+            for (TLRUIHandler handler : mTLRUiHandlers) {
                 handler.onFinish(target, isRefresh, isSuccess, errorCode);
             }
         }

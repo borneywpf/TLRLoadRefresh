@@ -65,7 +65,7 @@ class TLRCalculator {
 
     private TLRStatusController mStatusController;
 
-    private TLRUiHandler mTLRUiHandler;
+    private TLRUIHandler mTLRUiHandler;
 
     private ValueAnimator mAutoAnimator, mResetAnimator, mKeepAnimator;
     /**
@@ -124,7 +124,7 @@ class TLRCalculator {
         TLRLog.v("mLoadMaxMoveDistance = " + mLoadMaxMoveDistance);
     }
 
-    public void setTLRUiHandler(TLRUiHandler uiHandler) {
+    public void setTLRUiHandler(TLRUIHandler uiHandler) {
         mTLRUiHandler = uiHandler;
         mStatusController.setTLRUiHandler(mTLRUiHandler);
     }

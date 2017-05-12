@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.think.tlr.TLRLinearLayout;
-import com.think.tlr.TLRUiHandlerAdapter;
+import com.think.tlr.TLRUIHandlerAdapter;
 import com.think.uiloader.R;
 
 /**
@@ -25,7 +25,7 @@ public class RScrollViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tlrscrollview);
         mTLRLinearLayout = (TLRLinearLayout) findViewById(R.id.tlrlayout);
-        mTLRLinearLayout.addTLRUiHandler(new TLRUiHandlerAdapter() {
+        mTLRLinearLayout.addTLRUiHandler(new TLRUIHandlerAdapter() {
             @Override
             public void onRefreshStatusChanged(View target, TLRLinearLayout.RefreshStatus status) {
                 if (status == TLRLinearLayout.RefreshStatus.REFRESHING) {

@@ -36,7 +36,7 @@ class TLRStatusController {
 
     private boolean isRefreshing = false, isLoading = false;
 
-    private TLRUiHandler mTLRUiHandler;
+    private TLRUIHandler mTLRUiHandler;
 
     TLRStatusController(TLRCalculator calculator, Context context, AttributeSet attrs) {
         mCalculator = calculator;
@@ -168,7 +168,7 @@ class TLRStatusController {
         mTLRUiHandler.onLoadStatusChanged(mCalculator.tLRLinearLayout.getTouchView(), mLoadStatus);
     }
 
-    public void setTLRUiHandler(TLRUiHandler uiHandler) {
+    public void setTLRUiHandler(TLRUIHandler uiHandler) {
         mTLRUiHandler = uiHandler;
     }
 

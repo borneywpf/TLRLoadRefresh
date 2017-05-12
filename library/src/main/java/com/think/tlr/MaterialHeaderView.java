@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 /**
  * Created by borney on 5/12/17.
  */
-public class MaterialHeaderView extends LinearLayout implements TLRUiHandler {
+public class MaterialHeaderView extends LinearLayout implements TLRUIHandler {
     private CircleImageView mCircleView;
     private MaterialProgressDrawable mProgress;
     // Default background for the progress spinner
@@ -93,10 +93,6 @@ public class MaterialHeaderView extends LinearLayout implements TLRUiHandler {
             mProgress.setAlpha(255);
             mProgress.start();
         }
-    }
-
-    public void setTLRLinearLayout(TLRLinearLayout TLRLinearLayout) {
-        mTLRLinearLayout = TLRLinearLayout;
     }
 
     public void setColorSchemeColors(int[] colors) {

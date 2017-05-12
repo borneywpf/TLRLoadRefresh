@@ -13,9 +13,9 @@ import android.widget.TextView;
 /**
  * @author borney
  * @date 4/28/17
- * @see TLRUiHandler
+ * @see TLRUIHandler
  */
-public class TLRDefHeadView extends LinearLayout implements TLRUiHandler {
+public class TLRDefHeadView extends LinearLayout implements TLRUIHandler {
     private ImageView mImageView;
     private TextView mTextView;
     private ValueAnimator mReleaseAnimator;

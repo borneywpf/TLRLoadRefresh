@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.think.tlr.TLRLinearLayout;
-import com.think.tlr.TLRUiHandlerAdapter;
+import com.think.tlr.TLRUIHandlerAdapter;
 import com.think.uiloader.App;
 import com.think.uiloader.R;
 import com.think.uiloader.data.entity.ImageEntity;
@@ -51,7 +51,7 @@ public class RGridViewActivity extends AppCompatActivity implements ImageContrac
         initActivityComponent();
         setContentView(R.layout.activity_tlrgridview);
         mTLRLinearLayout = (TLRLinearLayout) findViewById(R.id.tlrlayout);
-        mTLRLinearLayout.addTLRUiHandler(new TLRUiHandlerAdapter() {
+        mTLRLinearLayout.addTLRUiHandler(new TLRUIHandlerAdapter() {
             @Override
             public void onRefreshStatusChanged(View target, TLRLinearLayout.RefreshStatus status) {
                 if (status == TLRLinearLayout.RefreshStatus.REFRESHING) {

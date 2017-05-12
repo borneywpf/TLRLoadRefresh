@@ -13,7 +13,7 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import com.think.tlr.TLRLinearLayout;
-import com.think.tlr.TLRUiHandlerAdapter;
+import com.think.tlr.TLRUIHandlerAdapter;
 import com.think.uiloader.R;
 
 /**
@@ -32,7 +32,7 @@ public class RWebViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tlrwebview);
         mProgressBar = (ProgressBar) findViewById(R.id.progress);
         mTLRLinearLayout = (TLRLinearLayout) findViewById(R.id.tlrlayout);
-        mTLRLinearLayout.addTLRUiHandler(new TLRUiHandlerAdapter() {
+        mTLRLinearLayout.addTLRUiHandler(new TLRUIHandlerAdapter() {
             @Override
             public void onRefreshStatusChanged(View target, TLRLinearLayout.RefreshStatus status) {
                 if (status == TLRLinearLayout.RefreshStatus.REFRESHING) {

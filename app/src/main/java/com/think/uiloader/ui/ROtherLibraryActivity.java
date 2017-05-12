@@ -10,7 +10,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.think.tlr.TLRLinearLayout;
-import com.think.tlr.TLRUiHandlerAdapter;
+import com.think.tlr.TLRUIHandlerAdapter;
 import com.think.uiloader.App;
 import com.think.uiloader.R;
 import com.think.uiloader.data.entity.ImageEntity;
@@ -91,7 +91,7 @@ public class ROtherLibraryActivity extends AppCompatActivity implements ImageCon
 
     private void initTlr() {
         mTLRLinearLayout = (TLRLinearLayout) findViewById(R.id.tlrlayout);
-        mTLRLinearLayout.addTLRUiHandler(new TLRUiHandlerAdapter() {
+        mTLRLinearLayout.addTLRUiHandler(new TLRUIHandlerAdapter() {
             @Override
             public void onRefreshStatusChanged(View target, TLRLinearLayout.RefreshStatus status) {
                 if (status == TLRLinearLayout.RefreshStatus.REFRESHING) {
