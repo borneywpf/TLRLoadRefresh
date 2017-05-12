@@ -5,6 +5,7 @@ import com.think.uiloader.ui.LListViewActivity;
 import com.think.uiloader.ui.RAutoRefreshActivity;
 import com.think.uiloader.ui.RCannotMoveHeadByTLRActivity;
 import com.think.uiloader.ui.RGridViewActivity;
+import com.think.uiloader.ui.RKeepContentActivity;
 import com.think.uiloader.ui.RLListViewActivity;
 import com.think.uiloader.ui.RListViewActivity;
 import com.think.uiloader.ui.RMaterialHeadActivity;
@@ -40,4 +41,5 @@ public interface ActivityComponent {
     void inject(RLListViewActivity activity);
     void inject(RMaterialHeadActivity activity);
     void inject(RMaterialHeadKeepContentActivity activity);
+    void inject(RKeepContentActivity activity);
 }

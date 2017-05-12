@@ -514,6 +514,7 @@ public class TLRLinearLayout extends ViewGroup {
     }
 
     /**
+     * add hook when ui ready to reset
      *
      * @param hook
      */
@@ -522,6 +523,7 @@ public class TLRLinearLayout extends ViewGroup {
     }
 
     /**
+     * remove hook, must call if you set hook
      *
      * @param hook
      */
