@@ -57,3 +57,16 @@ TLRLoadRefresh是一个支持ListView,RecycleView,ViewGroup等下拉刷新和上
         </attr>
     </declare-styleable>
 ```
+
+# TLRLinearLayout子类TLRNestedLinearLayout
+
+TLRNestedLinearLayout子类是支持android的嵌套滑动，可以支持RecycleView,NestedScrollView等嵌套滑动view的下拉刷新和上拉加载，具体可以查看demo
+
+# 实现原理介绍
+
+暂略
+
+# 总结
+
+在实现过程中我参考了一些优秀的开源库，感谢这些无私的大牛们做出的贡献；这个库目前没有进一步封装，因为我还没有做过全面的测试，所以如果有问题欢迎大家指正，并提[issues](https://github.com/borneywpf/TLRLoadRefresh/issues)
+  
