@@ -16,6 +16,7 @@ import android.widget.TextView;
  * @see TLRUIHandler
  */
 public class TLRDefHeadView extends LinearLayout implements TLRUIHandler {
+    private boolean isMoveDown = false;
     private ImageView mImageView;
     private TextView mTextView;
     private ValueAnimator mReleaseAnimator;
@@ -55,7 +56,9 @@ public class TLRDefHeadView extends LinearLayout implements TLRUIHandler {
     public void onRefreshStatusChanged(View target, TLRLinearLayout.RefreshStatus status) {
         switch (status) {
             case PULL_DOWN:
-                mTextView.setText(R.string.tlr_def_head_pull_down);
+                if (isMoveDown) {
+                    mTextView.setText(R.string.tlr_def_head_pull_down);
+                }
                 break;
             case RELEASE_REFRESH:
                 mTextView.setText(R.string.tlr_def_head_release_refresh);
@@ -88,7 +91,8 @@ public class TLRDefHeadView extends LinearLayout implements TLRUIHandler {
 
     @Override
     public void onOffsetChanged(View target, boolean isRefresh, int totalOffsetY, int totalThresholdY, int offsetY, float threshOffset) {
-        if (isRefresh && totalOffsetY == 0) {
+        isMoveDown = offsetY > 0;
+        if (threshOffset == 0) {
             mImageView.setRotation(0);
         }
     }

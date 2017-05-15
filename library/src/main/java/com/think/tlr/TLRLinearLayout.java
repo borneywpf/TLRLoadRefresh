@@ -233,7 +233,9 @@ public class TLRLinearLayout extends ViewGroup {
                 return true;
             case MotionEvent.ACTION_MOVE:
                 mCalculator.eventMove(x, y);
-                if (mCalculator.canCalculatorV()) {
+                if (!mCalculator.isBackStatus()) {
+                    mCalculator.touchMoveLayoutView();
+                } else if (mCalculator.canCalculatorV()) {
                     if (isTouchMoveRefresh(x, y) || isTouchMoveLoad(x, y)) {
                         ev.setAction(MotionEvent.ACTION_CANCEL);
                         super.dispatchTouchEvent(ev);
@@ -385,6 +387,9 @@ public class TLRLinearLayout extends ViewGroup {
             }
         }
         refresh &= isEnableRefresh();
+        if (DEBUG) {
+            TLRLog.i("isTouchMoveRefresh refresh:" + refresh);
+        }
         return refresh;
     }
 
@@ -397,6 +402,9 @@ public class TLRLinearLayout extends ViewGroup {
             }
         }
         load &= isEnableLoad();
+        if (DEBUG) {
+            TLRLog.i("isTouchMoveLoad load:" + load);
+        }
         return load;
     }
 
@@ -942,7 +950,10 @@ public class TLRLinearLayout extends ViewGroup {
 
         @Override
         public void onRefreshStatusChanged(View target, RefreshStatus status) {
-            TLRLog.d("onRefreshStatusChanged target:" + target + " status:" + status + " size:" + mTLRUiHandlers.size());
+            if (DEBUG) {
+                String name = target == null ? null : target.getClass().getSimpleName();
+                TLRLog.d("onRefreshStatusChanged target:" + name + " status:" + status + " size:" + mTLRUiHandlers.size());
+            }
             for (TLRUIHandler handler : mTLRUiHandlers) {
                 handler.onRefreshStatusChanged(target, status);
             }
@@ -950,7 +961,10 @@ public class TLRLinearLayout extends ViewGroup {
 
         @Override
         public void onLoadStatusChanged(View target, LoadStatus status) {
-            TLRLog.i("onLoadStatusChanged target:" + target + " status:" + status + " size:" + mTLRUiHandlers.size());
+            if (DEBUG) {
+                String name = target == null ? null : target.getClass().getSimpleName();
+                TLRLog.i("onLoadStatusChanged target:" + name + " status:" + status + " size:" + mTLRUiHandlers.size());
+            }
             for (TLRUIHandler handler : mTLRUiHandlers) {
                 handler.onLoadStatusChanged(target, status);
             }
@@ -958,7 +972,10 @@ public class TLRLinearLayout extends ViewGroup {
 
         @Override
         public void onOffsetChanged(View target, boolean isRefresh, int totalOffsetY, int totalThresholdY, int offsetY, float threshOffset) {
-            //TLRLog.v("isRefresh:" + isRefresh + " totalOffsetY:" + totalOffsetY + " y:" + offsetY);
+            if (DEBUG) {
+                String name = target == null ? null : target.getClass().getSimpleName();
+                TLRLog.v("onOffsetChanged target:" + name + " isRefresh:" + isRefresh + " totalOffsetY:" + totalOffsetY + " totalThresholdY:" + totalThresholdY + " offsetY:" + offsetY + " threshOffset:" + threshOffset);
+            }
             for (TLRUIHandler handler : mTLRUiHandlers) {
                 handler.onOffsetChanged(target, isRefresh, totalOffsetY, totalThresholdY, offsetY, threshOffset);
             }
@@ -966,7 +983,10 @@ public class TLRLinearLayout extends ViewGroup {
 
         @Override
         public void onFinish(View target, boolean isRefresh, boolean isSuccess, int errorCode) {
-            TLRLog.i("onFinish target:" + target + " isRefresh:" + isRefresh + " isSuccess:" + isSuccess + " errorCode:" + errorCode);
+            if (DEBUG) {
+                String name = target == null ? null : target.getClass().getSimpleName();
+                TLRLog.i("onFinish target:" + name + " isRefresh:" + isRefresh + " isSuccess:" + isSuccess + " errorCode:" + errorCode);
+            }
             for (TLRUIHandler handler : mTLRUiHandlers) {
                 handler.onFinish(target, isRefresh, isSuccess, errorCode);
             }

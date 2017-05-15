@@ -67,6 +67,9 @@ class TLRStatusController {
      */
     public void calculateMoveRefreshStatus(boolean moveDown) {
         int totalOffsetY = mCalculator.getTotalOffsetY();
+        if (!mCalculator.tLRLinearLayout.isEnableRefresh()) {
+            return;
+        }
         //y 方向移动正值,切Load为初始状态
         if (totalOffsetY > 0 && mLoadStatus == LoadStatus.IDLE) {
             if (moveDown) {//view向下运动
@@ -98,6 +101,9 @@ class TLRStatusController {
      */
     public void calculateMoveLoadStatus(boolean moveUp) {
         int totalOffsetY = mCalculator.getTotalOffsetY();
+        if (!mCalculator.tLRLinearLayout.isEnableLoad()) {
+            return;
+        }
         if (totalOffsetY < 0 && mRefreshStatus == RefreshStatus.IDLE) {
             if (moveUp) {//view向上运动
                 if (mLoadStatus == LoadStatus.IDLE && !isLoading) {
@@ -115,12 +121,16 @@ class TLRStatusController {
                 }
             }
         }
+
     }
 
     /**
      * calculate refresh view status when up motionevent
      */
     public void calculatorUpRefreshStatus() {
+        if (!mCalculator.tLRLinearLayout.isEnableRefresh()) {
+            return;
+        }
         if (mRefreshStatus == RefreshStatus.RELEASE_REFRESH) {
             if (isReleaseRefresh) {
                 notifyRefreshStatusChanged(RefreshStatus.REFRESHING);
@@ -135,6 +145,9 @@ class TLRStatusController {
      * calculate load view status when up motionevent
      */
     public void calculatorUpLoadStatus() {
+        if (!mCalculator.tLRLinearLayout.isEnableLoad()) {
+            return;
+        }
         if (mLoadStatus == LoadStatus.RELEASE_LOAD) {
             if (isReleaseLoad) {
                 notifyLoadStatusChanged(LoadStatus.LOADING);

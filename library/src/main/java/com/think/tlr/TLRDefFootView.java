@@ -16,6 +16,7 @@ import android.widget.TextView;
  * @see TLRUIHandler
  */
 public class TLRDefFootView extends LinearLayout implements TLRUIHandler {
+    private boolean isMoveUp = false;
     private ImageView mImageView;
     private TextView mTextView;
     private ValueAnimator mReleaseAnimator;
@@ -66,7 +67,9 @@ public class TLRDefFootView extends LinearLayout implements TLRUIHandler {
     public void onLoadStatusChanged(View target, TLRLinearLayout.LoadStatus status) {
         switch (status) {
             case PULL_UP:
-                mTextView.setText(R.string.tlr_def_foot_pull_up);
+                if (isMoveUp) {
+                    mTextView.setText(R.string.tlr_def_foot_pull_up);
+                }
                 break;
             case RELEASE_LOAD:
                 mTextView.setText(R.string.tlr_def_foot_release_load);
@@ -88,7 +91,8 @@ public class TLRDefFootView extends LinearLayout implements TLRUIHandler {
 
     @Override
     public void onOffsetChanged(View target, boolean isRefresh, int totalOffsetY, int totalThresholdY, int offsetY, float threshOffset) {
-        if (!isRefresh && totalOffsetY == 0) {
+        isMoveUp = offsetY < 0;
+        if (threshOffset == 0) {
             mImageView.setRotation(0);
         }
     }

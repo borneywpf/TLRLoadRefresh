@@ -548,6 +548,10 @@ class TLRCalculator {
         return mStatusController.isLoading();
     }
 
+    public boolean isBackStatus() {
+        return isBackStatus;
+    }
+
     private class AnimUpdateListener implements ValueAnimator.AnimatorUpdateListener {
         private int lastY;
 
