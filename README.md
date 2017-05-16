@@ -62,6 +62,43 @@ TLRLoadRefresh是一个支持ListView,RecycleView,ViewGroup等下拉刷新和上
 
 TLRNestedLinearLayout子类是支持android的嵌套滑动，可以支持RecycleView,NestedScrollView等嵌套滑动view的下拉刷新和上拉加载，具体可以查看demo
 
+# 回调接口TLRUIHandler介绍
+
+```java
+public interface TLRUIHandler {
+    /**
+     * 指定view刷新状态的回调
+     */
+    void onRefreshStatusChanged(View target, TLRLinearLayout.RefreshStatus status);
+
+    /**
+     * 指定view加载状态的回调
+     */
+    void onLoadStatusChanged(View target, TLRLinearLayout.LoadStatus status);
+
+    /**
+     * 指定view坐标信息的回调
+     * @param target 哪个view触发的位置变化
+     * @param isRefresh 是否时刷新
+     * @param totalOffsetY touch Y方向移动的距离
+     * @param totalThresholdY Y方向通过刷新系数计算的移动距离
+     * @param offsetY Y方向相对移动的距离
+     * @param threshOffset Y方向移动变化系数
+     */
+    void onOffsetChanged(View target, boolean isRefresh, int totalOffsetY, int totalThresholdY,
+            int offsetY, float threshOffset);
+
+    /**
+     * 刷新或加载完成时状态的回调
+     */
+    void onFinish(View target, boolean isRefresh, boolean isSuccess, int errorCode);
+}
+```
+
+# 刷新或加载完成时hook keepview接口TLRUIHandlerHook
+
+在加载或刷新完成时，head或foot view有时想完成一些自己的动画，比如类似原生的[MaterialHeaderView](https://github.com/borneywpf/TLRLoadRefresh/blob/master/library/src/main/java/com/think/tlr/MaterialHeaderView.java)在加载完成时，想先做一个缩小动画，然后在让TLRLinearLayout完成剩下的动画，这时候就用到了TLRUIHandlerHook，具体可参考MaterialHeaderView实现。这种设计思想源自于[android-Ultra-Pull-To-Refresh](https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh),感谢大牛们的贡献。
+
 # 实现原理介绍
 
 暂略
