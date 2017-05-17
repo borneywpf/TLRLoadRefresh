@@ -23,6 +23,10 @@ public class TLRLinearLayout extends ViewGroup {
     public static final int LABEL_HEAD = 1;
     public static final int LABEL_CONTENT = 2;
     public static final int LABEL_FOOT = 3;
+
+    public static final int FLAG_KEEP_CONTENT_REFRESH = 0x01;
+    public static final int FLAG_KEEP_CONTENT_LOAD = 0x02;
+
     /**
      * 上拉加载功能是否可用
      */
@@ -34,7 +38,7 @@ public class TLRLinearLayout extends ViewGroup {
     /**
      * 操作过程中是否保持contentLayout不移动
      */
-    private boolean isKeepContentLayout = false;
+    private int keepContentLayoutFlag = 0x00;
 
     /**
      * TLR 是否可以移动head
@@ -113,8 +117,7 @@ public class TLRLinearLayout extends ViewGroup {
                     isEnableRefresh = array.getBoolean(index, false);
                     TLRLog.i("isEnableRefresh = " + isEnableRefresh);
                 } else if (index == R.styleable.TLRLinearLayout_keepContentLayout) {
-                    isKeepContentLayout = array.getBoolean(index, false);
-                    TLRLog.i("isKeepContentLayout = " + isKeepContentLayout);
+                    keepContentLayoutFlag = array.getInt(index, keepContentLayoutFlag);
                 } else if (index == R.styleable.TLRLinearLayout_canMoveHeadByTLR) {
                     canMoveHeadByTLR = array.getBoolean(index, canMoveHeadByTLR);
                     TLRLog.i("canMoveHeadByTLR = " + canMoveHeadByTLR);
@@ -126,6 +129,7 @@ public class TLRLinearLayout extends ViewGroup {
         } finally {
             array.recycle();
         }
+        TLRLog.i("keepContentLayoutFlag = " + keepContentLayoutFlag);
     }
 
     private void addSelfView(View child, int index, ViewGroup.LayoutParams params) {
@@ -293,9 +297,13 @@ public class TLRLinearLayout extends ViewGroup {
             LayoutParams lp = (LayoutParams) mContentLayout.getLayoutParams();
             int left = parentLeft + lp.leftMargin;
             int top = parentTop + lp.topMargin;
-            if (!isKeepContentLayout) {
+
+            if (mCalculator.getTotalOffsetY() > 0 && (keepContentLayoutFlag & FLAG_KEEP_CONTENT_REFRESH) == 0) {
+                top += totalOffsetY;
+            } else if (mCalculator.getTotalOffsetY() < 0 && (keepContentLayoutFlag & FLAG_KEEP_CONTENT_LOAD) == 0) {
                 top += totalOffsetY;
             }
+
             int right = left + mContentLayout.getMeasuredWidth();
             int bottom = top + mContentLayout.getMeasuredHeight();
 
@@ -351,7 +359,9 @@ public class TLRLinearLayout extends ViewGroup {
         if (isEnableLoad() && isCanMoveFootByTLR() && mFooterView != null) {
             mFooterView.offsetTopAndBottom(y);
         }
-        if (!isKeepContentLayout()) {
+        if (mCalculator.getTotalOffsetY() > 0 && (keepContentLayoutFlag & FLAG_KEEP_CONTENT_REFRESH) == 0) {
+            mContentLayout.offsetTopAndBottom(y);
+        } else if (mCalculator.getTotalOffsetY() < 0 && (keepContentLayoutFlag & FLAG_KEEP_CONTENT_LOAD) == 0) {
             mContentLayout.offsetTopAndBottom(y);
         }
     }
@@ -558,15 +568,8 @@ public class TLRLinearLayout extends ViewGroup {
     /**
      * return contentLayout can not move on refresh or load
      */
-    public boolean isKeepContentLayout() {
-        return isKeepContentLayout;
-    }
-
-    /**
-     * set contentLayout can not move on refresh or load
-     */
-    public void setKeepContentLayout(boolean keepContentLayout) {
-        isKeepContentLayout = keepContentLayout;
+    public int keepContentLayoutFlag() {
+        return keepContentLayoutFlag;
     }
 
     /**
@@ -577,24 +580,10 @@ public class TLRLinearLayout extends ViewGroup {
     }
 
     /**
-     * set {@link TLRLinearLayout} can move head view
-     */
-    public void setCanMoveHeadByTLR(boolean canMoveHeadByTLR) {
-        this.canMoveHeadByTLR = canMoveHeadByTLR;
-    }
-
-    /**
      * get {@link TLRLinearLayout} can move foot view
      */
     public boolean isCanMoveFootByTLR() {
         return canMoveFootByTLR;
-    }
-
-    /**
-     * set {@link TLRLinearLayout} can move foot view
-     */
-    public void setCanMoveFootByTLR(boolean canMoveFootByTLR) {
-        this.canMoveFootByTLR = canMoveFootByTLR;
     }
 
     /**
@@ -904,7 +893,7 @@ public class TLRLinearLayout extends ViewGroup {
 
         @Override
         public void onOffsetChanged(View target, boolean isRefresh, int totalOffsetY,
-                int totalThresholdY, int offsetY, float threshOffset) {
+                                    int totalThresholdY, int offsetY, float threshOffset) {
             if (DEBUG) {
                 String name = target == null ? null : target.getClass().getSimpleName();
                 TLRLog.v("onOffsetChanged target:" + name + " isRefresh:" + isRefresh

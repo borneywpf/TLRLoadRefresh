@@ -8,7 +8,6 @@
     uiloader:enableRefresh="true"
     uiloader:enableLoad="false"
     uiloader:keepHeadRefreshing="false"
-    uiloader:keepContentLayout="false"
     uiloader:canMoveHeadByTLR="false">
 
     <ListView

@@ -7,8 +7,7 @@
     android:layout_height="match_parent"
     uiloader:enableRefresh="true"
     uiloader:enableLoad="false"
-    uiloader:keepHeadRefreshing="true"
-    uiloader:keepContentLayout="false">
+    uiloader:keepHeadRefreshing="true">
 
     <com.youth.banner.Banner
         android:id="@+id/banner"

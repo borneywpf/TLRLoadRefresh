@@ -9,7 +9,7 @@
     uiloader:enableLoad="false"
     uiloader:keepHeadRefreshing="true"
     uiloader:closeAnimDuration="1000"
-    uiloader:keepContentLayout="true">
+    uiloader:keepContentLayout="refresh">
 
     <com.think.tlr.MaterialHeaderView
         android:id="@+id/head"

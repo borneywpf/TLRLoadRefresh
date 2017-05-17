@@ -8,7 +8,6 @@
     android:layout_height="match_parent"
     uiloader:enableLoad="false"
     uiloader:enableRefresh="true"
-    uiloader:keepContentLayout="false"
     uiloader:keepHeadRefreshing="true">
 
     <RelativeLayout

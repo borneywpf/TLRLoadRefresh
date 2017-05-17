@@ -7,8 +7,7 @@
     android:layout_height="match_parent"
     uiloader:enableRefresh="false"
     uiloader:enableLoad="true"
-    uiloader:keepFootLoading="true"
-    uiloader:keepContentLayout="false">
+    uiloader:keepFootLoading="true">
 
     <ListView
         android:id="@+id/content"

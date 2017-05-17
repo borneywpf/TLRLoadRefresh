@@ -1,5 +1,6 @@
 package com.think.uiloader.ui;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -65,6 +66,7 @@ public class RLListViewActivity extends AppCompatActivity implements ImageContra
                 }
             }
         });
+        mTLRLinearLayout.getHeaderView().setBackgroundColor(Color.WHITE);
         mAdapter = new ListImageAdapter();
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

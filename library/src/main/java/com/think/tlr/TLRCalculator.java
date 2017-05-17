@@ -559,6 +559,14 @@ class TLRCalculator {
         return isBackStatus;
     }
 
+    public boolean isRefresh() {
+        return getTotalOffsetY() > 0;
+    }
+
+    public boolean isLoad() {
+        return getTotalOffsetY() < 0;
+    }
+
     private class AnimUpdateListener implements ValueAnimator.AnimatorUpdateListener {
         private int lastY;
 

@@ -25,7 +25,10 @@ TLRLoadRefresh是一个支持ListView,RecycleView,ViewGroup等下拉刷新和上
         <attr name="releaseLoad" format="boolean"/>
         <attr name="keepHeadRefreshing" format="boolean"/>
         <attr name="keepFootLoading" format="boolean"/>
-        <attr name="keepContentLayout" format="boolean"/>
+        <attr name="keepContentLayout">
+            <flag name="refresh" value="0x01"/>
+            <flag name="load" value="0x02"/>
+        </attr>
         <attr name="canMoveHeadByTLR" format="boolean"/>
         <attr name="canMoveFootByTLR" format="boolean"/>
     </declare-styleable>
@@ -43,7 +46,7 @@ TLRLoadRefresh是一个支持ListView,RecycleView,ViewGroup等下拉刷新和上
 - **releaseLoad** 是否释放加载，默认是
 - **keepHeadRefreshing** 刷新时，是否保持Head View
 - **keepFootLoading** 加载时，是否保持Foot View
-- **keepContentLayout** 加载或刷新时，是否保持内容体部移动
+- **keepContentLayout** 加载或刷新时，是否保持内容体部不移动
 - **canMoveHeadByTLR** 刷新时，是否可以让Head View一起移动
 - **canMoveFootByTLR** 加载时，是否可以让Foot View一起移动
 

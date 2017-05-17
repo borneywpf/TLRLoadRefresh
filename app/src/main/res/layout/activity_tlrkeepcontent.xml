@@ -8,7 +8,7 @@
     uiloader:enableRefresh="true"
     uiloader:enableLoad="false"
     uiloader:keepHeadRefreshing="true"
-    uiloader:keepContentLayout="true"
+    uiloader:keepContentLayout="refresh"
     uiloader:refreshMaxMoveDistance="@dimen/tlr_def_head_height">
 
     <ListView

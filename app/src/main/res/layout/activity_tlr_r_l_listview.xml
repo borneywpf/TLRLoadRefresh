@@ -9,7 +9,8 @@
     uiloader:enableLoad="true"
     uiloader:keepFootLoading="true"
     uiloader:keepHeadRefreshing="true"
-    uiloader:keepContentLayout="false">
+    uiloader:keepContentLayout="refresh"
+    uiloader:refreshMaxMoveDistance="@dimen/tlr_def_head_height">
 
     <ListView
         android:id="@+id/content"
