@@ -219,11 +219,19 @@ class TLRStatusController {
     }
 
     public void finishRefresh() {
-        isRefreshing = false;
+        if (isRefreshing) {
+            isRefreshing = false;
+        } else {
+            throw new RuntimeException("not refreshing, can not finish refresh");
+        }
     }
 
     public void finishLoad() {
-        isLoading = false;
+        if (isLoading) {
+            isLoading = false;
+        } else {
+            throw new RuntimeException("not loading, can not finish load");
+        }
     }
 
     public boolean isRefreshing() {
