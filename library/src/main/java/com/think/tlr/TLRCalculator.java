@@ -115,9 +115,11 @@ class TLRCalculator {
                 } else if (index == R.styleable.TLRLinearLayout_keepFootLoading) {
                     isKeepFootLoading = array.getBoolean(index, isKeepFootLoading);
                 } else if (index == R.styleable.TLRLinearLayout_refreshMaxMoveDistance) {
-                    mRefreshMaxMoveDistance = array.getDimensionPixelOffset(index, mRefreshMaxMoveDistance);
+                    mRefreshMaxMoveDistance = array.getDimensionPixelOffset(index,
+                            mRefreshMaxMoveDistance);
                 } else if (index == R.styleable.TLRLinearLayout_loadMaxMoveDistance) {
-                    mLoadMaxMoveDistance = array.getDimensionPixelOffset(index, mLoadMaxMoveDistance);
+                    mLoadMaxMoveDistance = array.getDimensionPixelOffset(index,
+                            mLoadMaxMoveDistance);
                 }
             }
         } finally {
@@ -182,8 +184,6 @@ class TLRCalculator {
 
     /**
      * eventMove distance must more than {@link ViewConfiguration#getScaledTouchSlop()}
-     *
-     * @return
      */
     public boolean canCalculatorV() {
         if (mDirection == Direction.DOWN || mDirection == Direction.UP) {
@@ -202,8 +202,6 @@ class TLRCalculator {
 
     /**
      * call view {@link android.view.View#offsetTopAndBottom(int)} method must cast offset to int
-     *
-     * @return
      */
     private void moveOffsetY(int y) {
         if (y == 0) {
@@ -250,12 +248,14 @@ class TLRCalculator {
         int tempTotalOffsetY = totalOffsetY + y;
 
         // calculate refresh over max move distance
-        if (tempTotalOffsetY > 0 && mRefreshMaxMoveDistance > 0 && tempTotalOffsetY > mRefreshMaxMoveDistance) {
+        if (tempTotalOffsetY > 0 && mRefreshMaxMoveDistance > 0
+                && tempTotalOffsetY > mRefreshMaxMoveDistance) {
             y = mRefreshMaxMoveDistance - mTotalOffsetY;
         }
 
         // calculate load over max move distance
-        if (tempTotalOffsetY < 0 && mLoadMaxMoveDistance > 0 && -tempTotalOffsetY > mLoadMaxMoveDistance) {
+        if (tempTotalOffsetY < 0 && mLoadMaxMoveDistance > 0
+                && -tempTotalOffsetY > mLoadMaxMoveDistance) {
             y = -mLoadMaxMoveDistance - mTotalOffsetY;
         }
         return y;
@@ -271,7 +271,8 @@ class TLRCalculator {
             offset = (float) (Math.round(((float) totalThresholdY / height) * 100)) / 100;
         }
         boolean isRefresh = totalOffsetY != 0 ? totalOffsetY > 0 : y < 0;
-        mTLRUiHandler.onOffsetChanged(tLRLinearLayout.getTouchView(), isRefresh, totalOffsetY, totalThresholdY, y, offset);
+        mTLRUiHandler.onOffsetChanged(tLRLinearLayout.getTouchView(), isRefresh, totalOffsetY,
+                totalThresholdY, y, offset);
     }
 
     private void setDirection(float xDiff, float yDiff) {
@@ -299,18 +300,21 @@ class TLRCalculator {
         TLRLog.d("autoRefresh mHeadHeight:" + mHeadHeight);
         mStatusController.setAutoRefreshing(true);
         if (mHeadHeight == 0) {
-            tLRLinearLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    TLRLog.d("autoRefresh onGlobalLayout mHeadHeight:" + mHeadHeight);
-                    startAutoRefreshAnimator();
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        tLRLinearLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    } else {
-                        tLRLinearLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                    }
-                }
-            });
+            tLRLinearLayout.getViewTreeObserver().addOnGlobalLayoutListener(
+                    new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            TLRLog.d("autoRefresh onGlobalLayout mHeadHeight:" + mHeadHeight);
+                            startAutoRefreshAnimator();
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                                tLRLinearLayout.getViewTreeObserver().removeOnGlobalLayoutListener(
+                                        this);
+                            } else {
+                                tLRLinearLayout.getViewTreeObserver().removeGlobalOnLayoutListener(
+                                        this);
+                            }
+                        }
+                    });
         } else {
             startAutoRefreshAnimator();
         }
@@ -328,7 +332,8 @@ class TLRCalculator {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     mAutoAnimator.removeListener(this);
-                    TLRLog.v("startAutoRefreshAnimator isKeepHeadRefreshing:" + isKeepHeadRefreshing);
+                    TLRLog.v("startAutoRefreshAnimator isKeepHeadRefreshing:"
+                            + isKeepHeadRefreshing);
                     if (isKeepHeadRefreshing) {
                         startKeepAnimator();
                     } else {
@@ -379,7 +384,9 @@ class TLRCalculator {
             endAllRunningAnimator();
             int startY = mTotalOffsetY;
             mResetAnimator = ValueAnimator.ofInt(startY, 0);
-            mResetAnimator.setDuration(mCloseAnimDuration);
+            long duration = (long) (mCloseAnimDuration * ((float) Math.abs(mTotalOffsetY)
+                    / mHeadHeight));
+            mResetAnimator.setDuration(duration);
             mResetAnimator.setInterpolator(new DecelerateInterpolator());
             mResetAnimator.addUpdateListener(new AnimUpdateListener(startY));
             mResetAnimator.start();
