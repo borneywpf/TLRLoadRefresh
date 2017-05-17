@@ -50,7 +50,8 @@ public class TLRNestedLinearLayout extends TLRLinearLayout implements NestedScro
     }
 
     @Override
-    public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
+    public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed,
+            int dyUnconsumed) {
         setTouchView(target);
         mCalculator.touchMoveLayoutView((int) (-dyUnconsumed / getResistance()));
     }
@@ -73,6 +74,13 @@ public class TLRNestedLinearLayout extends TLRLinearLayout implements NestedScro
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
+        int action = ev.getAction();
+        if (action == MotionEvent.ACTION_DOWN) {
+            return dispatchTouchEvent(false, ev);
+        }
+        if (action == MotionEvent.ACTION_MOVE && !mCalculator.isBackStatus()) {
+            return dispatchTouchEvent(false, ev);
+        }
         return dispatchTouchEvent(true, ev);
     }
 }

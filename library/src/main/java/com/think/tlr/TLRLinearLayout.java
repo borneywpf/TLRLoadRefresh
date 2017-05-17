@@ -150,11 +150,11 @@ public class TLRLinearLayout extends ViewGroup {
         int count = getChildCount();
         mContentLayout = new LinearLayout(getContext());
         mContentLayout.setOrientation(LinearLayout.VERTICAL);
-        ViewGroup.LayoutParams l = getLayoutParams();
         for (int i = 0; i < count; i++) {
             View child = getChildAt(i);
             LayoutParams params = (LayoutParams) child.getLayoutParams();
-            TLRLog.d("child = " + child.getClass().getSimpleName() + " params.label = " + params.label);
+            TLRLog.d("child = " + child.getClass().getSimpleName() + " params.label = "
+                    + params.label);
             if (params.label == LABEL_HEAD) {
                 if (i != 0) {
                     throw new RuntimeException("head must in first");
@@ -199,7 +199,8 @@ public class TLRLinearLayout extends ViewGroup {
             LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(params);
             mContentLayout.addView(view, llp);
         }
-        addSelfView(mContentLayout, 0, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        addSelfView(mContentLayout, 0,
+                new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         TLRLog.i("ContentLayout count:" + mContentLayout.getChildCount());
     }
 
@@ -208,8 +209,8 @@ public class TLRLinearLayout extends ViewGroup {
         return dispatchTouchEvent(false, ev);
     }
 
-    boolean dispatchTouchEvent(boolean isNested, MotionEvent ev) {
-        if (isNested) {
+    boolean dispatchTouchEvent(boolean childIntercepted, MotionEvent ev) {
+        if (childIntercepted) {
             return super.dispatchTouchEvent(ev);
         }
         if (!isEnableLoad() && !isEnableRefresh()) {
@@ -235,13 +236,14 @@ public class TLRLinearLayout extends ViewGroup {
                 mCalculator.eventMove(x, y);
                 if (!mCalculator.isBackStatus()) {
                     mCalculator.touchMoveLayoutView();
-                } else if (mCalculator.canCalculatorV()) {
-                    if (isTouchMoveRefresh(x, y) || isTouchMoveLoad(x, y)) {
-                        ev.setAction(MotionEvent.ACTION_CANCEL);
-                        super.dispatchTouchEvent(ev);
-                        mCalculator.touchMoveLayoutView();
-                        return true;
-                    }
+                    return true;
+                }
+                if (mCalculator.canCalculatorV()
+                        && (isTouchMoveRefresh(x, y) || isTouchMoveLoad(x, y))) {
+                    ev.setAction(MotionEvent.ACTION_CANCEL);
+                    super.dispatchTouchEvent(ev);
+                    mCalculator.touchMoveLayoutView();
+                    return true;
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -271,7 +273,8 @@ public class TLRLinearLayout extends ViewGroup {
                     mCalculator.setFootViewHeight(child.getMeasuredHeight());
                 }
                 if (DEBUG) {
-                    TLRLog.d(child.getClass().getSimpleName() + " mw:" + child.getMeasuredWidth() + " mh:" + child.getMeasuredHeight());
+                    TLRLog.d(child.getClass().getSimpleName() + " mw:" + child.getMeasuredWidth()
+                            + " mh:" + child.getMeasuredHeight());
                 }
             }
         }
@@ -297,7 +300,8 @@ public class TLRLinearLayout extends ViewGroup {
             int bottom = top + mContentLayout.getMeasuredHeight();
 
             if (DEBUG) {
-                TLRLog.i("ContentLayout left:" + left + " right:" + right + " top:" + top + " bottom:" + bottom);
+                TLRLog.i("ContentLayout left:" + left + " right:" + right + " top:" + top
+                        + " bottom:" + bottom);
             }
 
             mContentLayout.layout(left, top, right, bottom);
@@ -314,7 +318,8 @@ public class TLRLinearLayout extends ViewGroup {
             int top = bottom - mHeaderView.getMeasuredHeight();
 
             if (DEBUG) {
-                TLRLog.i("HeaderView left:" + left + " right:" + right + " top:" + top + " bottom:" + bottom);
+                TLRLog.i("HeaderView left:" + left + " right:" + right + " top:" + top + " bottom:"
+                        + bottom);
             }
 
             mHeaderView.layout(left, top, right, bottom);
@@ -331,7 +336,8 @@ public class TLRLinearLayout extends ViewGroup {
             int bottom = top + mFooterView.getMeasuredHeight();
 
             if (DEBUG) {
-                TLRLog.i("FooterView left:" + left + " right:" + right + " top:" + top + " bottom:" + bottom);
+                TLRLog.i("FooterView left:" + left + " right:" + right + " top:" + top + " bottom:"
+                        + bottom);
             }
 
             mFooterView.layout(left, top, right, bottom);
@@ -352,8 +358,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * call by child
-     *
-     * @return
      */
     TLRCalculator calculator() {
         return mCalculator;
@@ -469,8 +473,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * finish refresh success or not
-     *
-     * @param isSuccess
      */
     public void finishRefresh(boolean isSuccess) {
         finishRefresh(isSuccess, -1);
@@ -478,8 +480,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * finish refresh success or not, cotain errorCode
-     *
-     * @param isSuccess
      */
     public void finishRefresh(boolean isSuccess, int errorCode) {
         mCalculator.finishRefresh(isSuccess, errorCode);
@@ -487,8 +487,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * finish load success or not
-     *
-     * @param isSuccess
      */
     public void finishLoad(boolean isSuccess) {
         finishLoad(isSuccess, -1);
@@ -496,8 +494,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * finish load success or not, cotain errorCode
-     *
-     * @param isSuccess
      */
     public void finishLoad(boolean isSuccess, int errorCode) {
         mCalculator.finishLoad(isSuccess, errorCode);
@@ -505,8 +501,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * add {@link TLRUIHandler} callback
-     *
-     * @param handler
      */
     public void addTLRUiHandler(TLRUIHandler handler) {
         mUiHandlerWrapper.addTLRUiHandler(handler);
@@ -514,8 +508,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * remove {@link TLRUIHandler} callback
-     *
-     * @param handler
      */
     public void removeTLRUiHandler(TLRUIHandler handler) {
         mUiHandlerWrapper.removeTLRUiHandler(handler);
@@ -523,8 +515,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * add hook when ui ready to reset
-     *
-     * @param hook
      */
     public void hook(TLRUIHandlerHook hook) {
         mCalculator.hook(hook);
@@ -532,8 +522,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * remove hook, must call if you set hook
-     *
-     * @param hook
      */
     public void releaseHook(TLRUIHandlerHook hook) {
         mCalculator.releaseHook(hook);
@@ -541,8 +529,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * return load is enable or not
-     *
-     * @return
      */
     public boolean isEnableLoad() {
         return isEnableLoad;
@@ -550,8 +536,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * set load is enable or not
-     *
-     * @param enableLoad
      */
     public void setEnableLoad(boolean enableLoad) {
         isEnableLoad = enableLoad;
@@ -559,8 +543,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * return refresh is enable or not
-     *
-     * @return
      */
     public boolean isEnableRefresh() {
         return isEnableRefresh;
@@ -568,8 +550,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * set refresh is enable or not
-     *
-     * @param enableRefresh
      */
     public void setEnableRefresh(boolean enableRefresh) {
         isEnableRefresh = enableRefresh;
@@ -577,8 +557,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * return contentLayout can not move on refresh or load
-     *
-     * @return
      */
     public boolean isKeepContentLayout() {
         return isKeepContentLayout;
@@ -586,8 +564,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * set contentLayout can not move on refresh or load
-     *
-     * @param keepContentLayout
      */
     public void setKeepContentLayout(boolean keepContentLayout) {
         isKeepContentLayout = keepContentLayout;
@@ -602,8 +578,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * set {@link TLRLinearLayout} can move head view
-     *
-     * @param canMoveHeadByTLR
      */
     public void setCanMoveHeadByTLR(boolean canMoveHeadByTLR) {
         this.canMoveHeadByTLR = canMoveHeadByTLR;
@@ -618,8 +592,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * set {@link TLRLinearLayout} can move foot view
-     *
-     * @param canMoveFootByTLR
      */
     public void setCanMoveFootByTLR(boolean canMoveFootByTLR) {
         this.canMoveFootByTLR = canMoveFootByTLR;
@@ -627,8 +599,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * get head view
-     *
-     * @return
      */
     public View getHeaderView() {
         return mHeaderView;
@@ -636,8 +606,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * set head view
-     *
-     * @param headerView
      */
     public void setHeaderView(View headerView) {
         setHeaderView(false, headerView);
@@ -651,7 +619,8 @@ public class TLRLinearLayout extends ViewGroup {
             mHeaderView = headerView;
         } else {
             mHeaderView = headerView;
-            LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
             params.label = LABEL_HEAD;
             addView(mHeaderView, params);
         }
@@ -663,8 +632,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * set foot view
-     *
-     * @param footerView
      */
     public void setFooterView(View footerView) {
         setFooterView(false, footerView);
@@ -678,7 +645,8 @@ public class TLRLinearLayout extends ViewGroup {
             mFooterView = footerView;
         } else {
             mFooterView = footerView;
-            LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
             params.label = LABEL_FOOT;
             addView(mFooterView, params);
         }
@@ -690,8 +658,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * get foot view
-     *
-     * @return
      */
     public View getFooterView() {
         return mFooterView;
@@ -699,8 +665,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * get the refresh factor
-     *
-     * @return
      */
     public float getRefreshThreshold() {
         return mCalculator.getRefreshThreshold();
@@ -715,8 +679,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * get the load factor
-     *
-     * @return
      */
     public float getLoadThreshold() {
         return mCalculator.getLoadThreshold();
@@ -738,8 +700,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * Set the maximum travel distance to refresh
-     *
-     * @param refreshMaxMoveDistance
      */
     public void setRefreshMaxMoveDistance(int refreshMaxMoveDistance) {
         mCalculator.setRefreshMaxMoveDistance(refreshMaxMoveDistance);
@@ -754,8 +714,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * Set the maximum travel distance to load
-     *
-     * @param loadMaxMoveDistance
      */
     public void setLoadMaxMoveDistance(int loadMaxMoveDistance) {
         mCalculator.setLoadMaxMoveDistance(loadMaxMoveDistance);
@@ -763,8 +721,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * get the damping coefficient
-     *
-     * @return
      */
     public float getResistance() {
         return mCalculator.getResistance();
@@ -779,8 +735,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * Set the reset the animation duration
-     *
-     * @param closeAnimDuration
      */
     public void setCloseAnimDuration(int closeAnimDuration) {
         mCalculator.setCloseAnimDuration(closeAnimDuration);
@@ -788,8 +742,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * Set the auto refresh to open the animation duration
-     *
-     * @param openAnimDuration
      */
     public void setOpenAnimDuration(int openAnimDuration) {
         mCalculator.setOpenAnimDuration(openAnimDuration);
@@ -797,8 +749,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * return keep head view when refreshing
-     *
-     * @return
      */
     public boolean isKeepHeadRefreshing() {
         return mCalculator.isKeepHeadRefreshing();
@@ -806,8 +756,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * When refresh, whether or not to stay head view
-     *
-     * @param keepHeadRefreshing
      */
     public void setKeepHeadRefreshing(boolean keepHeadRefreshing) {
         mCalculator.setKeepHeadRefreshing(keepHeadRefreshing);
@@ -815,8 +763,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * return keep foot view when loading
-     *
-     * @return
      */
     public boolean isKeepFootLoading() {
         return mCalculator.isKeepFootLoading();
@@ -824,8 +770,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * When loaded, whether to stay foot view
-     *
-     * @param keepFootLoading
      */
     public void setKeepFootLoading(boolean keepFootLoading) {
         mCalculator.setKeepFootLoading(keepFootLoading);
@@ -833,8 +777,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * Whether to release the refresh
-     *
-     * @return
      */
     public boolean isReleaseRefresh() {
         return mCalculator.isReleaseRefresh();
@@ -842,8 +784,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * set whether to release the refresh
-     *
-     * @param releaseRefresh
      */
     public void setReleaseRefresh(boolean releaseRefresh) {
         mCalculator.setReleaseRefresh(releaseRefresh);
@@ -851,8 +791,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * Whether to release the load
-     *
-     * @return
      */
     public boolean isReleaseLoad() {
         return mCalculator.isReleaseLoad();
@@ -860,8 +798,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * set whether to release the load
-     *
-     * @param releaseLoad
      */
     public void setReleaseLoad(boolean releaseLoad) {
         mCalculator.setReleaseLoad(releaseLoad);
@@ -869,8 +805,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * return has any animation is running
-     *
-     * @return
      */
     public boolean hasAnyAnimatorRunning() {
         return mCalculator.hasAnyAnimatorRunning();
@@ -878,8 +812,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * Returns whether it is refreshing
-     *
-     * @return
      */
     public boolean isRefreshing() {
         return mCalculator.isRefreshing();
@@ -887,8 +819,6 @@ public class TLRLinearLayout extends ViewGroup {
 
     /**
      * Returns whether it is loading
-     *
-     * @return
      */
     public boolean isLoading() {
         return mCalculator.isLoading();
@@ -952,7 +882,8 @@ public class TLRLinearLayout extends ViewGroup {
         public void onRefreshStatusChanged(View target, RefreshStatus status) {
             if (DEBUG) {
                 String name = target == null ? null : target.getClass().getSimpleName();
-                TLRLog.d("onRefreshStatusChanged target:" + name + " status:" + status + " size:" + mTLRUiHandlers.size());
+                TLRLog.d("onRefreshStatusChanged target:" + name + " status:" + status + " size:"
+                        + mTLRUiHandlers.size());
             }
             for (TLRUIHandler handler : mTLRUiHandlers) {
                 handler.onRefreshStatusChanged(target, status);
@@ -963,7 +894,8 @@ public class TLRLinearLayout extends ViewGroup {
         public void onLoadStatusChanged(View target, LoadStatus status) {
             if (DEBUG) {
                 String name = target == null ? null : target.getClass().getSimpleName();
-                TLRLog.i("onLoadStatusChanged target:" + name + " status:" + status + " size:" + mTLRUiHandlers.size());
+                TLRLog.i("onLoadStatusChanged target:" + name + " status:" + status + " size:"
+                        + mTLRUiHandlers.size());
             }
             for (TLRUIHandler handler : mTLRUiHandlers) {
                 handler.onLoadStatusChanged(target, status);
@@ -971,13 +903,17 @@ public class TLRLinearLayout extends ViewGroup {
         }
 
         @Override
-        public void onOffsetChanged(View target, boolean isRefresh, int totalOffsetY, int totalThresholdY, int offsetY, float threshOffset) {
+        public void onOffsetChanged(View target, boolean isRefresh, int totalOffsetY,
+                int totalThresholdY, int offsetY, float threshOffset) {
             if (DEBUG) {
                 String name = target == null ? null : target.getClass().getSimpleName();
-                TLRLog.v("onOffsetChanged target:" + name + " isRefresh:" + isRefresh + " totalOffsetY:" + totalOffsetY + " totalThresholdY:" + totalThresholdY + " offsetY:" + offsetY + " threshOffset:" + threshOffset);
+                TLRLog.v("onOffsetChanged target:" + name + " isRefresh:" + isRefresh
+                        + " totalOffsetY:" + totalOffsetY + " totalThresholdY:" + totalThresholdY
+                        + " offsetY:" + offsetY + " threshOffset:" + threshOffset);
             }
             for (TLRUIHandler handler : mTLRUiHandlers) {
-                handler.onOffsetChanged(target, isRefresh, totalOffsetY, totalThresholdY, offsetY, threshOffset);
+                handler.onOffsetChanged(target, isRefresh, totalOffsetY, totalThresholdY, offsetY,
+                        threshOffset);
             }
         }
 
@@ -985,7 +921,8 @@ public class TLRLinearLayout extends ViewGroup {
         public void onFinish(View target, boolean isRefresh, boolean isSuccess, int errorCode) {
             if (DEBUG) {
                 String name = target == null ? null : target.getClass().getSimpleName();
-                TLRLog.i("onFinish target:" + name + " isRefresh:" + isRefresh + " isSuccess:" + isSuccess + " errorCode:" + errorCode);
+                TLRLog.i("onFinish target:" + name + " isRefresh:" + isRefresh + " isSuccess:"
+                        + isSuccess + " errorCode:" + errorCode);
             }
             for (TLRUIHandler handler : mTLRUiHandlers) {
                 handler.onFinish(target, isRefresh, isSuccess, errorCode);
