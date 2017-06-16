@@ -60,7 +60,7 @@ public class TLRLinearLayout extends ViewGroup {
      * 需要向ContentLayout中添加的子view
      */
     private List<View> mContentChilds;
-    private LinearLayout mContentLayout;
+    private View mContentView;
     private View mFooterView;
     private TLRCalculator mCalculator;
     private TLRUiHandlerWrapper mUiHandlerWrapper;
@@ -152,8 +152,6 @@ public class TLRLinearLayout extends ViewGroup {
     protected void onFinishInflate() {
         super.onFinishInflate();
         int count = getChildCount();
-        mContentLayout = new LinearLayout(getContext());
-        mContentLayout.setOrientation(LinearLayout.VERTICAL);
         for (int i = 0; i < count; i++) {
             View child = getChildAt(i);
             LayoutParams params = (LayoutParams) child.getLayoutParams();
@@ -193,19 +191,27 @@ public class TLRLinearLayout extends ViewGroup {
             }
         }
 
-        if (mContentChilds.size() == 0) {
+        int contentChildSize = mContentChilds.size();
+        if (contentChildSize == 0) {
             throw new RuntimeException("must have content view !!!");
+        } else if (contentChildSize == 1) {
+            removeView(mContentChilds.get(0));
+            mContentView = mContentChilds.get(0);
+        } else {
+            LinearLayout layout = new LinearLayout(getContext());
+            layout.setOrientation(LinearLayout.VERTICAL);
+            for (View view : mContentChilds) {
+                removeView(view);
+                ViewGroup.MarginLayoutParams params = (MarginLayoutParams) view.getLayoutParams();
+                LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(params);
+                layout.addView(view, llp);
+            }
+            TLRLog.d("ContentLayout child count:" + contentChildSize);
+            mContentView = layout;
         }
 
-        for (View view : mContentChilds) {
-            removeView(view);
-            ViewGroup.MarginLayoutParams params = (MarginLayoutParams) view.getLayoutParams();
-            LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(params);
-            mContentLayout.addView(view, llp);
-        }
-        addSelfView(mContentLayout, 0,
+        addSelfView(mContentView, 0,
                 new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        TLRLog.i("ContentLayout count:" + mContentLayout.getChildCount());
     }
 
     @Override
@@ -268,7 +274,7 @@ public class TLRLinearLayout extends ViewGroup {
             if (child.getVisibility() != GONE) {
                 // Measure the child.
                 measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
-                if (child.equals(mContentLayout)) {
+                if (child.equals(mContentView)) {
                     width = child.getMeasuredWidth();
                     height = child.getMeasuredHeight();
                 } else if (child.equals(mHeaderView)) {
@@ -293,26 +299,28 @@ public class TLRLinearLayout extends ViewGroup {
         int parentTop = getPaddingTop();
         int parentBottom = parentTop + getMeasuredHeight();
 
-        if (mContentLayout != null && mContentLayout.getVisibility() != GONE) {
-            LayoutParams lp = (LayoutParams) mContentLayout.getLayoutParams();
+        if (mContentView != null && mContentView.getVisibility() != GONE) {
+            LayoutParams lp = (LayoutParams) mContentView.getLayoutParams();
             int left = parentLeft + lp.leftMargin;
             int top = parentTop + lp.topMargin;
 
-            if (mCalculator.getTotalOffsetY() > 0 && (keepContentLayoutFlag & FLAG_KEEP_CONTENT_REFRESH) == 0) {
+            if (mCalculator.getTotalOffsetY() > 0
+                    && (keepContentLayoutFlag & FLAG_KEEP_CONTENT_REFRESH) == 0) {
                 top += totalOffsetY;
-            } else if (mCalculator.getTotalOffsetY() < 0 && (keepContentLayoutFlag & FLAG_KEEP_CONTENT_LOAD) == 0) {
+            } else if (mCalculator.getTotalOffsetY() < 0
+                    && (keepContentLayoutFlag & FLAG_KEEP_CONTENT_LOAD) == 0) {
                 top += totalOffsetY;
             }
 
-            int right = left + mContentLayout.getMeasuredWidth();
-            int bottom = top + mContentLayout.getMeasuredHeight();
+            int right = left + mContentView.getMeasuredWidth();
+            int bottom = top + mContentView.getMeasuredHeight();
 
             if (DEBUG) {
                 TLRLog.i("ContentLayout left:" + left + " right:" + right + " top:" + top
                         + " bottom:" + bottom);
             }
 
-            mContentLayout.layout(left, top, right, bottom);
+            mContentView.layout(left, top, right, bottom);
         }
 
         if (mHeaderView != null && mHeaderView.getVisibility() != GONE) {
@@ -359,10 +367,12 @@ public class TLRLinearLayout extends ViewGroup {
         if (isEnableLoad() && isCanMoveFootByTLR() && mFooterView != null) {
             mFooterView.offsetTopAndBottom(y);
         }
-        if (mCalculator.getTotalOffsetY() > 0 && (keepContentLayoutFlag & FLAG_KEEP_CONTENT_REFRESH) == 0) {
-            mContentLayout.offsetTopAndBottom(y);
-        } else if (mCalculator.getTotalOffsetY() < 0 && (keepContentLayoutFlag & FLAG_KEEP_CONTENT_LOAD) == 0) {
-            mContentLayout.offsetTopAndBottom(y);
+        if (mCalculator.getTotalOffsetY() > 0
+                && (keepContentLayoutFlag & FLAG_KEEP_CONTENT_REFRESH) == 0) {
+            mContentView.offsetTopAndBottom(y);
+        } else if (mCalculator.getTotalOffsetY() < 0
+                && (keepContentLayoutFlag & FLAG_KEEP_CONTENT_LOAD) == 0) {
+            mContentView.offsetTopAndBottom(y);
         }
     }
 
@@ -893,7 +903,7 @@ public class TLRLinearLayout extends ViewGroup {
 
         @Override
         public void onOffsetChanged(View target, boolean isRefresh, int totalOffsetY,
-                                    int totalThresholdY, int offsetY, float threshOffset) {
+                int totalThresholdY, int offsetY, float threshOffset) {
             if (DEBUG) {
                 String name = target == null ? null : target.getClass().getSimpleName();
                 TLRLog.v("onOffsetChanged target:" + name + " isRefresh:" + isRefresh
