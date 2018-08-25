@@ -226,7 +226,7 @@ public class TLRLinearLayout extends ViewGroup {
         if (!isEnableLoad() && !isEnableRefresh()) {
             return super.dispatchTouchEvent(ev);
         }
-        if (mCalculator.hasAnyAnimatorRunning()) {
+        if (mCalculator.hasAnyRunningThing()) {
             return super.dispatchTouchEvent(ev);
         }
 
@@ -806,7 +806,7 @@ public class TLRLinearLayout extends ViewGroup {
      * return has any animation is running
      */
     public boolean hasAnyAnimatorRunning() {
-        return mCalculator.hasAnyAnimatorRunning();
+        return mCalculator.hasAnyRunningThing();
     }
 
     /**

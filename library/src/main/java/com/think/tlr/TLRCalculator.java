@@ -345,17 +345,18 @@ class TLRCalculator {
         }
     }
 
-    public boolean hasAnyAnimatorRunning() {
-        if (mAutoAnimator != null) {
-            return mAutoAnimator.isRunning() || mAutoAnimator.isStarted();
+    public boolean hasAnyRunningThing() {
+        if (mAutoAnimator != null && (mAutoAnimator.isRunning() || mAutoAnimator.isStarted())) {
+            return true;
         }
-        if (mResetAnimator != null) {
-            return mResetAnimator.isRunning() || mResetAnimator.isStarted();
+        if (mResetAnimator != null && (mResetAnimator.isRunning() || mResetAnimator.isStarted())) {
+            return true;
         }
-        if (mKeepAnimator != null) {
-            return mKeepAnimator.isRunning() || mKeepAnimator.isStarted();
+        if (mKeepAnimator != null && (mKeepAnimator.isRunning() || mKeepAnimator.isStarted())) {
+            return true;
         }
-        return false;
+
+        return mHooks.size() > 0;
     }
 
     private void startKeepAnimator() {

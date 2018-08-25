@@ -70,13 +70,13 @@ public class MaterialHeaderView extends LinearLayout implements TLRUIHandler {
         mScaleAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                if (mTLRLinearLayout != null) {
-                    mTLRLinearLayout.releaseHook(mHook);
-                }
                 mCircleView.setScaleX(1.0f);
                 mCircleView.setScaleY(1.0f);
                 invalidate();
                 mCircleView.setVisibility(View.GONE);
+                if (mTLRLinearLayout != null) {
+                    mTLRLinearLayout.releaseHook(mHook);
+                }
             }
         });
     }
@@ -87,7 +87,7 @@ public class MaterialHeaderView extends LinearLayout implements TLRUIHandler {
         mProgress.setBackgroundColor(CIRCLE_BG_LIGHT);
         mCircleView.setImageDrawable(mProgress);
         mCircleView.setVisibility(View.VISIBLE);
-        mProgress.setAlpha(256);
+        mProgress.setAlpha(255);
         mProgress.setColorSchemeColors(getResources().getIntArray(R.array.google_colors));
         addView(mCircleView);
     }

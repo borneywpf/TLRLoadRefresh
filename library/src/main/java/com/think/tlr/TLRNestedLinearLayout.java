@@ -38,7 +38,7 @@ public class TLRNestedLinearLayout extends TLRLinearLayout implements NestedScro
         if (!isEnableLoad() && !isEnableRefresh()) {
             return false;
         }
-        if (mCalculator.hasAnyAnimatorRunning()) {
+        if (mCalculator.hasAnyRunningThing()) {
             return false;
         }
         return (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
